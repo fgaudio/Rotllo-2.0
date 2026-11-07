@@ -1,0 +1,17 @@
+# Claves y secretos: nunca al repositorio
+.env
+.env.*
+!.env.example
+
+# Dependencias y builds
+node_modules/
+dist/
+build/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Resultados sueltos de las pruebas de la skill rotllo-estilo
+/prueba-rotllo-estilo/
+/revision-rotllo-estilo.html
