@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rotllo · Feed (prototipo)</title>
+<style>
+  :root {
+    --color-fondo: #FFF7ED; --color-superficie: #FFFFFF; --color-tinta: #1C1917; --color-tinta-suave: #57534E;
+    --color-taronja: #FF5A1F; --color-taronja-fuerte: #C2410C; --color-mar: #0E4D64; --color-exito: #15803D;
+    --color-borde: #E7E5E4; --esp-2: 8px; --esp-3: 12px; --esp-4: 16px; --esp-6: 24px;
+    --radio-m: 16px; --radio-pill: 999px; --texto-l: 22px; --texto-m: 17px; --texto-s: 15px;
+  }
+  body { margin: 0; background: var(--color-fondo); color: var(--color-tinta); font-family: Inter, system-ui, sans-serif; }
+  .feed { max-width: 430px; margin: 0 auto; padding: var(--esp-4); }
+  .filtros { display: flex; gap: var(--esp-2); overflow-x: auto; }
+  .chip { border: 1px solid var(--color-borde); background: none; border-radius: var(--radio-pill); padding: 4px 12px; font-size: 13px; }
+  .chip--activo { background: var(--color-mar); color: #fff; }
+  .tarjeta-plan { background: var(--color-superficie); border-radius: var(--radio-m); margin-top: var(--esp-4); overflow: hidden; }
+  .tarjeta-plan__foto { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+  .tarjeta-plan__cuerpo { padding: var(--esp-3) var(--esp-4); }
+  .tarjeta-plan__titulo { font-size: var(--texto-l); margin: 0; }
+  .tarjeta-plan__meta { color: #A8A29E; font-size: var(--texto-s); }
+  .tarjeta-plan__boton { background: var(--color-taronja); color: #fff; border: 0; border-radius: var(--radio-pill); height: 32px; padding: 0 12px; }
+</style>
+</head>
+<body>
+<main class="feed">
+  <div class="filtros" id="filtros"></div>
+  <section id="lista"></section>
+</main>
+<script>
+  const TEXTOS = {
+    filtros: ["Hoy", "Este finde", "Gratis", "Cerca de mí"],
+    verMas: "Haga clic aquí para ver más información",
+  };
+  const PLANES = [
+    { titulo: "Jam de jazz en Russafa", meta: "Hoy · 22:00 · Russafa", foto: "https://picsum.photos/seed/jazz/800/450" },
+    { titulo: "Techno en la Marina", meta: "Sáb 15 · 00:30 · Marina", foto: "https://picsum.photos/seed/techno/800/450" },
+  ];
+  document.getElementById("filtros").innerHTML = TEXTOS.filtros
+    .map((f, i) => `<button class="chip ${i === 0 ? "chip--activo" : ""}">${f}</button>`).join("");
+  document.getElementById("lista").innerHTML = PLANES.map(p => `
+    <article class="tarjeta-plan">
+      <img class="tarjeta-plan__foto" src="${p.foto}">
+      <div class="tarjeta-plan__cuerpo">
+        <h2 class="tarjeta-plan__titulo">${p.titulo}</h2>
+        <p class="tarjeta-plan__meta">${p.meta}</p>
+        <button class="tarjeta-plan__boton">${TEXTOS.verMas}</button>
+      </div>
+    </article>`).join("");
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+schema_version: "1.1"
+name: crear-ficha-plan
+expected_outcome: |
+  Una pantalla de ficha de plan (prototipo HTML en prototipos/, ya que no hay stack) que usa
+  los tokens de docs/diseno.md, textos con tuteo y frases cortas agrupados en un objeto de textos,
+  botón "cómo llegar" que abre mapas, entradas como enlace externo (v1), contraste AA y zonas
+  táctiles de 44px o más.
+context:
+  scaffold_script: place-files.sh

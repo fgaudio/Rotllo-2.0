@@ -1,0 +1,9 @@
+schema_version: "1.1"
+name: modificar-feed-estado-vacio
+expected_outcome: |
+  feed.html modificado siguiendo sus propias convenciones (variables CSS, clases BEM en español,
+  objeto TEXTOS), con un estado vacío con tono Rotllo y acción siguiente, botón de guardar con
+  etiqueta accesible y zona táctil >= 44px, y de paso se corrigen los problemas de la guía
+  existentes (chips y botón < 44px, texto gris sin contraste, "Haga clic aquí").
+context:
+  scaffold_script: place-files.sh
