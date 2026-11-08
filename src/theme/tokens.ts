@@ -1,9 +1,6 @@
 // Tokens de diseño de Rotllo: la única fuente de colores, espacios y tamaños de la app.
-//
-// PROVISIONAL: todavía no existe docs/diseno.md. Estos valores son el borrador que se
-// usó para probar la skill rotllo-estilo (contraste comprobado con
-// .claude/skills/rotllo-estilo/scripts/contraste.py). Cuando se apruebe la guía visual,
-// se cambian aquí y toda la app se actualiza sola.
+// Son la versión en código de docs/diseno.md: si cambias algo aquí, cámbialo también allí.
+// Contraste comprobado con .claude/skills/rotllo-estilo/scripts/contraste.py.
 
 export const colores = {
   fondo: '#FFF7ED', // arena: fondo de la app
