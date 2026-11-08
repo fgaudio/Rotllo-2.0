@@ -1,6 +1,6 @@
 # ADR-006: Notificaciones push
 
-**Estado:** Propuesto (se construye después de la v1, como dice `CLAUDE.md`)
+**Estado:** Aceptado (se construye después de la v1, como dice `CLAUDE.md`)
 **Fecha:** 2026-11-07
 **Decide:** responsable de Rotllo
 
@@ -15,7 +15,7 @@ Las notificaciones push llegan más tarde, pero conviene elegir ya el sistema pa
 
 Por debajo, en iPhone siempre pasa por **APNs** (el servicio de Apple) y en Android por **FCM** (el de Google). Lo que elegimos es quién habla con ellos por nosotros.
 
-## Decisión (propuesta)
+## Decisión
 
 El **servicio de push de Expo** (`expo-notifications`). Las notificaciones se envían desde Supabase: una Edge Function o un aviso automático de la base de datos (por ejemplo, cuando un plan pasa a `cancelado`).
 

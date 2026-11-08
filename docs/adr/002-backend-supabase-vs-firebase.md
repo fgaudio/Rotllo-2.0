@@ -1,6 +1,6 @@
 # ADR-002: Backend, base de datos, login y tiempo real
 
-**Estado:** Propuesto
+**Estado:** Aceptado (2026-11-08)
 **Fecha:** 2026-11-07
 **Decide:** responsable de Rotllo
 
@@ -17,7 +17,7 @@ Rotllo necesita:
 
 El diseño ya está pensado con tablas relacionadas y reglas RLS (Row Level Security: reglas que deciden qué filas puede ver o cambiar cada persona).
 
-## Decisión (propuesta)
+## Decisión
 
 **Supabase** (plan Pro), en una región de la UE (Fráncfort o París): Postgres + PostGIS, Auth, Storage, Realtime, Edge Functions y pg_cron.
 

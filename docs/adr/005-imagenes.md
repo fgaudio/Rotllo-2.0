@@ -1,6 +1,6 @@
 # ADR-005: Imágenes de planes y locales
 
-**Estado:** Propuesto
+**Estado:** Aceptado (2026-11-08)
 **Fecha:** 2026-11-07
 **Decide:** responsable de Rotllo
 
@@ -11,7 +11,7 @@
 - Las fotos que se hacen con el móvil pesan **3-8 MB**. Si se sirven tal cual, la app va lenta y gasta datos.
 - Hay que generar la **imagen para Instagram stories** de cada plan.
 
-## Decisión (propuesta)
+## Decisión
 
 - **Dónde guardarlas: Supabase Storage**, que ya viene incluido en el plan Pro (100 GB) y usa las mismas reglas de permisos que la base de datos.
 - **Cómo optimizarlas: en el móvil, antes de subirlas**, con `expo-image-manipulator`:

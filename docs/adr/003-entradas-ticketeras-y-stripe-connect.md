@@ -1,6 +1,6 @@
 # ADR-003: Entradas — v1 con enlace a la ticketera, v2 con Stripe Connect
 
-**Estado:** Propuesto
+**Estado:** Aceptado (2026-11-08)
 **Fecha:** 2026-11-07
 **Decide:** responsable de Rotllo (y conviene consultar con un asesor fiscal antes de la v2)
 
@@ -9,12 +9,12 @@
 - Muchos locales de Valencia ya venden con una ticketera: Xceed, Fourvenues, Entradium, Eventbrite…
 - Decisiones de producto ya tomadas (`docs/system-design.md`):
   - El dinero de la entrada es para el local.
-  - Rotllo cobra unos **gastos de gestión del 5 % + 0,30 € por entrada**, que paga el comprador.
+  - Rotllo cobra unos **gastos de gestión del 4 % + 1,60 € por entrada** (tarifa A), que paga el comprador.
   - Los planes gratis no pagan gastos.
   - No hay devoluciones salvo que el local las active.
 - Estamos en **España**: IVA, facturas, Verifactu, y Bizum es muy popular (Stripe dice que el 38 % de la gente en España prefiere pagar con Bizum).
 
-## Decisión (propuesta)
+## Decisión
 
 1. **v1: enlace a la ticketera del local**, con seguimiento de clics. Además, preguntaremos a Xceed y Fourvenues por su programa de afiliados.
 2. **v2: venta propia con Stripe Connect** (cuentas Express, cobro con destino al local y `on_behalf_of`; se explica más abajo). Tarjeta, Apple Pay y Google Pay, y **Bizum si Stripe lo permite en nuestro caso**.
@@ -95,7 +95,7 @@ La alternativa es que la comisión de Stripe la pague el local (Stripe cobra dir
 
 **IVA**
 - **La entrada**: el IVA lo pone el local, porque es quien vende. En general es el 21 % en discotecas y salas de fiesta y el 10 % en conciertos y espectáculos en directo; hay que confirmarlo con un asesor. Rotllo guarda el tipo de IVA en cada tipo de entrada (`tipos_entrada.iva_porcentaje`, un campo nuevo para el diseño) para que salga bien en el justificante.
-- **Los gastos de gestión**: son un servicio de Rotllo a un consumidor, con **21 % de IVA**. Como el precio mostrado al consumidor tiene que incluir el IVA, de los 0,70 € de gastos de una entrada de 8 €, **unos 0,12 € son IVA** y Rotllo ingresa en realidad 0,58 €.
+- **Los gastos de gestión**: son un servicio de Rotllo a un consumidor, con **21 % de IVA**. Como el precio mostrado al consumidor tiene que incluir el IVA, de los 1,92 € de gastos de una entrada de 8 €, **unos 0,33 € son IVA** y Rotllo ingresa en realidad 1,59 €.
 
 **Facturas**
 - **Rotllo** emite una **factura simplificada** por los gastos de gestión de cada compra. Va adjunta al email de confirmación, y se genera de forma automática con el aviso de "pago correcto" de Stripe.
@@ -107,25 +107,49 @@ La alternativa es que la comisión de Stripe la pague el local (Stripe cobra dir
 - **Falta confirmar** si funciona con Connect (`on_behalf_of`) y en el formulario de pago nativo de la app (Payment Sheet). No he podido abrir la documentación de Stripe desde esta sesión porque su web está bloqueada en la red del entorno.
 - **Plan B**: si no va en el formulario nativo, ofrecer "Pagar con Bizum" abriendo la página de pago de Stripe (Checkout) en el navegador de la app.
 
-## Números de la v2 (orientativos)
+## Números de la v2 con la tarifa A (orientativos)
 
-Supuestos: entrada de 8 € y 1,5 entradas por compra de media. Por cada entrada, los gastos de gestión son 0,40 € + 0,30 € = 0,70 €.
+**Tarifa elegida (2026-11-08): 4 % del precio + 1,60 € por entrada**, IVA incluido. Sale de buscar al menos 1 € limpio por entrada con margen extra para Fallas y verano, cuando hay más volumen y entradas más caras. La comparativa con la competencia está en `docs/competencia.md`.
+
+Lo que se descuenta de cada venta: el IVA de los gastos (21 %), la comisión de Stripe (≈ 1,5 % del total + 0,25 € por compra) y Connect (≈ 2 $ al mes por local activo + 0,25 % + 0,25 € por transferencia).
+
+**Por entrada** (1,5 entradas por compra de media):
+
+| Entrada | Gastos | Paga el comprador | Limpio para Rotllo | Si compra 1 sola entrada | En Fallas o verano |
+|---|---|---|---|---|---|
+| 5 € | 1,80 € | 6,80 € | 1,11 € | 1,02 € | 1,23 € |
+| 10 € | 2,00 € | 12,00 € | 1,18 € | 1,10 € | 1,31 € |
+| 15 € | 2,20 € | 17,20 € | 1,26 € | 1,17 € | 1,38 € |
+| 25 € | 2,60 € | 27,60 € | 1,41 € | 1,32 € | 1,53 € |
+| 40 € | 3,20 € | 43,20 € | 1,63 € | 1,55 € | 1,76 € |
+| 60 € | 4,00 € | 64,00 € | 1,93 € | 1,85 € | 2,06 € |
+
+**Al mes** (entrada de 8 €, escenarios del índice de ADR):
 
 | | 1.000 usuarios | 20.000 usuarios |
 |---|---|---|
-| Entradas vendidas al mes | 300 | 6.000 |
-| Compras | 200 | 4.000 |
-| Gastos de gestión cobrados (IVA incluido) | 210 € | 4.200 € |
-| – IVA de esos gastos (21 %) | –36 € | –729 € |
-| – Comisión de Stripe por pago (≈ 1,5 % + 0,25 €) | –89 € | –1.784 € |
-| – Connect (locales activos + transferencias) | –~35 € | –~420 € |
-| **Lo que le queda a Rotllo** | **~50 €/mes** | **~1.270 €/mes** |
+| Entradas vendidas | 300 | 6.000 |
+| Gastos cobrados (IVA incluido) | 576 € | 11.520 € |
+| – IVA (21 %) | –100 € | –1.999 € |
+| – Stripe | –95 € | –1.893 € |
+| – Connect | –36 € | –420 € |
+| **Limpio para Rotllo** | **~345 €** | **~7.200 €** |
 
-**Lo importante:** con las tarifas actuales, a Rotllo le queda en torno a un **25-30 % de lo que paga el comprador en gastos**. Hay formas de mejorarlo sin cambiar el modelo:
+**Proyección de 2027** (volúmenes supuestos):
 
-- Hacer las transferencias a los locales **semanales o mensuales** en vez de diarias, porque cada transferencia cuesta 0,25 €.
-- Revisar si los gastos se muestran **"+ IVA"** en lugar de "IVA incluido". Esto hay que verlo con el asesor: al consumidor siempre hay que enseñarle el total final.
-- Poner un **mínimo de gastos por compra** para las entradas baratas.
+| Periodo | Entradas | Precio medio | Limpio por entrada | Limpio total |
+|---|---|---|---|---|
+| Mes normal | 2.000 | 12 € | 1,23 € | ~2.460 €/mes |
+| Fallas (marzo) | 8.000 | 15 € | 1,38 € | ~11.060 € |
+| Mes de verano (junio a septiembre) | 6.000 | 20 € | 1,43 € | ~8.600 €/mes |
+| **Año 2027** | | | | **~62.700 €** |
+
+A estas cifras aún hay que restarles los costes fijos (35-95 $ al mes) y los impuestos sobre beneficios.
+
+**A vigilar:**
+- En las entradas baratas, los gastos pesan mucho: en una de 5 €, son un 36 % más.
+- Frente a Fever y Wegow, la tarifa A está a la par. Para compras en grupo hay una alternativa por compra (opción B en `docs/competencia.md`) si las ventas lo piden.
+- Como la tarifa sale de `tarifas_gestion`, se puede cambiar sin tocar código.
 
 ## Consecuencias
 

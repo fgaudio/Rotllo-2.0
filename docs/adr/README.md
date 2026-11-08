@@ -5,11 +5,11 @@ Un **ADR** (Architecture Decision Record) es una ficha corta que explica una dec
 | # | Decisión | Recomendación | Estado |
 |---|---|---|---|
 | [001](001-app-movil-expo.md) | App móvil | Expo + Expo Router + development build + EAS + deep links con web de respaldo | Aceptado |
-| [002](002-backend-supabase-vs-firebase.md) | Backend, base de datos, login y tiempo real | Supabase | Propuesto |
-| [003](003-entradas-ticketeras-y-stripe-connect.md) | Entradas | v1: enlace a la ticketera del local · v2: Stripe Connect | Propuesto |
-| [004](004-mapa-y-como-llegar.md) | Mapa y "Cómo llegar" | `react-native-maps` (Apple Maps en iOS, Google Maps en Android) + enlaces a las apps de mapas | Propuesto |
-| [005](005-imagenes.md) | Imágenes | Supabase Storage, comprimidas en el móvil antes de subirlas, y `expo-image` para mostrarlas | Propuesto |
-| [006](006-notificaciones-push.md) | Notificaciones push | Servicio de push de Expo | Propuesto |
+| [002](002-backend-supabase-vs-firebase.md) | Backend, base de datos, login y tiempo real | Supabase | Aceptado |
+| [003](003-entradas-ticketeras-y-stripe-connect.md) | Entradas | v1: enlace a la ticketera del local · v2: Stripe Connect | Aceptado |
+| [004](004-mapa-y-como-llegar.md) | Mapa y "Cómo llegar" | `react-native-maps` (Apple Maps en iOS, Google Maps en Android) + enlaces a las apps de mapas | Aceptado |
+| [005](005-imagenes.md) | Imágenes | Supabase Storage, comprimidas en el móvil antes de subirlas, y `expo-image` para mostrarlas | Aceptado |
+| [006](006-notificaciones-push.md) | Notificaciones push | Servicio de push de Expo | Aceptado |
 
 ## Supuestos de uso para los costes
 

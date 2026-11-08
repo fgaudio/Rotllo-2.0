@@ -14,7 +14,7 @@ Rotllo es "móvil primero" y tiene que estar en App Store y Google Play. La pers
 ## Decisión
 
 - **Expo** (React Native con TypeScript): una sola base de código para iOS y Android.
-- **Expo Router** para las pantallas. Cada archivo dentro de `app/` es una pantalla y su ruta (por ejemplo, `app/plan/[id].tsx` es `rotllo.app/p/…`). Como las rutas son URLs, los deep links salen casi gratis.
+- **Expo Router** para las pantallas. Cada archivo dentro de `app/` es una pantalla y su ruta (por ejemplo, `app/p/[id].tsx` es `rotllo.app/p/123`). Como las rutas son URLs, los deep links salen casi gratis.
 - **Development build** en lugar de Expo Go. Es "tu propia Expo Go", con los módulos nativos que necesitamos (Stripe y mapas). Se instala una vez en el móvil y luego los cambios de código se ven al instante, como en Expo Go.
 - **EAS Build** para compilar en la nube y **EAS Submit** para enviar a las tiendas. Así no hace falta un Mac para la versión de iPhone.
 - **Deep links**: universal links en iOS y App Links en Android, con el dominio `rotllo.app`, más una **web de respaldo** para quien no tiene la app (ver más abajo).

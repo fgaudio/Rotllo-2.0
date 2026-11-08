@@ -29,7 +29,35 @@ App de planes y actividades en Valencia para gente joven, estudiantes y gente so
 
 ## Stack
 
-_Pendiente: se completa en la Fase 1._
+Decidido en la Fase 1. El porqué de cada decisión está en `docs/adr/`.
+
+- **App:** Expo (React Native + TypeScript) con **Expo Router**; development build, no Expo Go. Se compila y se publica con **EAS Build / EAS Submit** (ADR-001).
+- **Deep links:** dominio `rotllo.app` (universal links + App Links) y web de respaldo con las mismas rutas de Expo Router (ADR-001).
+- **Backend:** **Supabase**, en una región de la UE: Postgres + PostGIS, Auth, Storage, Realtime, Edge Functions y pg_cron. Seguridad con RLS (ADR-002).
+- **Entradas:** v1, enlace a la ticketera del local con contador de clics; v2, **Stripe Connect** (cuentas Express). Gastos de gestión con la **tarifa A: 4 % + 1,60 € por entrada**, sacada de la tabla `tarifas_gestion` (ADR-003).
+- **Mapa:** `react-native-maps` (Apple Maps en iOS, Google Maps en Android). "Cómo llegar" abre la app de mapas con un enlace (ADR-004).
+- **Imágenes:** Supabase Storage, comprimidas en el móvil con `expo-image-manipulator` y mostradas con `expo-image` (ADR-005).
+- **Push:** servicio de push de Expo (`expo-notifications`), después de la v1 (ADR-006).
+- **Textos:** `i18next` + `react-i18next`, con `es` primero y `en` e `it` preparados.
+
+### Estructura de carpetas
+
+```
+app/            Pantallas y rutas (Expo Router). Cada archivo es una URL.
+src/components/ Componentes reutilizables (Boton, TarjetaPlan...).
+src/lib/        Conexiones (supabase.ts) y utilidades (mapas, formatos).
+src/i18n/       Textos: es.ts (principal), en.ts, it.ts.
+src/theme/      Tokens de diseño (colores, espacios, tipografía).
+supabase/       Migraciones SQL, Edge Functions y datos de prueba.
+docs/           Diseño del sistema, ADR, competencia.
+```
+
+### Comandos
+
+- `npm start`: arranca el servidor de desarrollo (para la development build).
+- `npm run web`: abre la app en el navegador.
+- `npm run typecheck`: comprueba los tipos de TypeScript.
+- `npm run lint`: revisa el estilo del código.
 
 ## Reglas de trabajo para Claude
 

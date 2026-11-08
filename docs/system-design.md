@@ -1,6 +1,6 @@
 # Rotllo · Diseño del sistema (MVP)
 
-> Estado: **propuesta para revisar**. Fecha: 2026-11-07 (actualizado con las decisiones sobre entradas, edad, gastos de gestión y devoluciones).
+> Estado: **aprobado**. Fecha: 2026-11-08. Incluye las decisiones sobre entradas, edad, gastos de gestión (tarifa A), devoluciones, idiomas y categorías.
 > Se basa en `CLAUDE.md` y en las decisiones de la sección 0. La sección "Stack" de `CLAUDE.md` sigue vacía: aquí se propone Supabase + Stripe, pero se confirma en la Fase 1.
 
 ## Índice
@@ -26,7 +26,7 @@
 | Edad mínima | **Rotllo es para mayores de 18** | Al registrarse se pide la fecha de nacimiento y, si no tiene 18, no puede crear la cuenta. Sin cuenta se pueden mirar los planes, pero no guardar, comprar ni entrar en jams. |
 | Edad por plan | **Cada local define la suya** | La app es para todo el público adulto, sin límite superior. Cada local decide en sus planes la **edad mínima de acceso** (18, 21, 25...) y, si quiere, el **público al que apunta** (por ejemplo, 25-40). La edad mínima se respeta al comprar y en la puerta. El público objetivo es solo orientativo: no oculta el plan a nadie. |
 | Comprobar la edad | Fecha de nacimiento declarada + DNI en la puerta | La app confía en la fecha que pone el usuario; el control real lo hace el local en la puerta, pidiendo el DNI como siempre. |
-| Comisión | **La paga el comprador** como "gastos de gestión": **5 % + 0,30 € por entrada** | Se suma al precio: una entrada de 8 € paga 0,70 € de gastos y en total 8,70 €. El local recibe sus 8 € enteros. |
+| Comisión | **La paga el comprador** como "gastos de gestión": **4 % + 1,60 € por entrada** (tarifa A) | Una entrada de 8 € paga 1,92 € de gastos y en total 9,92 €. El local recibe sus 8 € enteros. A Rotllo le quedan unos 1,10-1,40 € limpios por entrada, después de IVA, Stripe y Connect (cálculo y comparativa en el ADR-003 y en `docs/competencia.md`). |
 | Planes gratis | **Sin gastos** | Si el plan es gratis y tiene aforo, se reserva la entrada en la app gratis del todo: sin gastos y sin pasar por Stripe. |
 | Devoluciones | **Sin devolución, salvo que el local la active** en su plan | Por defecto, una entrada comprada no se devuelve. Cada local puede activar "Admite devoluciones hasta X horas antes" en un plan. Si el plan se cancela, se devuelve todo siempre. |
 | Jam | Estilo Spotify Jam: grupo privado por enlace de invitación, **máximo 30 personas** | Alguien crea una jam (normalmente desde un plan), comparte el enlace con sus amigos y ahí chatean y votan. No es una sala pública. |
@@ -284,6 +284,15 @@ Tiene índices por `ubicacion` (de tipo GIST, para el mapa), por `empieza_en` y 
 | `plan_id` | uuid → planes | |
 | `creado_en` | timestamptz | |
 
+**`clics_ticketera`**: cuenta cuántas personas manda Rotllo a la ticketera de cada local (ADR-003). Sirve para enseñárselo al local.
+
+| Campo | Tipo | Notas |
+|---|---|---|
+| `id` | uuid PK | |
+| `plan_id` | uuid → planes | |
+| `user_id` | uuid → perfiles, opcional | Vacío si quien pulsa no tiene cuenta. |
+| `creado_en` | timestamptz | |
+
 #### Entradas · v2 · entradas
 
 Funciona en tres niveles: **tipo de entrada** (el producto y su stock), **compra** (el pago) y **entrada** (cada QR individual). Si compras 3 entradas, hay 1 compra y 3 entradas, cada una con su QR, para que cada amigo entre con la suya.
@@ -300,6 +309,7 @@ Funciona en tres niveles: **tipo de entrada** (el producto y su stock), **compra
 | `cantidad_reservada` | int | Entradas apartadas mientras alguien está pagando. |
 | `cantidad_vendida` | int | |
 | `max_por_compra` | int | Por defecto, 6. |
+| `iva_porcentaje` | numeric | El IVA de la entrada, que fija el local (por ejemplo, 21 o 10). Sale en el justificante (ver ADR-003). |
 | `venta_desde`, `venta_hasta` | timestamptz | |
 | `activo` | bool | |
 
@@ -358,8 +368,8 @@ Tiene una regla fija en la base de datos: `cantidad_reservada + cantidad_vendida
 | Campo | Tipo | Notas |
 |---|---|---|
 | `id` | uuid PK | |
-| `porcentaje` | numeric | Ahora `5` (= 5 % del subtotal). |
-| `fijo_centimos` | int | Ahora `30` (= 0,30 € por entrada). |
+| `porcentaje` | numeric | Ahora `4` (= 4 % del subtotal). |
+| `fijo_centimos` | int | Ahora `160` (= 1,60 € por entrada). |
 | `vigente_desde` | timestamptz | Se usa la tarifa más reciente. |
 
 **`eventos_stripe`**: guarda los avisos que manda Stripe para no procesar el mismo dos veces (Stripe a veces los repite).
@@ -445,6 +455,19 @@ Como en Spotify: una jam es un **grupo privado**. Se entra con el enlace de invi
 | `creado_en` | timestamptz | |
 
 Si la votación no es múltiple, la función `votar()` borra el voto anterior de esa persona antes de guardar el nuevo. Así, cambiar de opinión es un solo toque.
+
+#### Notificaciones · después de la v1
+
+**`dispositivos_push`**: los móviles a los que se puede mandar una notificación (ADR-006).
+
+| Campo | Tipo | Notas |
+|---|---|---|
+| `id` | uuid PK | |
+| `user_id` | uuid → perfiles | |
+| `token` | text único | El token de Expo de ese móvil. |
+| `plataforma` | enum `ios`/`android` | |
+| `activo` | bool | Se pone a `false` cuando Expo avisa de que el token ya no vale. |
+| `actualizado_en` | timestamptz | |
 
 #### Moderación · v1 (se amplía en v2 · jam)
 
@@ -628,7 +651,7 @@ sequenceDiagram
   U->>App: Toca un plan y luego "Pillar entrada"
   App->>EF: crear-compra(tipo, cantidad)
   EF->>DB: ¿Tiene la edad mínima del plan? ¿Hay stock? Reserva 15 min y calcula los gastos
-  App-->>U: "8,00 € + 0,70 € de gastos = 8,70 € · Sin devolución"
+  App-->>U: "8,00 € + 1,92 € de gastos = 9,92 € · Sin devolución"
   EF->>S: Crea el pago (subtotal para el local, gastos para Rotllo)
   S-->>App: Pantalla de pago (tarjeta, Apple Pay, Google Pay)
   U->>S: Paga
@@ -645,7 +668,7 @@ Paso a paso:
 1. **Descubrir**: el mapa llama a `planes_cercanos()` con la ubicación (si la persona la comparte) y los filtros. Funciona sin cuenta.
 2. **Ficha**: fotos, descripción, "Cómo llegar" (abre Google o Apple Maps) y "Pillar entrada".
 3. **Cuenta**: si no ha iniciado sesión, se le pide entrar o registrarse, y luego vuelve a la ficha.
-4. **Resumen antes de pagar**: precio de la entrada, gastos de gestión, total y condiciones de devolución ("Sin devolución" o "Puedes devolverla hasta 24 h antes"). La ley de consumo obliga a mostrar el precio total con todos los gastos **antes** de pagar. Además, para que no haya sorpresas, propongo que la ficha ya diga "8 € + gastos".
+4. **Resumen antes de pagar**: precio de la entrada, gastos de gestión, total y condiciones de devolución ("Sin devolución" o "Puedes devolverla hasta 24 h antes"). La ley de consumo obliga a mostrar el precio total con todos los gastos **antes** de pagar. Además, la nota de Consumo de julio de 2024 pide que los gastos vayan incluidos en el precio anunciado. Por eso la ficha muestra ya el **precio final** ("9,92 €, gastos incluidos"), a falta de confirmarlo con la gestoría.
 5. **Edad**: si el plan pide más de 18 (por ejemplo, +21), se comprueba con la fecha de nacimiento y la edad que tendrá **el día del plan**. Si no llega, se ve "Este plan es +21" y no puede comprar.
 6. **Reserva**: `crear-compra` aparta las entradas durante 15 minutos con una operación atómica. "Atómica" significa que no se puede quedar a medias: o se reservan todas o ninguna, aunque cien personas compren a la vez.
 7. **Pago**: Stripe cobra el total, envía el subtotal a la cuenta del local y deja los gastos de gestión a Rotllo (`application_fee`). Ojo: Stripe cobra su propia comisión por cada pago (en torno al 1,5 % + 0,25 € con tarjetas europeas) y, con este modelo, **sale de la parte de Rotllo**. Por eso los gastos de gestión tienen que cubrir al menos esa cantidad.

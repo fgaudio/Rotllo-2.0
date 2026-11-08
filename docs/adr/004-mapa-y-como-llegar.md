@@ -1,6 +1,6 @@
 # ADR-004: Mapa y "Cómo llegar"
 
-**Estado:** Propuesto
+**Estado:** Aceptado (2026-11-08)
 **Fecha:** 2026-11-07
 **Decide:** responsable de Rotllo
 
@@ -12,7 +12,7 @@ En Rotllo, los mapas sirven para tres cosas:
 2. **"Cómo llegar"**: abrir Google Maps o Apple Maps con la dirección del plan. Las indicaciones paso a paso **no** las hacemos nosotros.
 3. **Escribir la dirección** al dar de alta un local o un plan (autocompletar y convertirla en coordenadas). Esto lo usan solo los locales, así que hay pocas peticiones.
 
-## Decisión (propuesta)
+## Decisión
 
 - **Mapa**: `react-native-maps` con el proveedor nativo de cada móvil: **Apple Maps en iPhone y Google Maps en Android**. Los dos son **gratis y sin límite** dentro de apps móviles.
 - **Cómo llegar**: abrir un enlace a la app de mapas, también gratis:
