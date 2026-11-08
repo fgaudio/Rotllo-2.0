@@ -1,4 +1,4 @@
--- Tests de las reglas de la v1 (pgTAP). Cada test lleva una frase que explica qué comprueba.
+-- Tests de las reglas de la v1 (pgTAP), con los ajustes de seguridad de 20261108212249. Cada test lleva una frase que explica qué comprueba.
 -- Se ejecutan dentro de una transacción que se deshace al final: no dejan datos.
 --
 -- Para "hacerse pasar" por alguien se usan tres líneas:
@@ -25,11 +25,11 @@ insert into public.admins_rotllo (user_id) values ('44444444-4444-4444-8444-4444
 
 -- ── 1. Registro y perfil ────────────────────────────────────────────────────
 
-select is((select estado::text from perfiles where id = '11111111-1111-4111-8111-111111111111'), 'activo',
+select is((select estado::text from perfiles_privados where id = '11111111-1111-4111-8111-111111111111'), 'activo',
   'Registro con fecha de nacimiento: el perfil queda activo');
 select is((select nombre_visible from perfiles where id = '11111111-1111-4111-8111-111111111111'), 'Ana',
   'El nombre del registro pasa al perfil');
-select is((select estado::text from perfiles where id = '33333333-3333-4333-8333-333333333333'), 'incompleto',
+select is((select estado::text from perfiles_privados where id = '33333333-3333-4333-8333-333333333333'), 'incompleto',
   'Registro sin fecha (por ejemplo, con Google): el perfil queda incompleto');
 select throws_ok(
   $$ insert into auth.users (id, email, raw_user_meta_data)
@@ -46,20 +46,20 @@ select throws_ok(
   '42501', null,
   'Con el perfil incompleto no se puede dar de alta un local');
 select throws_ok(
-  $$ update perfiles set fecha_nacimiento = '2012-01-01' where id = '33333333-3333-4333-8333-333333333333' $$,
+  $$ update perfiles_privados set fecha_nacimiento = '2012-01-01' where id = '33333333-3333-4333-8333-333333333333' $$,
   '23514', null,
   'No se puede poner una fecha de nacimiento de menor');
 select throws_ok(
-  $$ update perfiles set estado = 'activo' where id = '33333333-3333-4333-8333-333333333333' $$,
+  $$ update perfiles_privados set estado = 'activo' where id = '33333333-3333-4333-8333-333333333333' $$,
   '42501', null,
   'Nadie puede activar su propio perfil a mano');
 select lives_ok(
-  $$ update perfiles set fecha_nacimiento = '2000-02-02' where id = '33333333-3333-4333-8333-333333333333' $$,
+  $$ update perfiles_privados set fecha_nacimiento = '2000-02-02' where id = '33333333-3333-4333-8333-333333333333' $$,
   'Gus pone su fecha de nacimiento (mayor de edad)');
-select is((select estado::text from perfiles where id = '33333333-3333-4333-8333-333333333333'), 'activo',
+select is((select estado::text from perfiles_privados where id = '33333333-3333-4333-8333-333333333333'), 'activo',
   'Con una fecha válida, el perfil pasa solo a activo');
 select throws_ok(
-  $$ update perfiles set fecha_nacimiento = '2001-02-02' where id = '33333333-3333-4333-8333-333333333333' $$,
+  $$ update perfiles_privados set fecha_nacimiento = '2001-02-02' where id = '33333333-3333-4333-8333-333333333333' $$,
   '42501', null,
   'La fecha de nacimiento solo se pone una vez');
 
@@ -68,10 +68,18 @@ reset role;
 select set_config('request.jwt.claims', '{"sub": "22222222-2222-4222-8222-222222222222", "role": "authenticated"}', true);
 set local role authenticated;
 
-select is((select count(*) from perfiles where id = '11111111-1111-4111-8111-111111111111')::int, 0,
+select is((select count(*) from perfiles_privados where id = '11111111-1111-4111-8111-111111111111')::int, 0,
   'Bea no puede ver el perfil privado de Ana (ni su fecha de nacimiento)');
-select is((select nombre_visible from perfiles_publicos where id = '11111111-1111-4111-8111-111111111111'), 'Ana',
+select is((select nombre_visible from perfiles where id = '11111111-1111-4111-8111-111111111111'), 'Ana',
   'Pero sí su perfil público');
+select is((select count(*) from perfiles_privados)::int, 1,
+  'Bea solo ve un perfil privado: el suyo');
+select lives_ok(
+  $$ update perfiles set username = 'bea.vlc' where id = '22222222-2222-4222-8222-222222222222' $$,
+  'Bea cambia su nombre de usuario');
+update perfiles set nombre_visible = 'Cambiado por Bea' where id = '11111111-1111-4111-8111-111111111111';
+select is((select nombre_visible from perfiles where id = '11111111-1111-4111-8111-111111111111'), 'Ana',
+  'Pero no puede cambiar el perfil de Ana');
 
 -- ── 2. Alta y verificación de un local ──────────────────────────────────────
 
@@ -129,6 +137,10 @@ select is((select count(*) from planes_feed)::int, 4,
   'Sin cuenta se ven los 4 planes de demo en el feed');
 select is((select count(*) from locales_privado)::int, 0,
   'Sin cuenta no se ve ningún dato privado de locales');
+select is((select count(*) from perfiles)::int, 0,
+  'Sin cuenta no se ve ningún perfil, ni siquiera el público');
+select is((select count(*) from perfiles_privados)::int, 0,
+  'Ni ningún perfil privado');
 
 -- El admin verifica
 reset role;
@@ -250,6 +262,28 @@ select throws_ok(
 reset role;
 select is((select count(*) from planes where titulo = 'Plan cambiado por Bea')::int, 0,
   'Bea no consiguió cambiar el título del plan de Ana');
+
+-- ── 5. Qué se puede llamar desde la API ─────────────────────────────────────
+
+select is(
+  (select array_agg(p.proname::text order by p.proname)
+   from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+   where n.nspname = 'public' and p.prosecdef),
+  array['crear_local', 'registrar_clic'],
+  'En el esquema público solo quedan las dos funciones que usa la app');
+select ok(
+  not has_function_privilege('anon',
+    'public.crear_local(text, text, public.tipo_local, text, double precision, double precision, text, text, text, text, text, integer)',
+    'execute'),
+  'Sin cuenta no se puede llamar a crear_local');
+select ok(
+  has_function_privilege('authenticated',
+    'public.crear_local(text, text, public.tipo_local, text, double precision, double precision, text, text, text, text, text, integer)',
+    'execute'),
+  'Con cuenta sí');
+select ok(has_function_privilege('anon', 'public.registrar_clic(uuid)', 'execute'),
+  'registrar_clic sigue abierta a todos ("Pillar entrada" sin cuenta)');
+select hasnt_view('public', 'perfiles_publicos', 'La vista perfiles_publicos ya no existe');
 
 select * from finish();
 rollback;

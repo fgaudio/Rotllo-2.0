@@ -602,7 +602,8 @@ Algunas acciones son demasiado delicadas para una regla simple: tienen que hacer
 Implementado en `supabase/migrations/` y probado con los tests de `supabase/tests/database/`. Cambios respecto a lo de arriba:
 
 - **`planes_feed`**: una vista que junta plan, local, categoría y la primera foto en una sola fila, con `lat` y `lng`. El feed y la ficha leen de aquí, y como la vista usa las reglas de quien consulta, cada persona ve solo lo que le toca.
-- **`perfiles_publicos`**: implementada como vista (id, username, nombre_visible, avatar_url).
+- **Perfil en dos tablas** (migración de ajustes de seguridad): `perfiles` guarda lo público (username, nombre_visible, avatar_url) y lo ve cualquiera con cuenta; `perfiles_privados` guarda `fecha_nacimiento`, `idioma` y `estado`, y solo lo ve su dueño. Sustituye a la vista `perfiles_publicos`, que Supabase marcaba como insegura porque se saltaba las reglas.
+- **Funciones de ayuda de las reglas**: en el esquema `privado`, fuera de la API. En `public` solo quedan `crear_local` (con cuenta) y `registrar_clic` (todos).
 - **`locales_privado`**: no tiene `notas_verificacion`. El dueño del local puede leer esa tabla, así que las notas internas no podían ir ahí. Si el admin necesita notas, irán en una tabla solo para admins.
 - **Edad mínima y dirección de un plan**: si no se indican, se copian del local al crear el plan.
 - **Fotos**: van en Storage con carpetas por id (`planes/{plan_id}/…`, `locales/{local_id}/…`, `avatares/{user_id}/…`). Quién puede subir se comprueba en la base de datos.
