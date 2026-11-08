@@ -15,3 +15,26 @@ Thumbs.db
 # Resultados sueltos de las pruebas de la skill rotllo-estilo
 /prueba-rotllo-estilo/
 /revision-rotllo-estilo.html
+/prueba-proyecto-base/
+
+# Expo
+.expo/
+web-build/
+expo-env.d.ts
+.metro-health-check*
+
+# Nativo (se genera solo con Expo; no se edita a mano)
+/ios
+/android
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.pem
+*.mobileprovision
+
+# Logs y TypeScript
+npm-debug.*
+*.tsbuildinfo

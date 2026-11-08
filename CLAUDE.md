@@ -43,11 +43,11 @@ Decidido en la Fase 1. El porqué de cada decisión está en `docs/adr/`.
 ### Estructura de carpetas
 
 ```
-app/            Pantallas y rutas (Expo Router). Cada archivo es una URL.
-src/components/ Componentes reutilizables (Boton, TarjetaPlan...).
-src/lib/        Conexiones (supabase.ts) y utilidades (mapas, formatos).
+src/app/        Pantallas y rutas (Expo Router). Cada archivo es una URL: src/app/p/[id].tsx = rotllo.app/p/123.
+src/components/ Componentes reutilizables (Boton, Chip, TarjetaPlan...). Un archivo .web.tsx es la versión para navegador.
+src/lib/        Conexiones (supabase.ts), tipos, formatos, filtros y mapas.
 src/i18n/       Textos: es.ts (principal), en.ts, it.ts.
-src/theme/      Tokens de diseño (colores, espacios, tipografía).
+src/theme/      Tokens de diseño (colores, espacios, tipografía). Ningún color o medida fuera de aquí.
 supabase/       Migraciones SQL, Edge Functions y datos de prueba.
 docs/           Diseño del sistema, ADR, competencia.
 ```
@@ -58,6 +58,8 @@ docs/           Diseño del sistema, ADR, competencia.
 - `npm run web`: abre la app en el navegador.
 - `npm run typecheck`: comprueba los tipos de TypeScript.
 - `npm run lint`: revisa el estilo del código.
+- Dependencias nativas: `npx expo install <paquete>`. Si la red bloquea a Expo, se usan las versiones de `node_modules/expo/bundledNativeModules.json`.
+- Cambios en `app.config.ts` o paquetes nativos: hay que rehacer la development build.
 
 ## Reglas de trabajo para Claude
 
