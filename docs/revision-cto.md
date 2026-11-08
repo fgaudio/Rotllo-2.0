@@ -1,6 +1,6 @@
 # Revisión crítica del sistema (prompt 1.2)
 
-> Fecha: 2026-11-08. Revisión de `docs/system-design.md` **y de lo ya construido** (migraciones, app). Estado: **propuestas, pendientes de tu OK**.
+> Fecha: 2026-11-08. Revisión de `docs/system-design.md` **y de lo ya construido** (migraciones, app). Estado: **puntos 2, 3, 4, 5 y 7 aplicados** (migración `20261108215008_v1_feed_y_clics`). Pendientes: SMTP propio y plan Pro (los haces tú en el panel) y Sentry (con el módulo de login).
 
 **Conclusión:** el diseño aguanta 5.000 usuarios un sábado por la noche sin cambiar de arquitectura. Lo que se rompería antes no es la base de datos, sino cuatro cosas más pequeñas:
 - Los **emails de registro**.

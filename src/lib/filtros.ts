@@ -1,41 +1,90 @@
-// Filtros del feed: hoy, este finde y gratis.
-// "Cerca de mí" llegará cuando pidamos la ubicación (expo-location).
+// Filtros del feed: hoy, este finde y gratis. Hacen lo mismo que la función
+// buscar_planes de la base de datos (que es la que se usa con Supabase); esta versión
+// sirve para los datos de ejemplo. Si cambias una, cambia la otra.
+//
+// Dos reglas de una app de noche:
+//   · Siempre en hora de Valencia, tenga el móvil la hora que tenga.
+//   · El "día" va de 06:00 a 06:00: a las 23:30 del viernes, la fiesta de las 00:30 es "hoy".
+// "Cerca de mí" llegará con el módulo de mapa (permiso de ubicación).
 import type { Plan } from './tipos';
 
 export type Filtro = 'hoy' | 'finde' | 'gratis';
 
-function inicioDelDia(fecha: Date) {
-  const d = new Date(fecha);
-  d.setHours(0, 0, 0, 0);
-  return d;
+const ZONA = 'Europe/Madrid';
+const HORA = 60 * 60 * 1000;
+const DIA = 24 * HORA;
+const DURACION_SIN_FIN = 6 * HORA; // un plan sin hora de fin se da por terminado 6 h después
+
+type FechaHora = { y: number; m: number; d: number; h: number; min: number; s: number };
+
+// La fecha y la hora "de reloj" en Valencia para un instante.
+function enValencia(instante: Date): FechaHora {
+  const partes = new Intl.DateTimeFormat('en-GB', {
+    timeZone: ZONA,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(instante);
+  const valor = (tipo: string) => Number(partes.find((p) => p.type === tipo)?.value);
+  return { y: valor('year'), m: valor('month'), d: valor('day'), h: valor('hour'), min: valor('minute'), s: valor('second') };
 }
 
-export function esHoy(iso: string, ahora = new Date()) {
-  const inicio = inicioDelDia(ahora);
-  const fin = new Date(inicio);
-  fin.setDate(fin.getDate() + 1);
-  const fecha = new Date(iso);
-  return fecha >= inicio && fecha < fin;
+// Diferencia entre la hora de Valencia y UTC en ese instante (1 h en invierno, 2 h en verano).
+function desfaseValencia(instante: Date): number {
+  const v = enValencia(instante);
+  return Date.UTC(v.y, v.m - 1, v.d, v.h, v.min, v.s) - Math.floor(instante.getTime() / 1000) * 1000;
 }
 
-// El finde es de viernes a domingo. Si hoy es lunes-jueves, el próximo; si ya es finde, este.
-export function esEsteFinde(iso: string, ahora = new Date()) {
-  const hoy = inicioDelDia(ahora);
-  const dia = hoy.getDay(); // 0 = domingo ... 5 = viernes, 6 = sábado
-  const diasHastaViernes = dia === 0 ? -2 : dia === 6 ? -1 : 5 - dia;
-  const viernes = new Date(hoy);
-  viernes.setDate(hoy.getDate() + diasHastaViernes);
-  const lunes = new Date(viernes);
-  lunes.setDate(viernes.getDate() + 3);
-  const fecha = new Date(iso);
-  return fecha >= viernes && fecha < lunes;
+// Un día y una hora de Valencia → el instante exacto.
+export function instanteValencia(y: number, m: number, d: number, h: number): Date {
+  const comoSiFueraUTC = Date.UTC(y, m - 1, d, h);
+  let t = comoSiFueraUTC - desfaseValencia(new Date(comoSiFueraUTC));
+  t = comoSiFueraUTC - desfaseValencia(new Date(t)); // segunda vuelta por si cambia la hora ese día
+  return new Date(t);
 }
 
-export function filtrarPlanes(planes: Plan[], filtro: Filtro | null, ahora = new Date()) {
-  if (!filtro) return planes;
-  return planes.filter((plan) => {
-    if (filtro === 'hoy') return esHoy(plan.empiezaEn, ahora);
-    if (filtro === 'finde') return esEsteFinde(plan.empiezaEn, ahora);
-    return plan.esGratis;
-  });
+// Qué "día de noche" es: la fecha de Valencia restando 6 horas de reloj.
+// Se devuelve como medianoche UTC de esa fecha, para poder sumar días sin líos.
+function diaNocturno(ahora: Date): Date {
+  const v = enValencia(ahora);
+  const relojMenos6 = new Date(Date.UTC(v.y, v.m - 1, v.d, v.h, v.min, v.s) - 6 * HORA);
+  return new Date(Date.UTC(relojMenos6.getUTCFullYear(), relojMenos6.getUTCMonth(), relojMenos6.getUTCDate()));
+}
+
+function a06h(dia: Date, sumarDias = 0): Date {
+  const d = new Date(dia.getTime() + sumarDias * DIA);
+  return instanteValencia(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate(), 6);
+}
+
+export function ventanas(ahora: Date) {
+  const dia = diaNocturno(ahora);
+  const isodow = dia.getUTCDay() === 0 ? 7 : dia.getUTCDay(); // 1 = lunes … 7 = domingo
+  const hastaViernes = isodow >= 5 ? -(isodow - 5) : 5 - isodow;
+  return {
+    hoyFin: a06h(dia, 1),
+    findeInicio: a06h(dia, hastaViernes),
+    findeFin: a06h(dia, hastaViernes + 3),
+  };
+}
+
+function finDe(plan: Plan): number {
+  return plan.terminaEn ? Date.parse(plan.terminaEn) : Date.parse(plan.empiezaEn) + DURACION_SIN_FIN;
+}
+
+export function filtrarPlanes(planes: Plan[], filtro: Filtro | null, ahora = new Date()): Plan[] {
+  const v = ventanas(ahora);
+  return planes
+    .filter((plan) => finDe(plan) > ahora.getTime())
+    .filter((plan) => {
+      const empieza = Date.parse(plan.empiezaEn);
+      if (filtro === 'hoy') return empieza < v.hoyFin.getTime();
+      if (filtro === 'finde') return empieza < v.findeFin.getTime() && finDe(plan) > v.findeInicio.getTime();
+      if (filtro === 'gratis') return plan.esGratis;
+      return true;
+    })
+    .sort((a, b) => Date.parse(a.empiezaEn) - Date.parse(b.empiezaEn) || a.id.localeCompare(b.id));
 }

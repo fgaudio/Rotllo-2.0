@@ -58,6 +58,7 @@ docs/           Diseño del sistema, ADR, competencia.
 - `npm run web`: abre la app en el navegador.
 - `npm run typecheck`: comprueba los tipos de TypeScript.
 - `npm run lint`: revisa el estilo del código.
+- `npm test`: tests de la lógica de la app (Jest). Los filtros del feed tienen los mismos casos que los tests de la base de datos.
 - Dependencias nativas: `npx expo install <paquete>`. Si la red bloquea a Expo, se usan las versiones de `node_modules/expo/bundledNativeModules.json`.
 - Cambios en `app.config.ts` o paquetes nativos: hay que rehacer la development build.
 - `bash scripts/db/probar.sh` (como usuario postgres): prueba las migraciones y las reglas RLS en un Postgres local que imita a Supabase. Cualquier cambio en `supabase/` tiene que pasar estos tests.

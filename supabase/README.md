@@ -9,6 +9,9 @@ migrations/                       Cambios de la base de datos, en orden. Cada ca
   20261108212249_v1_ajustes_seguridad.sql
                                   Perfil público/privado, funciones de ayuda al esquema `privado`,
                                   índices y reglas sin solapes (avisos del panel de Supabase)
+  20261108215008_v1_feed_y_clics.sql
+                                  buscar_planes (feed por páginas, "día de noche" en hora de
+                                  Valencia), reglas ligeras sin cuenta y 1 clic por persona/hora
 seed.sql                          Las 9 categorías + locales y planes de demo (solo desarrollo)
 tests/database/                   Tests automáticos de las reglas (pgTAP)
 ```
@@ -29,7 +32,8 @@ tests/database/                   Tests automáticos de las reglas (pgTAP)
 - **Funciones de ayuda de las reglas** (`es_admin`, `es_miembro_local`...): están en el esquema `privado`, que la API no publica, así que no se pueden llamar desde fuera.
 - **Funciones para la app:**
   - `crear_local(...)`: da de alta un local y pone a quien lo crea como propietario. Solo con cuenta.
-  - `registrar_clic(plan)`: cuenta el clic y devuelve el enlace de la ticketera.
+  - `buscar_planes(filtro, desde, limite)`: el feed, de 30 en 30. Filtros `hoy`, `finde` y `gratis`, en hora de Valencia y con el día de 06:00 a 06:00.
+  - `registrar_clic(plan, dispositivo)`: cuenta como mucho 1 clic por persona (o por móvil) y por hora, y devuelve el enlace de la ticketera.
 - **Vista** `planes_feed`: lo que pinta el feed y la ficha.
 
 ## Probar en local, sin cuenta
@@ -38,7 +42,7 @@ tests/database/                   Tests automáticos de las reglas (pgTAP)
 bash scripts/db/probar.sh   # como usuario postgres; necesita Postgres 16 + PostGIS + pgTAP
 ```
 
-Crea una base de datos que imita a Supabase, aplica las migraciones y el seed y pasa los tests. Ahora mismo son **61 tests**, y todos pasan.
+Crea una base de datos que imita a Supabase, aplica las migraciones y el seed y pasa los tests. Ahora mismo son **77 tests**, y todos pasan.
 
 Con Docker y la CLI de Supabase, lo mismo se hace con `supabase start`, `supabase db reset` y `supabase test db`.
 

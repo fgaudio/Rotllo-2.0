@@ -281,7 +281,7 @@ select ok(
     'public.crear_local(text, text, public.tipo_local, text, double precision, double precision, text, text, text, text, text, integer)',
     'execute'),
   'Con cuenta sí');
-select ok(has_function_privilege('anon', 'public.registrar_clic(uuid)', 'execute'),
+select ok(has_function_privilege('anon', 'public.registrar_clic(uuid, text)', 'execute'),
   'registrar_clic sigue abierta a todos ("Pillar entrada" sin cuenta)');
 select hasnt_view('public', 'perfiles_publicos', 'La vista perfiles_publicos ya no existe');
 

@@ -1,6 +1,8 @@
 // De dónde salen los planes. Si hay claves de Supabase en el .env, de la vista
 // `planes_feed` de la base de datos; si no, de los datos de ejemplo.
 // Las pantallas no saben de dónde vienen: solo llaman a estas funciones.
+import { idDispositivo } from './dispositivo';
+import { filtrarPlanes, type Filtro } from './filtros';
 import { planesEjemplo, buscarPlan } from './planes-ejemplo';
 import { supabase } from './supabase';
 import type { ModoEntradas, Plan } from './tipos';
@@ -12,6 +14,7 @@ type FilaPlanFeed = {
   descripcion: string;
   categoria: string;
   empieza_en: string;
+  termina_en: string | null;
   local: string;
   direccion: string;
   barrio: string | null;
@@ -38,6 +41,7 @@ function aPlan(fila: FilaPlanFeed): Plan {
     descripcion: fila.descripcion,
     categoria: fila.categoria,
     empiezaEn: fila.empieza_en,
+    terminaEn: fila.termina_en,
     local: fila.local,
     direccion: fila.direccion,
     barrio: fila.barrio ?? '',
@@ -52,16 +56,17 @@ function aPlan(fila: FilaPlanFeed): Plan {
   };
 }
 
-// Planes publicados que aún no han pasado (con 6 h de margen para lo que ya ha empezado).
-export async function obtenerPlanes(): Promise<Plan[]> {
-  if (!supabase) return planesEjemplo;
-  const desde = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
-  const { data, error } = await supabase
-    .from('planes_feed')
-    .select('*')
-    .eq('estado', 'publicado')
-    .gte('empieza_en', desde)
-    .order('empieza_en');
+export const PLANES_POR_PAGINA = 30;
+
+// Una página del feed: planes publicados que aún no han terminado, con el filtro hecho en la
+// base de datos (buscar_planes: hora de Valencia y día de 06:00 a 06:00).
+export async function obtenerPlanes(filtro: Filtro | null = null, desde = 0): Promise<Plan[]> {
+  if (!supabase) return filtrarPlanes(planesEjemplo, filtro).slice(desde, desde + PLANES_POR_PAGINA);
+  const { data, error } = await supabase.rpc('buscar_planes', {
+    p_filtro: filtro,
+    p_desde: desde,
+    p_limite: PLANES_POR_PAGINA,
+  });
   if (error) throw error;
   return (data as FilaPlanFeed[]).map(aPlan);
 }
@@ -76,7 +81,10 @@ export async function obtenerPlan(id: string): Promise<Plan | null> {
 // "Pillar entrada" (v1): apunta el clic para el local y devuelve el enlace de la ticketera.
 export async function enlaceEntradas(plan: Plan): Promise<string | null> {
   if (!supabase) return plan.urlTicketera;
-  const { data, error } = await supabase.rpc('registrar_clic', { p_plan: plan.id });
+  const { data, error } = await supabase.rpc('registrar_clic', {
+    p_plan: plan.id,
+    p_dispositivo: await idDispositivo(),
+  });
   if (error) return plan.urlTicketera; // si falla el contador, que no falle la compra
   return (data as string | null) ?? plan.urlTicketera;
 }

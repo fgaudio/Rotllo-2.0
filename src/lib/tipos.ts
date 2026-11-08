@@ -8,6 +8,7 @@ export type Plan = {
   descripcion: string;
   categoria: string; // slug de la lista cerrada: fiesta, musica-en-directo, gastro...
   empiezaEn: string; // fecha y hora en formato ISO
+  terminaEn: string | null; // sin hora de fin, se da por terminado 6 h después de empezar
   local: string;
   direccion: string;
   barrio: string;

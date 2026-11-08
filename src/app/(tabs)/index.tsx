@@ -7,19 +7,19 @@ import { Cargando } from '@/components/Cargando';
 import { Chip } from '@/components/Chip';
 import { EstadoVacio } from '@/components/EstadoVacio';
 import { TarjetaPlan } from '@/components/TarjetaPlan';
-import { filtrarPlanes, type Filtro } from '@/lib/filtros';
+import type { Filtro } from '@/lib/filtros';
 import { supabaseConfigurado } from '@/lib/supabase';
 import { usePlanes } from '@/lib/usePlanes';
 import { colores, espacio, texto } from '@/theme/tokens';
 
 const FILTROS: Filtro[] = ['hoy', 'finde', 'gratis'];
 
-// Feed de planes con filtros. Lee de Supabase, o de los datos de ejemplo si no hay claves en .env.
+// Feed de planes con filtros, de 30 en 30. Lee de Supabase (buscar_planes), o de los datos de
+// ejemplo si no hay claves en .env.
 export default function FeedScreen() {
   const { t } = useTranslation();
   const [filtro, setFiltro] = useState<Filtro | null>(null);
-  const { datos, cargando, error, recargar } = usePlanes();
-  const planes = filtrarPlanes(datos, filtro);
+  const { datos: planes, cargando, error, recargar, cargarMas, cargandoMas } = usePlanes(filtro);
 
   return (
     <SafeAreaView style={styles.pantalla} edges={['top']}>
@@ -28,6 +28,9 @@ export default function FeedScreen() {
         keyExtractor={(plan) => plan.id}
         renderItem={({ item }) => <TarjetaPlan plan={item} />}
         contentContainerStyle={styles.lista}
+        onEndReached={cargarMas}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={cargandoMas ? <Cargando etiqueta={t('comun.cargando')} /> : undefined}
         ListHeaderComponent={
           <View style={styles.cabecera}>
             <Text style={styles.titulo} accessibilityRole="header">
