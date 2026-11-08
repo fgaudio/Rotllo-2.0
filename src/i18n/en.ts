@@ -2,6 +2,14 @@ import type { Textos } from './es';
 
 // English. Same vibe as Spanish: casual, short, straight to the point.
 export const en: Textos = {
+  comun: {
+    cargando: 'Loading plans…',
+    error: {
+      titulo: 'Oops, something went wrong',
+      texto: "Plans didn't load. Check your connection and try again.",
+      boton: 'Try again',
+    },
+  },
   pestanas: {
     planes: 'Plans',
     mapa: 'Map',

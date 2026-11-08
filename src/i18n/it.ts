@@ -2,6 +2,14 @@ import type { Textos } from './es';
 
 // Italiano. Primera versión: conviene que la revise una persona nativa.
 export const it: Textos = {
+  comun: {
+    cargando: 'Caricamento eventi…',
+    error: {
+      titulo: 'Ops, qualcosa è andato storto',
+      texto: 'Non siamo riusciti a caricare gli eventi. Controlla la connessione e riprova.',
+      boton: 'Riprova',
+    },
+  },
   pestanas: {
     planes: 'Eventi',
     mapa: 'Mappa',

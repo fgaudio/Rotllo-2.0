@@ -7,18 +7,41 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BadgePrecio } from '@/components/BadgePrecio';
 import { Boton } from '@/components/Boton';
+import { Cargando } from '@/components/Cargando';
 import { EstadoVacio } from '@/components/EstadoVacio';
 import { FotoPlan } from '@/components/FotoPlan';
 import { formatearFecha } from '@/lib/formatos';
 import { abrirComoLlegar } from '@/lib/mapas';
-import { buscarPlan } from '@/lib/planes-ejemplo';
+import { enlaceEntradas } from '@/lib/planes';
+import type { Plan } from '@/lib/tipos';
+import { usePlan } from '@/lib/usePlanes';
 import { colores, espacio, radio, sombraTarjeta, texto } from '@/theme/tokens';
 
 // Ficha del plan. Es la pantalla que abre el deep link rotllo.app/p/<id> (ADR-001).
 export default function FichaPlanScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { t, i18n } = useTranslation();
-  const plan = buscarPlan(id);
+  const { datos: plan, cargando, error, recargar } = usePlan(id);
+
+  if (cargando) {
+    return (
+      <View style={styles.pantalla}>
+        <Cargando etiqueta={t('comun.cargando')} />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.pantalla}>
+        <EstadoVacio
+          titulo={t('comun.error.titulo')}
+          texto={t('comun.error.texto')}
+          boton={{ titulo: t('comun.error.boton'), onPress: recargar }}
+        />
+      </View>
+    );
+  }
 
   if (!plan) {
     return (
@@ -32,7 +55,7 @@ export default function FichaPlanScreen() {
     );
   }
 
-  const urlTicketera = plan.modoEntradas === 'enlace_externo' ? plan.urlTicketera : null;
+  const tieneTicketera = plan.modoEntradas === 'enlace_externo' && Boolean(plan.urlTicketera);
 
   return (
     <View style={styles.pantalla}>
@@ -80,13 +103,13 @@ export default function FichaPlanScreen() {
 
       {/* Acción principal abajo, al alcance del pulgar. En v1, la entrada se compra fuera. */}
       <SafeAreaView edges={['bottom']} style={styles.barraAccion}>
-        {urlTicketera ? (
+        {tieneTicketera ? (
           <>
             <Boton
               titulo={t('plan.pillarEntrada')}
               ayuda={t('plan.seCompraFuera')}
               icono="open-outline"
-              onPress={() => WebBrowser.openBrowserAsync(urlTicketera)}
+              onPress={() => abrirEntradas(plan)}
             />
             <Text style={styles.nota}>{t('plan.seCompraFuera')}</Text>
           </>
@@ -96,6 +119,12 @@ export default function FichaPlanScreen() {
       </SafeAreaView>
     </View>
   );
+}
+
+// Apunta el clic para el local (contador de la v1) y abre la ticketera dentro de la app.
+async function abrirEntradas(plan: Plan) {
+  const url = await enlaceEntradas(plan);
+  if (url) await WebBrowser.openBrowserAsync(url);
 }
 
 function Dato({ icono, texto: valor }: { icono: 'calendar-outline' | 'location-outline'; texto: string }) {

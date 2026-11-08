@@ -3,20 +3,23 @@ import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Cargando } from '@/components/Cargando';
 import { Chip } from '@/components/Chip';
 import { EstadoVacio } from '@/components/EstadoVacio';
 import { TarjetaPlan } from '@/components/TarjetaPlan';
 import { filtrarPlanes, type Filtro } from '@/lib/filtros';
-import { planesEjemplo } from '@/lib/planes-ejemplo';
+import { supabaseConfigurado } from '@/lib/supabase';
+import { usePlanes } from '@/lib/usePlanes';
 import { colores, espacio, texto } from '@/theme/tokens';
 
 const FILTROS: Filtro[] = ['hoy', 'finde', 'gratis'];
 
-// Feed de planes con filtros. De momento usa datos de ejemplo (ver src/lib/planes-ejemplo.ts).
+// Feed de planes con filtros. Lee de Supabase, o de los datos de ejemplo si no hay claves en .env.
 export default function FeedScreen() {
   const { t } = useTranslation();
   const [filtro, setFiltro] = useState<Filtro | null>(null);
-  const planes = filtrarPlanes(planesEjemplo, filtro);
+  const { datos, cargando, error, recargar } = usePlanes();
+  const planes = filtrarPlanes(datos, filtro);
 
   return (
     <SafeAreaView style={styles.pantalla} edges={['top']}>
@@ -45,15 +48,25 @@ export default function FeedScreen() {
                 />
               ))}
             </ScrollView>
-            <Text style={styles.aviso}>{t('feed.datosEjemplo')}</Text>
+            {supabaseConfigurado ? null : <Text style={styles.aviso}>{t('feed.datosEjemplo')}</Text>}
           </View>
         }
         ListEmptyComponent={
-          <EstadoVacio
-            titulo={t('feed.vacio.titulo')}
-            texto={t('feed.vacio.texto')}
-            boton={{ titulo: t('feed.vacio.boton'), onPress: () => setFiltro(null) }}
-          />
+          cargando ? (
+            <Cargando etiqueta={t('comun.cargando')} />
+          ) : error ? (
+            <EstadoVacio
+              titulo={t('comun.error.titulo')}
+              texto={t('comun.error.texto')}
+              boton={{ titulo: t('comun.error.boton'), onPress: recargar }}
+            />
+          ) : (
+            <EstadoVacio
+              titulo={t('feed.vacio.titulo')}
+              texto={t('feed.vacio.texto')}
+              boton={{ titulo: t('feed.vacio.boton'), onPress: () => setFiltro(null) }}
+            />
+          )
         }
       />
     </SafeAreaView>

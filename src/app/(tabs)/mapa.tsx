@@ -1,13 +1,14 @@
 import { StyleSheet, View } from 'react-native';
 
 import { MapaPlanes } from '@/components/MapaPlanes';
-import { planesEjemplo } from '@/lib/planes-ejemplo';
+import { usePlanes } from '@/lib/usePlanes';
 import { colores } from '@/theme/tokens';
 
 export default function MapaScreen() {
+  const { datos } = usePlanes();
   return (
     <View style={styles.pantalla}>
-      <MapaPlanes planes={planesEjemplo} />
+      <MapaPlanes planes={datos} />
     </View>
   );
 }

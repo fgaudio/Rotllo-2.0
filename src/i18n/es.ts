@@ -3,6 +3,14 @@
 // (TypeScript avisa si falta alguna).
 
 export const es = {
+  comun: {
+    cargando: 'Cargando planes…',
+    error: {
+      titulo: 'Uy, algo ha fallado',
+      texto: 'No hemos podido cargar los planes. Revisa tu conexión y prueba otra vez.',
+      boton: 'Reintentar',
+    },
+  },
   pestanas: {
     planes: 'Planes',
     mapa: 'Mapa',
