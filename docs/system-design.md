@@ -197,7 +197,6 @@ Va en una tabla aparte, y no como una columna `es_admin` en `perfiles`, para que
 | `razon_social` | text | |
 | `nif` | text | CIF o NIF. |
 | `email_contacto`, `telefono_contacto` | text | Para que Rotllo pueda contactar con el local. |
-| `notas_verificacion` | text | Notas internas del admin. |
 
 **`miembros_local`**: las personas que administran un local. Un local puede tener varias y una persona puede llevar varios locales.
 
@@ -597,6 +596,17 @@ Algunas acciones son demasiado delicadas para una regla simple: tienen que hacer
 | `votar(opcion_id)` · v2 | SQL | Guarda el voto (y quita el anterior si la votación no es múltiple). |
 
 ---
+
+### 3.5 Cómo quedó en la base de datos (v1)
+
+Implementado en `supabase/migrations/` y probado con los tests de `supabase/tests/database/`. Cambios respecto a lo de arriba:
+
+- **`planes_feed`**: una vista que junta plan, local, categoría y la primera foto en una sola fila, con `lat` y `lng`. El feed y la ficha leen de aquí, y como la vista usa las reglas de quien consulta, cada persona ve solo lo que le toca.
+- **`perfiles_publicos`**: implementada como vista (id, username, nombre_visible, avatar_url).
+- **`locales_privado`**: no tiene `notas_verificacion`. El dueño del local puede leer esa tabla, así que las notas internas no podían ir ahí. Si el admin necesita notas, irán en una tabla solo para admins.
+- **Edad mínima y dirección de un plan**: si no se indican, se copian del local al crear el plan.
+- **Fotos**: van en Storage con carpetas por id (`planes/{plan_id}/…`, `locales/{local_id}/…`, `avatares/{user_id}/…`). Quién puede subir se comprueba en la base de datos.
+- **Registro con email**: la app manda `fecha_nacimiento` en los datos del registro, y si es de un menor, la cuenta no se crea. Con Google, el perfil queda `incompleto` hasta que se pone la fecha.
 
 ## 4. Flujos principales
 

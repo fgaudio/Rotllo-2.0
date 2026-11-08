@@ -66,7 +66,7 @@ planes/{plan_id}/{foto_id}-1600.webp      # público (si el plan es visible)
 planes/{plan_id}/{foto_id}-600.webp
 locales/{local_id}/logo-600.webp           # público
 locales/{local_id}/portada-1600.webp
-avatares/{user_id}-300.webp                # público
+avatares/{user_id}/300.webp                # público
 ```
 
 - **Quién sube**: solo los miembros del local (planes y local) o el propio usuario (avatar). Son las mismas reglas RLS que en `docs/system-design.md`.

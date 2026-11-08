@@ -38,3 +38,7 @@ expo-env.d.ts
 # Logs y TypeScript
 npm-debug.*
 *.tsbuildinfo
+
+# Supabase CLI (archivos locales)
+supabase/.temp/
+supabase/.branches/
