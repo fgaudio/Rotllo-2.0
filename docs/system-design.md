@@ -153,7 +153,7 @@ Cómo se lee: `||--o{` significa "uno a muchos" (un local tiene muchos planes); 
 | `estado` | enum `incompleto`/`activo`/`suspendido` | `incompleto`: acaba de registrarse (por ejemplo, con Google) y aún no ha puesto su fecha de nacimiento; hasta entonces no puede hacer nada. `suspendido`: puede leer pero no escribir. |
 | `creado_en`, `actualizado_en` | timestamptz | |
 
-Además, la vista **`perfiles_publicos`** (`id`, `username`, `nombre_visible`, `avatar_url`) es lo que ven los demás. Así nunca se expone la fecha de nacimiento.
+En la base de datos real, `fecha_nacimiento`, `idioma` y `estado` van en una tabla aparte, **`perfiles_privados`**, que solo ve su dueño. `perfiles` se queda con lo público (`username`, `nombre_visible`, `avatar_url`). Así nunca se expone la fecha de nacimiento (ver 3.5).
 
 **`admins_rotllo`**: el equipo de Rotllo.
 
@@ -537,7 +537,8 @@ El admin puede leer y cambiar todo en todas las tablas (`es_admin()`). No se rep
 
 | Tabla | select | insert | update | delete |
 |---|---|---|---|---|
-| `perfiles` | Uno mismo. Los demás usan la vista `perfiles_publicos`. | Lo crea un trigger al registrarse (en `incompleto`). | Uno mismo. Puede poner `fecha_nacimiento` una vez (y entonces pasa a `activo` si tiene 18 o más). No puede cambiar `estado` por su cuenta. | Nadie. Borrar la cuenta va por una función. |
+| `perfiles` (lo público) | Cualquiera con cuenta. | Lo crea un trigger al registrarse. | Uno mismo. | Nadie. Borrar la cuenta va por una función. |
+| `perfiles_privados` | Uno mismo. | Lo crea el mismo trigger (en `incompleto`). | Uno mismo. Puede poner `fecha_nacimiento` una vez (y entonces pasa a `activo` si tiene 18 o más). No puede cambiar `estado` por su cuenta. | Nadie. |
 | `admins_rotllo` | Solo admin | Solo admin | — | Solo admin |
 | `locales` | Todos, si está `verificado`. Sus miembros, siempre. | Usuario, mediante `crear_local()` | Propietario y editor: sus datos. Nunca `estado_verificacion` ni `stripe_*`. | Nadie (se suspende) |
 | `locales_privado` | Propietario del local | Mediante `crear_local()` | Propietario | — |
