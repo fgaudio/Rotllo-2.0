@@ -1,13 +1,15 @@
+import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Boton } from '@/components/Boton';
 import { Chip } from '@/components/Chip';
 import { idiomasDisponibles } from '@/i18n';
 import { espacio, fuentes, texto } from '@/theme/tokens';
 import { crearEstilos } from '@/theme/useTema';
 
-// Perfil: de momento, cambio de idioma. El login llegará con Supabase Auth (módulo 1).
+// Perfil: entrar y cambio de idioma. El login de verdad llega con Supabase Auth (módulo 1).
 export default function PerfilScreen() {
   const { t, i18n } = useTranslation();
   const s = useEstilos();
@@ -18,6 +20,7 @@ export default function PerfilScreen() {
           {t('perfil.entrar.titulo')}
         </Text>
         <Text style={s.texto}>{t('perfil.entrar.texto')}</Text>
+        <Boton titulo={t('perfil.entrar.boton')} onPress={() => router.push('/entrar')} />
       </View>
       <View style={s.bloque}>
         <Text style={s.subtitulo}>{t('perfil.idioma')}</Text>
@@ -33,7 +36,7 @@ export default function PerfilScreen() {
 
 const useEstilos = crearEstilos((c) => ({
   pantalla: { flex: 1, backgroundColor: c.fondo, padding: espacio[4], gap: espacio[8] },
-  bloque: { gap: espacio[2] },
+  bloque: { gap: espacio[3] },
   titulo: { ...texto.xl, color: c.texto },
   texto: { ...texto.m, color: c.textoSuave },
   subtitulo: { ...texto.m, fontFamily: fuentes.negrita, color: c.texto },

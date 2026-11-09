@@ -4,6 +4,7 @@
 
 export const es = {
   comun: {
+    volver: 'Volver',
     cargando: 'Cargando planes…',
     error: {
       titulo: 'Uy, algo ha fallado',
@@ -35,6 +36,11 @@ export const es = {
       texto: 'Con este filtro no sale ningún plan. Prueba otro.',
       boton: 'Ver todos',
     },
+    sinResultados: {
+      titulo: 'Nada con «{{consulta}}»',
+      texto: 'Prueba con otra palabra, un barrio o el nombre del local.',
+      boton: 'Borrar búsqueda',
+    },
     datosEjemplo: 'Datos de ejemplo hasta conectar Supabase',
   },
   busqueda: {
@@ -56,6 +62,8 @@ export const es = {
     entradaLibre: 'Entrada libre, sin reserva',
     edadMinima: '+{{edad}}',
     edadMinimaAyuda: 'Edad mínima: {{edad}} años. Lleva el DNI.',
+    compartir: 'Compartir plan',
+    compartirMensaje: '{{titulo}}, en Rotllo: {{url}}',
     foto: 'Foto de {{titulo}}',
     noExiste: {
       titulo: 'Este plan no existe',
@@ -77,9 +85,64 @@ export const es = {
   perfil: {
     entrar: {
       titulo: 'Entra en Rotllo',
-      texto: 'Pronto podrás crear tu cuenta y guardar tus planes.',
+      texto: 'Crea tu cuenta para guardar planes y tenerlos a mano.',
+      boton: 'Entrar',
     },
     idioma: 'Idioma',
+  },
+  bienvenida: {
+    saltar: 'Saltar',
+    siguiente: 'Siguiente',
+    empezar: 'Empezar',
+    paso: 'Paso {{actual}} de {{total}}',
+    uno: {
+      titulo: 'Valencia tiene plan',
+      texto: 'Fiesta, conciertos, tardeo y deporte. Lo de hoy y lo del finde, en un sitio.',
+    },
+    dos: {
+      titulo: 'Llega sin perderte',
+      texto: 'Mira dónde es y abre la ruta en tu app de mapas con un toque.',
+    },
+    tres: {
+      titulo: 'Pilla tu entrada',
+      texto: 'Si el plan tiene entrada, te llevamos directo a la web del local.',
+    },
+  },
+  entrar: {
+    titulo: 'Entra y guarda tus planes',
+    texto: 'Tus planes guardados, en el móvil que uses.',
+    apple: 'Seguir con Apple',
+    google: 'Seguir con Google',
+    email: 'Seguir con email',
+    sinCuenta: 'Mirar sin cuenta',
+    mayores: 'Rotllo es solo para mayores de 18.',
+    prueba: 'Pantalla de prueba: las cuentas llegan pronto',
+    correo: {
+      titulo: '¿Cuál es tu email?',
+      texto: 'Te mandamos un código para entrar. Sin contraseñas.',
+      etiqueta: 'Email',
+      placeholder: 'tu@email.com',
+      enviar: 'Enviar código',
+      error: 'Este email no parece bien escrito. Revísalo.',
+    },
+    codigo: {
+      titulo: 'Mira tu correo',
+      texto: 'Te hemos mandado un código a {{email}}.',
+      etiqueta: 'Código de 6 cifras',
+      entrar: 'Entrar',
+      error: 'El código tiene 6 cifras. Míralo en el correo.',
+      cambiar: 'Cambiar email',
+    },
+    edad: {
+      titulo: '¿Cuándo naciste?',
+      texto: 'Lo necesitamos para los planes +18 y +21. No se lo enseñamos a nadie.',
+      dia: 'Día',
+      mes: 'Mes',
+      anio: 'Año',
+      seguir: 'Seguir',
+      invalida: 'Esta fecha no existe. Revisa el día, el mes y el año.',
+      menor: 'Rotllo es solo para mayores de 18. Te esperamos cuando los cumplas.',
+    },
   },
   idiomas: {
     es: 'Español',

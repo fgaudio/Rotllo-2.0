@@ -1,14 +1,18 @@
+import { Redirect } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { BarraBusqueda } from '@/components/BarraBusqueda';
 import { Cargando } from '@/components/Cargando';
 import { Chip } from '@/components/Chip';
 import { DestacadoSerie } from '@/components/DestacadoSerie';
 import { EstadoVacio } from '@/components/EstadoVacio';
 import { Logo } from '@/components/Logo';
 import { TarjetaPlan } from '@/components/TarjetaPlan';
+import { useBienvenidaVista } from '@/lib/bienvenida';
+import { buscarEnPlanes } from '@/lib/busqueda';
 import { ventanas, type Filtro } from '@/lib/filtros';
 import { supabaseConfigurado } from '@/lib/supabase';
 import { usePlanes } from '@/lib/usePlanes';
@@ -17,20 +21,27 @@ import { crearEstilos } from '@/theme/useTema';
 
 const FILTROS: Filtro[] = ['hoy', 'finde', 'gratis'];
 
-// Feed de planes con filtros, de 30 en 30. Lee de Supabase (buscar_planes), o de los datos de
-// ejemplo si no hay claves en .env. Sin filtro, el primer plan sale como destacado en serie.
+// Feed de planes con búsqueda y filtros, de 30 en 30. Lee de Supabase (buscar_planes), o de los
+// datos de ejemplo si no hay claves en .env. Sin filtro ni búsqueda, el primer plan sale como
+// destacado en serie. La primera vez que se abre la app, manda a la bienvenida.
 export default function FeedScreen() {
   const { t } = useTranslation();
   const s = useEstilos();
   const [filtro, setFiltro] = useState<Filtro | null>(null);
+  const [consulta, setConsulta] = useState('');
   const { datos, cargando, error, recargar, cargarMas, cargandoMas } = usePlanes(filtro);
+  const bienvenidaVista = useBienvenidaVista();
 
-  const destacado = filtro === null ? datos[0] : undefined;
-  const lista = destacado ? datos.slice(1) : datos;
+  const buscando = consulta.trim() !== '';
+  const encontrados = buscarEnPlanes(datos, consulta);
+  const destacado = filtro === null && !buscando ? encontrados[0] : undefined;
+  const lista = destacado ? encontrados.slice(1) : encontrados;
   const rotulo =
     destacado && Date.parse(destacado.empiezaEn) < ventanas(new Date()).hoyFin.getTime()
       ? t('feed.destacado.hoy')
       : t('feed.destacado.proximo');
+
+  if (bienvenidaVista === false) return <Redirect href="/bienvenida" />;
 
   return (
     <SafeAreaView style={s.pantalla} edges={['top']}>
@@ -48,6 +59,7 @@ export default function FeedScreen() {
               <Logo />
               <Text style={s.pregunta}>{t('feed.titulo')}</Text>
             </View>
+            <BarraBusqueda valor={consulta} onCambio={setConsulta} />
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -70,7 +82,13 @@ export default function FeedScreen() {
               texto={t('comun.error.texto')}
               boton={{ titulo: t('comun.error.boton'), onPress: recargar }}
             />
-          ) : destacado ? undefined : (
+          ) : destacado ? undefined : buscando ? (
+            <EstadoVacio
+              titulo={t('feed.sinResultados.titulo', { consulta: consulta.trim() })}
+              texto={t('feed.sinResultados.texto')}
+              boton={{ titulo: t('feed.sinResultados.boton'), onPress: () => setConsulta('') }}
+            />
+          ) : (
             <EstadoVacio
               titulo={t('feed.vacio.titulo')}
               texto={t('feed.vacio.texto')}

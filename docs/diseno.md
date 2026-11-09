@@ -79,13 +79,17 @@ La **serie del destacado** usa estas 4 parejas, en este orden: rosa/azul, amaril
 | Componente | Archivo | Cómo es |
 |---|---|---|
 | **Logo** | `Logo` | "ROTLLO" en Archivo Black, cada letra de un color de la serie, con un borde de tinta desplazado de 2 px |
-| **Botón** | `Boton` | 52 de alto, radio 4. Primario: fondo de botón principal. Secundario: sin fondo, con marco de 2 px |
+| **Botón** | `Boton` | 52 de alto, radio 4. Primario: fondo de botón principal. Secundario: sin fondo, con marco de 2 px. Texto: sin fondo ni marco, subrayado, para la opción menos importante ("Saltar", "Mirar sin cuenta") |
+| **Botón de icono** | `BotonIcono` | Icono de 24 en una zona táctil de 44×44, siempre con etiqueta para el lector de pantalla (compartir, volver) |
+| **Campo de texto** | `CampoTexto` | Etiqueta en `xs` arriba, caja de 52 con marco de 2 px y radio 4. Con el foco, marco en `indicador`; con error, marco y mensaje en `error` |
 | **Chip** (filtro o categoría) | `Chip` | 44 de alto, radio 4, marco de 2 px. Activo: los colores del botón principal |
-| **Barra de búsqueda** | `BarraBusqueda` | 48 de alto, marco de 2 px, icono de lupa. Se conecta en el módulo de planes |
+| **Barra de búsqueda** | `BarraBusqueda` | 48 de alto, marco de 2 px, icono de lupa y botón de borrar. Con el foco, marco en `indicador`. Busca sin tildes ni mayúsculas en título, local y barrio |
 | **Etiqueta de precio** | `BadgePrecio` | Radio 2. De pago: fondo `texto` y letra `fondo`. Gratis: turquesa con tinta |
 | **Ilustración del plan** | `IlustracionPlan` | Panel con la pareja de su categoría, lunares de semitono, la figura con contorno de tinta y destellos. Se usa mientras el local no suba fotos |
 | **Tarjeta de plan** | `TarjetaPlan` | Fila con la imagen de 120 px a la izquierda y la cartela a la derecha (título, metadatos, etiquetas). Marco de 2 px |
 | **Destacado** | `DestacadoSerie` | El plan de la noche en una serie de 2×2 con 4 parejas de color, más su cartela: rótulo "El plan de esta noche", título y datos |
+| **Aviso de prueba** | `AvisoPrueba` | Caja con marco discontinuo y texto `xs`: avisa de que una pantalla aún no hace lo que dice (el registro antes del módulo 1). Se quita cuando funcione |
+| **Pasos** | bienvenida | Cuadraditos de 12 con marco de 2 px; el activo se alarga a 32 y se rellena de `indicador` |
 | **Estado vacío** | `EstadoVacio` | Título `l`, texto `m` en `textoSuave` y botón principal |
 | **Barra de navegación** | pestañas | Fondo `fondo`, línea superior de 2 px en `marco`, iconos de trazo. La pestaña activa lleva un subrayado de 4 px en `indicador` |
 
@@ -93,8 +97,22 @@ La **serie del destacado** usa estas 4 parejas, en este orden: rosa/azul, amaril
 - Al pulsar, las tarjetas y los botones bajan su opacidad al 85 %.
 - **Más adelante:** el cambio de colores del destacado al aparecer (efecto serigrafía).
 
+## Pantallas
+
+| Pantalla | Ruta | Notas |
+|---|---|---|
+| Bienvenida | `/bienvenida` | 3 pasos con ilustración, solo la primera vez que se abre la app. Los enlaces a un plan (rotllo.app/p/…) no pasan por aquí |
+| Entrar | `/entrar` | Apple (solo iPhone), Google y email, todos con el mismo peso. "Mirar sin cuenta" abajo |
+| Email y código | `/entrar/email` | Código de 6 cifras por email, sin contraseñas |
+| Fecha de nacimiento | `/entrar/edad` | Día, mes y año en tres campos de números (más rápido que un calendario). Menos de 18: mensaje amable, sin rojo |
+| Feed | `/` | Logo, búsqueda, filtros, el destacado en serie y la lista |
+| Ficha del plan | `/p/<id>` | Arriba solo volver y compartir; la acción principal ("Pillar entrada") abajo, al alcance del pulgar |
+
+Capturas de la primera ronda en `prototipos/pantallas-r1/`.
+
 ## Pendiente
 
 - **Fotos reales en duotono:** procesarlas al subirlas (con una Edge Function), porque hacerlo en el móvil no funciona igual en iOS y Android. Mientras tanto, las fotos se muestran tal cual, con su marco.
 - **Logo e icono de la app** definitivos (ahora el logo es texto).
+- **Botón de Apple:** en el módulo 1 se cambia por el oficial de Apple (`expo-apple-authentication`), que Apple exige con sus colores.
 - **Componentes de la v2**, que se diseñan cuando lleguen sus módulos: tarjeta de entrada con QR (marco de 2 px, QR sobre blanco), burbuja de chat y tarjeta de votación (barras con las parejas de color).

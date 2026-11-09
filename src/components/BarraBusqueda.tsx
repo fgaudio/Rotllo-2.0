@@ -1,4 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, TextInput, View } from 'react-native';
 
@@ -10,14 +11,15 @@ type Props = {
   onCambio: (texto: string) => void;
 };
 
-// Barra de búsqueda (docs/diseno.md): 48 de alto, marco de 2 px y lupa. Se conecta a la base
-// de datos en el módulo de planes; mientras tanto no se enseña en ninguna pantalla.
+// Barra de búsqueda (docs/diseno.md): 48 de alto, marco de 2 px y lupa. Va en el feed; de momento
+// busca entre los planes cargados (src/lib/busqueda.ts) y en el módulo de planes, en la base de datos.
 export function BarraBusqueda({ valor, onCambio }: Props) {
   const { t } = useTranslation();
   const { c } = useTema();
   const s = useEstilos();
+  const [enfocada, setEnfocada] = useState(false);
   return (
-    <View style={s.caja}>
+    <View style={[s.caja, enfocada && s.cajaEnfocada]}>
       <Ionicons name="search" size={20} color={c.textoSuave} />
       <TextInput
         value={valor}
@@ -25,7 +27,10 @@ export function BarraBusqueda({ valor, onCambio }: Props) {
         placeholder={t('busqueda.placeholder')}
         placeholderTextColor={c.textoSuave}
         accessibilityLabel={t('busqueda.etiqueta')}
+        onFocus={() => setEnfocada(true)}
+        onBlur={() => setEnfocada(false)}
         returnKeyType="search"
+        autoCorrect={false}
         style={s.campo}
       />
       {valor ? (
@@ -49,6 +54,7 @@ const useEstilos = crearEstilos((c) => ({
     borderRadius: radio.m,
     backgroundColor: c.superficie,
   },
-  campo: { flex: 1, minHeight: zonaTactilMinima, fontFamily: fuentes.normal, fontSize: 17, color: c.texto },
+  cajaEnfocada: { borderColor: c.indicador }, // foco visible (en la web se quita el recuadro del navegador)
+  campo: { flex: 1, minHeight: zonaTactilMinima, fontFamily: fuentes.normal, fontSize: 17, color: c.texto, outlineStyle: 'solid', outlineWidth: 0 },
   borrar: { minWidth: zonaTactilMinima, minHeight: zonaTactilMinima, alignItems: 'center', justifyContent: 'center' },
 }));
