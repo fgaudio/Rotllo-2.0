@@ -1,16 +1,16 @@
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { EstadoVacio } from '@/components/EstadoVacio';
-import { colores } from '@/theme/tokens';
+import { crearEstilos } from '@/theme/useTema';
 
 // Guardados: se llenará con la tabla `favoritos` cuando haya cuentas (Supabase Auth).
 export default function GuardadosScreen() {
   const { t } = useTranslation();
+  const s = useEstilos();
   return (
-    <SafeAreaView style={styles.pantalla}>
+    <SafeAreaView style={s.pantalla}>
       <EstadoVacio
         titulo={t('guardados.vacio.titulo')}
         texto={t('guardados.vacio.texto')}
@@ -20,6 +20,6 @@ export default function GuardadosScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  pantalla: { flex: 1, justifyContent: 'center', backgroundColor: colores.fondo },
-});
+const useEstilos = crearEstilos((c) => ({
+  pantalla: { flex: 1, justifyContent: 'center', backgroundColor: c.fondo },
+}));

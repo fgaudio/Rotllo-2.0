@@ -1,67 +1,100 @@
-# Guía visual de Rotllo
+# Guía visual de Rotllo · Serie Warhol
 
-> Estado: **aprobada** (2026-11-08). Sale del borrador que se probó con la skill `rotllo-estilo`. En el código vive en `src/theme/tokens.ts`: si cambias algo aquí, cámbialo también allí (y al revés).
+> Estado: **aprobada** (2026-11-09). Es la dirección 2 de `docs/direcciones-visuales.md`. En el código vive en `src/theme/tokens.ts`: si cambias algo aquí, cámbialo también allí (y al revés). Un test (`src/theme/tokens.test.ts`) comprueba el contraste de los pares de esta guía.
 
-## Paleta
+**La idea:** una galería pop. Cada plan se ve como una serigrafía, con la pareja de colores de su categoría, y el plan de la noche se repite 4 veces cambiando los colores, como Warhol. El color va en las imágenes; la interfaz es papel, tinta y marcos finos, para que la app se lea fácil y se use sin pensar.
 
-| Token | Valor | Uso | Contraste |
+## Modos
+
+La app sigue el modo del móvil: **claro** de día y **oscuro** de noche. El oscuro ("negro galería") es el que más se va a usar.
+
+## Colores de la interfaz
+
+| Token | Claro | Oscuro | Uso |
 |---|---|---|---|
-| `fondo` | #FFF7ED | Fondo de la app (arena) | — |
-| `superficie` | #FFFFFF | Tarjetas, barras, hojas | — |
-| `tinta` | #1C1917 | Texto principal | 16,47:1 sobre fondo · 17,49:1 sobre blanco |
-| `tintaSuave` | #57534E | Texto secundario, iconos inactivos | 7,19:1 sobre fondo · 7,63:1 sobre blanco |
-| `taronja` | #FF5A1F | Color de marca. Solo como **fondo** de acento, con texto `tinta` encima. Nunca como color de texto sobre claro | tinta encima: 5,61:1 |
-| `taronjaFuerte` | #C2410C | Botón principal (texto blanco), pestaña activa, enlaces | blanco encima: 5,18:1 |
-| `mar` | #0E4D64 | Secundario: chips activos (texto blanco), mapa | blanco encima: 9,27:1 |
-| `exito` | #15803D | "Gratis", confirmaciones (texto blanco) | blanco encima: 5,02:1 |
-| `error` | #B91C1C | Errores | 6,09:1 sobre fondo |
-| `borde` | #E7E5E4 | Separadores **decorativos** | 1,18:1: no vale para bordes de controles |
-| `bordeControl` | #57534E | Bordes de chips y de controles | 7,19:1 (el mínimo para controles es 3:1) |
+| `fondo` | #F4F1EA (papel) | #0D0D0F (negro galería) | Fondo de pantalla |
+| `superficie` | #FFFFFF | #1A1A1F | Tarjetas, barras, campos |
+| `texto` | #111111 (tinta) | #F4F1EA (papel) | Texto principal |
+| `textoSuave` | #4A4640 | #B9B4AA | Metadatos, texto secundario |
+| `marco` | #111111 | #F4F1EA | Bordes de tarjetas y controles (2 px) |
+| `separador` | #D9D4C9 | #3A3A42 | Líneas **decorativas** (no valen para controles) |
+| `acento` | #FFD400 → solo con texto `tinta` | #FFD400 | Chip activo y botón principal en oscuro |
+| `indicador` | #1D2B8F (azul Klein) | #FF3EA5 (rosa) | Pestaña activa, foco del teclado |
+| `error` | #C81E1E | #FF6FBF | Mensajes de error |
 
-**Regla**: cualquier combinación nueva de texto y fondo se comprueba con `.claude/skills/rotllo-estilo/scripts/contraste.py` antes de usarla.
+**Botón principal y chip activo:**
+- **Claro:** fondo tinta con texto papel.
+- **Oscuro:** fondo amarillo con texto tinta.
+
+## Parejas de color por categoría
+
+Cada categoría tiene una pareja **fondo / figura** para sus ilustraciones y fotos. Son decorativas: nunca llevan texto encima, salvo la etiqueta de categoría, que siempre va en tinta o en blanco según la tabla.
+
+| Categoría | Fondo | Figura | Texto encima |
+|---|---|---|---|
+| Fiesta | #FF3EA5 rosa | #1D2B8F azul Klein | tinta (5,83:1) |
+| Música en directo | #FFD400 amarillo | #C81E1E rojo | tinta (13,19:1) |
+| Bar y tardeo | #00B3A6 turquesa | #6B1E87 violeta | tinta (7,19:1) |
+| Gastro | #C81E1E rojo | #FFD400 amarillo | blanco (5,74:1) |
+| Cultura | #6B1E87 violeta | #FF3EA5 rosa | blanco (9,72:1) |
+| Deporte | #1D2B8F azul Klein | #FFD400 amarillo | blanco (11,70:1) |
+| Talleres | #FFD400 amarillo | #1D2B8F azul Klein | tinta (13,19:1) |
+| Social | #FF3EA5 rosa | #FFD400 amarillo | tinta (5,83:1) |
+| Aire libre | #00B3A6 turquesa | #FFD400 amarillo | tinta (7,19:1) |
+
+La **serie del destacado** usa estas 4 parejas, en este orden: rosa/azul, amarillo/rojo, turquesa/violeta y azul/amarillo.
 
 ## Tipografía
 
-- Títulos: **Bricolage Grotesque** 700/800. Cuerpo: **Inter** 400/600. Mientras no carguemos las fuentes, se usa la del sistema.
-- Escala:
+- **Archivo Black** (`ArchivoBlack_400Regular`): logo, títulos de pantalla y títulos de plan. Siempre en frases normales, nunca todo en mayúsculas (menos el logo).
+- **Inter** (400, 600, 700): todo lo demás.
 
-| Token | Tamaño / interlineado | Uso |
-|---|---|---|
-| `xl` | 28 / 32 | Título de pantalla |
-| `l` | 22 / 26 | Título de tarjeta y de sección |
-| `m` | 17 / 24 | Texto normal y botones |
-| `s` | 15 / 21 | Metadatos (fecha · barrio) |
-| `xs` | 13 / 17 | Solo etiquetas pequeñas (precio, edad, notas) |
+| Token | Tamaño / interlineado | Fuente | Uso |
+|---|---|---|---|
+| `xl` | 30 / 34 | Archivo Black | Título de pantalla |
+| `l` | 22 / 27 | Archivo Black | Título de plan y de sección |
+| `m` | 17 / 24 | Inter 400-600 | Texto normal, botones (600) |
+| `s` | 15 / 21 | Inter 400 | Metadatos (fecha · barrio) |
+| `xs` | 13 / 17 | Inter 700 | Etiquetas (precio, edad, rótulos) |
 
-## Espaciado y forma
+## Espaciado, forma y sombras
 
-- Escala de 4 en 4: `1` 4 · `2` 8 · `3` 12 · `4` 16 · `6` 24 · `8` 32 · `12` 48.
-- Margen lateral de pantalla: `4` (16).
-- Radios: `s` 8 · `m` 16 (tarjetas) · `pill` 999 (botones, chips, etiquetas).
-- Sombra de tarjeta: tinta al 8 %, desenfoque 12, desplazamiento vertical 2.
+- **Espacios:** escala de 4 en 4, con los valores 4, 8, 12, 16, 24, 32 y 48. El margen lateral de pantalla es 16.
+- **Radios:**
+  - `s` (2) para etiquetas.
+  - `m` (4) para tarjetas, chips, botones y campos.
+  - Nada más redondeado: es la seña de las serigrafías.
+- **Bordes:** 2 px en `marco`. Dentro de una tarjeta, la foto se separa con otra línea de 2 px.
+- **Sombras:** **ninguna**. La profundidad la dan los marcos y el color, no las sombras.
 
 ## Accesibilidad
 
-- Todo lo que se pulsa mide **al menos 44 × 44**. Los botones miden 52 de alto.
-- La información nunca va solo con color: "Gratis" lleva texto, y la edad mínima lleva "+21".
-- Imágenes con texto alternativo y botones de solo icono con etiqueta.
+- Todo lo que se pulsa mide **al menos 44 × 44**. Los botones miden 52 de alto y las pestañas 56.
+- Contraste AA en todos los pares de texto. Los indicadores y bordes de controles llegan a 3:1 o más.
+- La información nunca va solo con color: "Gratis" lleva texto y la edad lleva "+21".
+- Las imágenes llevan texto alternativo y los botones de solo icono, etiqueta.
 
 ## Componentes
 
 | Componente | Archivo | Cómo es |
 |---|---|---|
-| **Botón primario** | `Boton` (`variante="primario"`) | Píldora, fondo `taronjaFuerte`, texto blanco 600 tamaño `m`, 52 de alto. Para la acción principal, a lo ancho y abajo |
-| **Botón secundario** | `Boton` (`variante="secundario"`) | Píldora sin fondo, borde de 2 en `tinta`, texto `tinta`, 52 de alto |
-| **Chip de filtro** | `Chip` | Píldora de 44 de alto, borde de 1 en `bordeControl`, fondo blanco. Activo: fondo `mar` y texto blanco |
-| **Tarjeta de plan** | `TarjetaPlan` | Fondo blanco, radio `m`, sombra. Foto 16:9 arriba; debajo, precio y edad, título `l` y metadatos `s` en `tintaSuave` |
-| **Etiqueta de precio** | `BadgePrecio` | Píldora pequeña: "Gratis" en `exito` o "Desde 8 €" en `tinta`, con texto blanco |
-| **Foto sin imagen** | `FotoPlan` | Fondo `taronja` con un icono en `tinta`, mientras el local no suba fotos |
-| **Estado vacío** | `EstadoVacio` | Título `l`, texto `m` en `tintaSuave` y botón primario con la siguiente acción |
-| **Barra de acción inferior** | En la ficha del plan | Fija abajo, fondo blanco, borde superior `borde`, margen `4`; contiene la acción principal y una nota `xs` |
+| **Logo** | `Logo` | "ROTLLO" en Archivo Black, cada letra de un color de la serie, con un borde de tinta desplazado de 2 px |
+| **Botón** | `Boton` | 52 de alto, radio 4. Primario: fondo de botón principal. Secundario: sin fondo, con marco de 2 px |
+| **Chip** (filtro o categoría) | `Chip` | 44 de alto, radio 4, marco de 2 px. Activo: los colores del botón principal |
+| **Barra de búsqueda** | `BarraBusqueda` | 48 de alto, marco de 2 px, icono de lupa. Se conecta en el módulo de planes |
+| **Etiqueta de precio** | `BadgePrecio` | Radio 2. De pago: fondo `texto` y letra `fondo`. Gratis: turquesa con tinta |
+| **Ilustración del plan** | `IlustracionPlan` | Panel con la pareja de su categoría, lunares de semitono, la figura con contorno de tinta y destellos. Se usa mientras el local no suba fotos |
+| **Tarjeta de plan** | `TarjetaPlan` | Fila con la imagen de 120 px a la izquierda y la cartela a la derecha (título, metadatos, etiquetas). Marco de 2 px |
+| **Destacado** | `DestacadoSerie` | El plan de la noche en una serie de 2×2 con 4 parejas de color, más su cartela: rótulo "El plan de esta noche", título y datos |
+| **Estado vacío** | `EstadoVacio` | Título `l`, texto `m` en `textoSuave` y botón principal |
+| **Barra de navegación** | pestañas | Fondo `fondo`, línea superior de 2 px en `marco`, iconos de trazo. La pestaña activa lleva un subrayado de 4 px en `indicador` |
+
+**Animaciones:**
+- Al pulsar, las tarjetas y los botones bajan su opacidad al 85 %.
+- **Más adelante:** el cambio de colores del destacado al aparecer (efecto serigrafía).
 
 ## Pendiente
 
-- Logo, icono de la app y pantalla de inicio (ahora son los de la plantilla de Expo).
-- Cargar las fuentes Bricolage Grotesque e Inter.
-- Modo oscuro (de momento, solo claro).
-- Estilo del mapa con los colores de Rotllo (en Android).
+- **Fotos reales en duotono:** procesarlas al subirlas (con una Edge Function), porque hacerlo en el móvil no funciona igual en iOS y Android. Mientras tanto, las fotos se muestran tal cual, con su marco.
+- **Logo e icono de la app** definitivos (ahora el logo es texto).
+- **Componentes de la v2**, que se diseñan cuando lleguen sus módulos: tarjeta de entrada con QR (marco de 2 px, QR sobre blanco), burbuja de chat y tarjeta de votación (barras con las parejas de color).

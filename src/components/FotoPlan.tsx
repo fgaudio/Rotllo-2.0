@@ -1,44 +1,31 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { Image } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 
-import { colores } from '@/theme/tokens';
+import { IlustracionPlan } from './IlustracionPlan';
 
 type Props = {
   uri: string | null;
-  descripcion: string; // texto alternativo para el lector de pantalla
+  categoria: string;
+  descripcion: string; // texto alternativo
+  proporcion?: number; // ancho / alto
 };
 
-// Foto del plan con expo-image (caché en el móvil, ADR-005).
-// Sin foto todavía: un fondo de marca con un icono.
-export function FotoPlan({ uri, descripcion }: Props) {
-  if (uri) {
-    return (
-      <Image
-        source={{ uri }}
-        style={styles.foto}
-        contentFit="cover"
-        transition={200}
-        accessibilityLabel={descripcion}
-      />
-    );
-  }
+// Foto del plan con expo-image (caché en el móvil, ADR-005). Sin foto: la ilustración de
+// serigrafía de su categoría. El duotono de las fotos reales llegará al procesarlas al
+// subirlas (docs/diseno.md, "Pendiente").
+export function FotoPlan({ uri, categoria, descripcion, proporcion = 1 }: Props) {
   return (
-    <View
-      style={[styles.foto, styles.sinFoto]}
-      accessible
-      accessibilityRole="image"
-      accessibilityLabel={descripcion}>
-      <Ionicons name="sparkles" size={36} color={colores.tinta} />
+    <View style={[estilos.caja, { aspectRatio: proporcion }]}>
+      {uri ? (
+        <Image source={{ uri }} style={estilos.foto} contentFit="cover" transition={200} accessibilityLabel={descripcion} />
+      ) : (
+        <IlustracionPlan categoria={categoria} descripcion={descripcion} proporcion={proporcion} />
+      )}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  foto: { width: '100%', aspectRatio: 16 / 9 },
-  sinFoto: {
-    backgroundColor: colores.taronja,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+const estilos = StyleSheet.create({
+  caja: { width: '100%', overflow: 'hidden' },
+  foto: { width: '100%', height: '100%' },
 });

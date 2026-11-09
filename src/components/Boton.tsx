@@ -1,8 +1,9 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ComponentProps } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
-import { alturaBoton, colores, espacio, radio, texto } from '@/theme/tokens';
+import { alturaBoton, borde, espacio, fuentes, radio } from '@/theme/tokens';
+import { crearEstilos, useTema } from '@/theme/useTema';
 
 type Props = {
   titulo: string;
@@ -12,45 +13,39 @@ type Props = {
   ayuda?: string; // lo que lee el lector de pantalla después del título
 };
 
-// Botón en forma de píldora (guía: primario taronja fuerte + blanco, 5,18:1;
-// secundario con borde tinta). Siempre 52 px de alto: más que los 44 mínimos.
+// Botón (docs/diseno.md): 52 de alto, radio 4. Primario con los colores del botón principal
+// (claro: tinta + papel; oscuro: amarillo + tinta). Secundario: sin fondo y con marco.
 export function Boton({ titulo, onPress, variante = 'primario', icono, ayuda }: Props) {
+  const s = useEstilos();
+  const { c } = useTema();
   const primario = variante === 'primario';
-  const colorTexto = primario ? colores.blanco : colores.tinta;
+  const colorTexto = primario ? c.sobrePrincipal : c.texto;
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={titulo}
       accessibilityHint={ayuda}
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.base,
-        primario ? styles.primario : styles.secundario,
-        pressed && styles.pulsado,
-      ]}>
-      <View style={styles.contenido}>
+      style={({ pressed }) => [s.base, primario ? s.primario : s.secundario, pressed && s.pulsado]}>
+      <View style={s.contenido}>
         {icono ? <Ionicons name={icono} size={20} color={colorTexto} /> : null}
-        <Text style={[styles.texto, { color: colorTexto }]}>{titulo}</Text>
+        <Text style={[s.texto, { color: colorTexto }]}>{titulo}</Text>
       </View>
     </Pressable>
   );
 }
 
-const styles = StyleSheet.create({
+const useEstilos = crearEstilos((c) => ({
   base: {
     minHeight: alturaBoton,
-    borderRadius: radio.pill,
+    borderRadius: radio.m,
     paddingHorizontal: espacio[6],
     justifyContent: 'center',
     alignItems: 'center',
   },
-  primario: { backgroundColor: colores.taronjaFuerte },
-  secundario: {
-    backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: colores.tinta,
-  },
+  primario: { backgroundColor: c.principal, borderWidth: borde, borderColor: c.principal },
+  secundario: { backgroundColor: 'transparent', borderWidth: borde, borderColor: c.marco },
   pulsado: { opacity: 0.85 },
   contenido: { flexDirection: 'row', alignItems: 'center', gap: espacio[2] },
-  texto: { ...texto.m, fontWeight: '600' },
-});
+  texto: { fontFamily: fuentes.media, fontSize: 17, lineHeight: 22 },
+}));

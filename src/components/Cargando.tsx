@@ -1,16 +1,18 @@
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-import { colores, espacio } from '@/theme/tokens';
+import { espacio } from '@/theme/tokens';
+import { useTema } from '@/theme/useTema';
 
 // Indicador de carga con etiqueta para el lector de pantalla.
 export function Cargando({ etiqueta }: { etiqueta: string }) {
+  const { c } = useTema();
   return (
-    <View style={styles.contenedor} accessible accessibilityLabel={etiqueta} accessibilityRole="progressbar">
-      <ActivityIndicator size="large" color={colores.taronjaFuerte} />
+    <View style={estilos.contenedor} accessible accessibilityLabel={etiqueta} accessibilityRole="progressbar">
+      <ActivityIndicator size="large" color={c.texto} />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const estilos = StyleSheet.create({
   contenedor: { paddingVertical: espacio[12], alignItems: 'center' },
 });

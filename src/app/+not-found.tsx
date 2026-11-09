@@ -1,15 +1,16 @@
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { EstadoVacio } from '@/components/EstadoVacio';
-import { colores } from '@/theme/tokens';
+import { crearEstilos } from '@/theme/useTema';
 
 // Cualquier enlace que no exista (por ejemplo, un plan borrado compartido en Instagram).
 export default function NoEncontrado() {
   const { t } = useTranslation();
+  const s = useEstilos();
   return (
-    <View style={styles.pantalla}>
+    <View style={s.pantalla}>
       <EstadoVacio
         titulo={t('plan.noExiste.titulo')}
         texto={t('plan.noExiste.texto')}
@@ -19,6 +20,6 @@ export default function NoEncontrado() {
   );
 }
 
-const styles = StyleSheet.create({
-  pantalla: { flex: 1, justifyContent: 'center', backgroundColor: colores.fondo },
-});
+const useEstilos = crearEstilos((c) => ({
+  pantalla: { flex: 1, justifyContent: 'center', backgroundColor: c.fondo },
+}));

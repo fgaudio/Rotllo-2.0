@@ -25,12 +25,21 @@ export const en: Textos = {
       finde: 'This weekend',
       gratis: 'Free',
     },
+    destacado: {
+      hoy: "Today's pick",
+      proximo: 'Coming up',
+    },
     vacio: {
       titulo: 'Nothing here',
       texto: 'No plans match this filter. Try another one.',
       boton: 'See all',
     },
     datosEjemplo: 'Sample data until Supabase is connected',
+  },
+  busqueda: {
+    placeholder: 'Search plans or places',
+    etiqueta: 'Search plans',
+    borrar: 'Clear search',
   },
   precio: {
     gratis: 'Free',

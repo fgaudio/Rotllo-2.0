@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { ScrollView, Text } from 'react-native';
 
 import type { Plan } from '@/lib/tipos';
-import { colores, espacio, texto } from '@/theme/tokens';
+import { espacio, texto } from '@/theme/tokens';
+import { crearEstilos } from '@/theme/useTema';
 
 import { TarjetaPlan } from './TarjetaPlan';
 
@@ -10,6 +11,7 @@ import { TarjetaPlan } from './TarjetaPlan';
 // de respaldo enseñamos los planes en lista.
 export function MapaPlanes({ planes }: { planes: Plan[] }) {
   const { t } = useTranslation();
+  const styles = useEstilos();
   return (
     <ScrollView contentContainerStyle={styles.lista}>
       <Text style={styles.aviso}>{t('mapa.soloEnApp')}</Text>
@@ -20,7 +22,7 @@ export function MapaPlanes({ planes }: { planes: Plan[] }) {
   );
 }
 
-const styles = StyleSheet.create({
+const useEstilos = crearEstilos((c) => ({
   lista: { padding: espacio[4], gap: espacio[4] },
-  aviso: { ...texto.s, color: colores.tintaSuave },
-});
+  aviso: { ...texto.s, color: c.textoSuave },
+}));

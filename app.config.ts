@@ -14,7 +14,7 @@ const config: ExpoConfig = {
   orientation: 'portrait',
   icon: './assets/images/icon.png', // PROVISIONAL: icono de la plantilla de Expo
   scheme: 'rotllo',
-  userInterfaceStyle: 'light', // De momento solo modo claro (no hay guía de modo oscuro)
+  userInterfaceStyle: 'automatic', // Sigue el modo del móvil: claro u oscuro (docs/diseno.md)
   ios: {
     bundleIdentifier: 'app.rotllo',
     icon: './assets/expo.icon',
@@ -24,7 +24,7 @@ const config: ExpoConfig = {
   android: {
     package: 'app.rotllo',
     adaptiveIcon: {
-      backgroundColor: '#FFF7ED',
+      backgroundColor: '#F4F1EA',
       foregroundImage: './assets/images/android-icon-foreground.png',
       backgroundImage: './assets/images/android-icon-background.png',
       monochromeImage: './assets/images/android-icon-monochrome.png',
@@ -53,9 +53,10 @@ const config: ExpoConfig = {
     [
       'expo-splash-screen',
       {
-        backgroundColor: '#FFF7ED',
+        backgroundColor: '#F4F1EA',
         image: './assets/images/splash-icon.png',
         imageWidth: 76,
+        dark: { backgroundColor: '#0D0D0F' },
       },
     ],
     [

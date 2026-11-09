@@ -26,12 +26,21 @@ export const es = {
       finde: 'Este finde',
       gratis: 'Gratis',
     },
+    destacado: {
+      hoy: 'El plan de hoy',
+      proximo: 'Lo próximo',
+    },
     vacio: {
       titulo: 'Aquí no hay nada',
       texto: 'Con este filtro no sale ningún plan. Prueba otro.',
       boton: 'Ver todos',
     },
     datosEjemplo: 'Datos de ejemplo hasta conectar Supabase',
+  },
+  busqueda: {
+    placeholder: 'Busca un plan o un sitio',
+    etiqueta: 'Buscar planes',
+    borrar: 'Borrar búsqueda',
   },
   precio: {
     gratis: 'Gratis',

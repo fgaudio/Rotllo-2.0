@@ -1,6 +1,7 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, Text } from 'react-native';
 
-import { colores, espacio, radio, texto, zonaTactilMinima } from '@/theme/tokens';
+import { borde, espacio, fuentes, radio, zonaTactilMinima } from '@/theme/tokens';
+import { crearEstilos } from '@/theme/useTema';
 
 type Props = {
   etiqueta: string;
@@ -8,32 +9,32 @@ type Props = {
   onPress: () => void;
 };
 
-// Chip de filtro: 44 px de alto. Activo = fondo mar + texto blanco (9,27:1).
-// Inactivo = borde de control (7,19:1, más de los 3:1 que pide un control).
+// Chip de filtro o de categoría (docs/diseno.md): 44 de alto, radio 4, marco de 2 px.
+// Activo: los colores del botón principal.
 export function Chip({ etiqueta, activo, onPress }: Props) {
+  const s = useEstilos();
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ selected: activo }}
       onPress={onPress}
-      style={({ pressed }) => [styles.base, activo && styles.activo, pressed && styles.pulsado]}>
-      <Text style={[styles.texto, activo && styles.textoActivo]}>{etiqueta}</Text>
+      style={({ pressed }) => [s.base, activo && s.activo, pressed && s.pulsado]}>
+      <Text style={[s.texto, activo && s.textoActivo]}>{etiqueta}</Text>
     </Pressable>
   );
 }
 
-const styles = StyleSheet.create({
+const useEstilos = crearEstilos((c) => ({
   base: {
     minHeight: zonaTactilMinima,
     paddingHorizontal: espacio[4],
-    borderRadius: radio.pill,
-    borderWidth: 1,
-    borderColor: colores.bordeControl,
-    backgroundColor: colores.superficie,
+    borderRadius: radio.m,
+    borderWidth: borde,
+    borderColor: c.marco,
     justifyContent: 'center',
   },
-  activo: { backgroundColor: colores.mar, borderColor: colores.mar },
+  activo: { backgroundColor: c.principal, borderColor: c.principal },
   pulsado: { opacity: 0.85 },
-  texto: { ...texto.s, fontWeight: '600', color: colores.tinta },
-  textoActivo: { color: colores.blanco },
-});
+  texto: { fontFamily: fuentes.media, fontSize: 15, lineHeight: 20, color: c.texto },
+  textoActivo: { color: c.sobrePrincipal },
+}));

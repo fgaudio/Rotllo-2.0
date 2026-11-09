@@ -1,18 +1,19 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { MapaPlanes } from '@/components/MapaPlanes';
 import { usePlanes } from '@/lib/usePlanes';
-import { colores } from '@/theme/tokens';
+import { crearEstilos } from '@/theme/useTema';
 
 export default function MapaScreen() {
   const { datos } = usePlanes();
+  const s = useEstilos();
   return (
-    <View style={styles.pantalla}>
+    <View style={s.pantalla}>
       <MapaPlanes planes={datos} />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  pantalla: { flex: 1, backgroundColor: colores.fondo },
-});
+const useEstilos = crearEstilos((c) => ({
+  pantalla: { flex: 1, backgroundColor: c.fondo },
+}));

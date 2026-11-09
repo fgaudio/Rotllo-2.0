@@ -25,12 +25,21 @@ export const it: Textos = {
       finde: 'Questo weekend',
       gratis: 'Gratis',
     },
+    destacado: {
+      hoy: 'Il piano di oggi',
+      proximo: 'Prossimamente',
+    },
     vacio: {
       titulo: 'Qui non c’è niente',
       texto: 'Nessun evento con questo filtro. Provane un altro.',
       boton: 'Vedi tutti',
     },
     datosEjemplo: 'Dati di esempio finché non colleghiamo Supabase',
+  },
+  busqueda: {
+    placeholder: 'Cerca eventi o locali',
+    etiqueta: 'Cerca eventi',
+    borrar: 'Cancella ricerca',
   },
   precio: {
     gratis: 'Gratis',
