@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rotllo · propuesta de rediseño «Cartelera»</title>
+<!--
+  PROTOTIPO para decidir el rediseño (no es la app). Datos de ejemplo.
+  Sin fotos de internet: las imágenes son carteles generados con el título del plan,
+  que es lo que tendrá la app mientras los locales no suban fotos.
+  Abrir con ?modo=claro para el modo claro y ?solo=feed|ficha|bienvenida para una pantalla.
+-->
+<style>
+@font-face{font-family:Anton;src:url(fuentes/Anton_400Regular.ttf)}
+@font-face{font-family:Inter;font-weight:400;src:url(../../node_modules/@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf)}
+@font-face{font-family:Inter;font-weight:500;src:url(../../node_modules/@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf)}
+@font-face{font-family:Inter;font-weight:600;src:url(../../node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf)}
+@font-face{font-family:Inter;font-weight:700;src:url(../../node_modules/@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf)}
+
+:root{
+  --rosa:#FF3EA5; --azul:#1D2B8F; --amarillo:#FFD400; --rojo:#E5341F; --turquesa:#00B3A6;
+  --violeta:#6B1E87; --tinta:#111111; --papel:#F4F1EA; --blanco:#FFFFFF;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#2A2A30;font-family:Inter,system-ui,sans-serif;padding:40px;display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start}
+body.suelto{padding:0;background:transparent;display:block}
+
+/* ── Tema ─────────────────────────────────────────────────────────── */
+.movil{
+  --fondo:#0B0B0D; --sup:#17171B; --sup2:#222228; --linea:#2B2B32;
+  --texto:#F4F1EA; --suave:#A9A49B; --tenue:#77736C;
+  --acento:#FFD400; --sobreAcento:#111111; --rotulo:#FFD400;
+  --vivo:#FF3EA5;
+  width:390px;height:844px;position:relative;overflow:hidden;background:var(--fondo);color:var(--texto);
+  border-radius:44px;flex:none;-webkit-font-smoothing:antialiased;
+}
+.movil.claro{
+  --fondo:#F4F1EA; --sup:#FFFFFF; --sup2:#E9E5DB; --linea:#DCD7CB;
+  --texto:#111111; --suave:#57524B; --tenue:#8A857D;
+  --acento:#111111; --sobreAcento:#F4F1EA; --rotulo:#1D2B8F;
+  --vivo:#D6157E;
+}
+body.suelto .movil{border-radius:0}
+.pagina{position:absolute;left:0;right:0;top:0}
+
+/* ── Piezas ───────────────────────────────────────────────────────── */
+.estado{height:54px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 10px;font-weight:600;font-size:16px;position:relative;z-index:5}
+.estado .der{display:flex;gap:6px;align-items:center}
+.pila{width:25px;height:12px;border:1.5px solid currentColor;border-radius:4px;position:relative;opacity:.9}
+.pila::before{content:"";position:absolute;inset:1.5px;right:6px;background:currentColor;border-radius:1.5px}
+.barras{display:flex;gap:2px;align-items:flex-end}.barras i{width:3px;background:currentColor;border-radius:1px}
+
+.display{font-family:Anton;text-transform:uppercase;font-weight:400;letter-spacing:.2px}
+.rotulo{font-size:12px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--rotulo)}
+.suave{color:var(--suave)}
+svg.ico{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+.marca{font-family:Anton;font-size:27px;letter-spacing:.6px;display:flex;align-items:center;line-height:1}
+.marca b{display:inline-block;width:.62em;height:.62em;border-radius:50%;background:var(--amarillo);margin-left:.06em;transform:translateY(.01em)}
+.claro .marca b{background:var(--rosa)}
+
+.redondo{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--sup);color:var(--texto);flex:none}
+.redondo.cristal{background:rgba(11,11,13,.55);color:#F4F1EA;backdrop-filter:blur(12px)}
+
+.chips{display:flex;gap:8px;overflow:hidden;padding:0 16px}
+.chip{height:44px;padding:0 18px;border-radius:22px;display:flex;align-items:center;font-size:15px;font-weight:600;background:var(--sup);color:var(--texto);white-space:nowrap;flex:none}
+.chip.on{background:var(--texto);color:var(--fondo)}
+
+.pastilla{display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:14px;font-size:13px;font-weight:700;background:var(--texto);color:var(--fondo);white-space:nowrap}
+.pastilla.gratis{background:var(--turquesa);color:#111}
+.pastilla.linea{background:transparent;color:var(--texto);box-shadow:inset 0 0 0 1.5px var(--suave)}
+
+.boton{height:56px;border-radius:28px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:17px;font-weight:700;background:var(--acento);color:var(--sobreAcento);padding:0 26px;white-space:nowrap}
+.boton.sup{background:var(--sup2);color:var(--texto)}
+.boton.blanco{background:#F4F1EA;color:#111}
+.boton.linea{background:transparent;color:var(--texto);box-shadow:inset 0 0 0 1.5px var(--tenue)}
+.boton.tinta{background:#111;color:#F4F1EA}
+
+/* ── Cartel generado ──────────────────────────────────────────────── */
+.cartel{position:relative;overflow:hidden;border-radius:10px;background:var(--pf);color:var(--pg);isolation:isolate}
+.cartel .trama{position:absolute;inset:0;background-image:radial-gradient(circle at center,rgba(0,0,0,.34) 0 1.7px,transparent 1.9px);background-size:9px 9px;z-index:1;pointer-events:none}
+.cartel .trama.a{-webkit-mask-image:linear-gradient(200deg,#000 0%,transparent 55%);mask-image:linear-gradient(200deg,#000 0%,transparent 55%)}
+.cartel .trama.b{-webkit-mask-image:radial-gradient(circle at 20% 100%,#000 0%,transparent 62%);mask-image:radial-gradient(circle at 20% 100%,#000 0%,transparent 62%)}
+/* A · Cinta: el título repetido en filas, relleno y contorno alternos */
+.cartel.cinta .filas{position:absolute;left:-30%;top:-18%;width:160%;transform:rotate(-9deg);z-index:2;font-family:Anton;text-transform:uppercase;line-height:.93;white-space:nowrap}
+.cartel.cinta .fila{display:block}
+.cartel.cinta .fila:nth-child(even){color:transparent;-webkit-text-stroke:calc(var(--u)*.022) var(--pt)}
+.cartel.cinta .fila:nth-child(4n+1){color:var(--pt)}
+/* B · Inicial: la primera letra, gigante y recortada, con un disco */
+.cartel.inicial .disco{position:absolute;width:74%;aspect-ratio:1;border-radius:50%;background:var(--pg);right:-16%;top:-10%;z-index:0}
+.cartel.inicial .letra{position:absolute;left:-4%;bottom:-27%;font-family:Anton;line-height:1;color:var(--pt);z-index:2;text-transform:uppercase}
+.cartel.inicial .eco{position:absolute;left:1.5%;bottom:-27%;font-family:Anton;line-height:1;color:transparent;-webkit-text-stroke:calc(var(--u)*.012) var(--pt);z-index:1;text-transform:uppercase;transform:translate(7%,-5%)}
+/* C · Serie: 2×2 con la misma letra en cuatro parejas de color */
+.cartel.serie{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:0;background:#111}
+.cartel.serie .celda{position:relative;overflow:hidden;background:var(--cf)}
+.cartel.serie .celda span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:Anton;line-height:1;color:var(--cg);text-transform:uppercase}
+.cartel.serie .celda::after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,0,0,.3) 0 1.5px,transparent 1.7px);background-size:8px 8px;-webkit-mask-image:linear-gradient(135deg,transparent 45%,#000 100%);mask-image:linear-gradient(135deg,transparent 45%,#000 100%)}
+/* F · Foto (simulada aquí con luces desenfocadas): se enseña tal cual, sin texto encima */
+.cartel.foto{background:#07060C}
+.cartel.foto i{position:absolute;border-radius:50%;filter:blur(calc(var(--u)*.05));mix-blend-mode:screen}
+.cartel.foto .grano{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.07) 0 .6px,transparent .8px);background-size:3px 3px;z-index:3}
+.cartel.foto .gente{position:absolute;left:0;right:0;bottom:0;height:34%;z-index:2;background:
+  radial-gradient(ellipse 9% 60% at 8% 100%,#050409 98%,transparent),radial-gradient(ellipse 8% 74% at 21% 100%,#050409 98%,transparent),
+  radial-gradient(ellipse 10% 58% at 35% 100%,#050409 98%,transparent),radial-gradient(ellipse 8% 82% at 49% 100%,#050409 98%,transparent),
+  radial-gradient(ellipse 9% 64% at 62% 100%,#050409 98%,transparent),radial-gradient(ellipse 9% 78% at 76% 100%,#050409 98%,transparent),
+  radial-gradient(ellipse 10% 60% at 91% 100%,#050409 98%,transparent)}
+
+/* Sello: redondo, girado. El círculo es el motivo de la marca (rotllo = corro). */
+.sello{position:absolute;z-index:6;width:calc(var(--u)*.2);height:calc(var(--u)*.2);border-radius:50%;background:#F4F1EA;color:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Anton;text-transform:uppercase;line-height:1;transform:rotate(9deg);right:4.5%;top:4%;box-shadow:0 0 0 2px #111}
+.sello small{font-size:calc(var(--u)*.042);letter-spacing:.6px}
+.sello strong{font-weight:400;font-size:calc(var(--u)*.066)}
+.sello.gratis{background:var(--turquesa)}
+.sello.peq{width:54px;height:54px}.sello.peq small{font-size:10px}.sello.peq strong{font-size:15px}
+
+/* ── Feed ─────────────────────────────────────────────────────────── */
+.cab{display:flex;align-items:center;justify-content:space-between;padding:6px 16px 0}
+.titular{padding:14px 16px 16px}
+.titular h1{font-size:52px;line-height:.96;margin-top:14px}
+.titular h1 em{font-style:normal;color:var(--rotulo)}
+.heroe{padding:16px 16px 0}
+.heroe .tarjeta{border-radius:18px;overflow:hidden;background:var(--sup)}
+.heroe .tarjeta .cartel{border-radius:0}
+.heroe .info{padding:14px 16px 14px}
+.vivo{display:inline-flex;align-items:center;gap:7px}
+.vivo::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--vivo);box-shadow:0 0 0 4px color-mix(in srgb,var(--vivo) 28%,transparent)}
+.heroe h2{font-size:40px;line-height:.98;margin-top:8px}
+.heroe .lugar{font-size:15.5px;margin-top:6px;color:var(--suave)}
+.heroe .acciones{display:flex;align-items:center;gap:8px;margin-top:10px}
+.heroe .acciones .redondo{background:var(--sup2)}
+.heroe .acciones .hueco{flex:1}
+.seccion{display:flex;align-items:baseline;justify-content:space-between;padding:40px 16px 14px}
+.seccion h3{font-size:26px;line-height:1}
+.seccion a{font-size:14px;font-weight:600;color:var(--suave)}
+.carril{display:flex;gap:12px;padding:0 16px;overflow:hidden}
+.mini{width:164px;flex:none}
+.mini .rotulo{margin-top:12px;font-size:11.5px}
+.mini h4{font-size:16px;line-height:1.25;font-weight:700;margin-top:5px}
+.mini p{font-size:13.5px;color:var(--suave);margin-top:4px}
+.dia{padding:6px 16px 0;display:flex;align-items:center;gap:12px}
+.dia span{font-family:Anton;text-transform:uppercase;font-size:17px;letter-spacing:.5px;color:var(--suave)}
+.dia::after{content:"";flex:1;height:1px;background:var(--linea)}
+.filaPlan{display:flex;gap:14px;padding:14px 16px;align-items:center}
+.filaPlan .cartel{width:84px;height:84px;border-radius:8px;flex:none}
+.filaPlan .txt{flex:1;min-width:0}
+.filaPlan h4{font-size:17px;font-weight:700;line-height:1.2}
+.filaPlan p{font-size:14px;color:var(--suave);margin-top:4px}
+.filaPlan .meta{display:flex;gap:6px;margin-top:8px;align-items:center}
+.filaPlan .pastilla{height:24px;font-size:12px;padding:0 8px}
+.filaPlan .hora{font-family:Anton;font-size:19px;color:var(--texto);width:50px;flex:none;text-align:left}
+.pestanas{position:absolute;left:0;right:0;bottom:0;height:88px;background:color-mix(in srgb,var(--fondo) 92%,transparent);backdrop-filter:blur(16px);border-top:1px solid var(--linea);display:flex;padding:0 8px 26px;z-index:20}
+.pestana{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px;font-weight:600;color:var(--tenue);position:relative}
+.pestana.on{color:var(--texto)}
+.pestana.on::before{content:"";position:absolute;top:0;width:22px;height:3px;border-radius:0 0 3px 3px;background:var(--rotulo)}
+
+/* ── Ficha ────────────────────────────────────────────────────────── */
+.portada{position:relative}
+.portada .cartel{border-radius:0;width:390px;height:440px}
+.portada .arriba{position:absolute;left:0;right:0;top:0;height:120px;background:linear-gradient(#0B0B0Dcc,transparent);z-index:7}
+.portada .botones{position:absolute;left:16px;right:16px;top:56px;display:flex;gap:10px;z-index:8}
+.portada .botones .hueco{flex:1}
+.fija{position:absolute;left:0;right:0;top:0;height:104px;padding:54px 8px 0;display:flex;align-items:center;gap:2px;background:color-mix(in srgb,var(--fondo) 94%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--linea);z-index:20}
+.fija b{flex:1;font-size:16px;font-weight:700;padding-left:4px}
+.fija .redondo{background:transparent}
+.cuerpo{padding:22px 16px 0}
+.cuerpo h1{font-size:58px;line-height:.95;margin-top:12px}
+.datos{margin-top:22px;border-top:1px solid var(--linea)}
+.dato{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--linea)}
+.dato .redondo{background:var(--sup)}
+.dato div b{display:block;font-size:17px;font-weight:700}
+.dato div span{display:block;font-size:14.5px;color:var(--suave);margin-top:2px}
+.dato .flecha{margin-left:auto;color:var(--tenue)}
+.bloque{padding:34px 16px 0}
+.bloque h3{font-size:26px;line-height:1;margin-bottom:14px}
+.entradilla{font-size:19px;line-height:1.42;font-weight:500}
+.parrafo{font-size:16px;line-height:1.55;color:var(--suave);margin-top:12px}
+.mapa{height:150px;border-radius:14px;position:relative;overflow:hidden;background:var(--sup)}
+.mapa svg{position:absolute;inset:0;width:100%;height:100%}
+.mapa .pin{position:absolute;left:50%;top:46%;width:22px;height:22px;border-radius:50%;background:var(--amarillo);box-shadow:0 0 0 5px rgba(255,212,0,.25),0 0 0 2px #111 inset;transform:translate(-50%,-50%)}
+.sitio{display:flex;align-items:center;gap:12px;margin-top:14px}
+.sitio b{font-size:17px}.sitio span{display:block;font-size:14.5px;color:var(--suave);margin-top:2px}
+.sitio .boton{height:44px;font-size:15px;padding:0 18px;margin-left:auto}
+.gente{margin:34px 16px 0;border-radius:14px;background:var(--rosa);color:#111;padding:22px 20px 20px;position:relative;overflow:hidden}
+.gente h3{font-size:38px;line-height:.95}
+.gente p{font-size:16px;line-height:1.4;margin-top:10px;font-weight:500;max-width:250px}
+.gente .boton{margin-top:18px;height:50px;display:inline-flex}
+.gente .corro{position:absolute;right:-34px;top:-34px;width:150px;height:150px;border-radius:50%;background:var(--amarillo)}
+.gente .corro::after{content:"";position:absolute;inset:0;border-radius:50%;background-image:radial-gradient(circle,rgba(0,0,0,.3) 0 1.6px,transparent 1.8px);background-size:8px 8px;-webkit-mask-image:linear-gradient(45deg,#000,transparent 70%);mask-image:linear-gradient(45deg,#000,transparent 70%)}
+.barra{position:absolute;left:0;right:0;bottom:0;padding:14px 16px 34px;background:color-mix(in srgb,var(--fondo) 94%,transparent);backdrop-filter:blur(16px);border-top:1px solid var(--linea);display:flex;align-items:center;gap:14px;z-index:20}
+.barra .precio b{display:block;font-size:21px;font-weight:700;line-height:1}
+.barra .precio span{display:block;font-size:12.5px;color:var(--suave);margin-top:5px}
+.barra .boton{margin-left:auto}
+
+/* ── Bienvenida ───────────────────────────────────────────────────── */
+.muro{position:absolute;left:-70px;top:-70px;width:560px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;transform:rotate(-8deg)}
+.muro .col{display:flex;flex-direction:column;gap:12px}
+.muro .col:nth-child(2){margin-top:-70px}
+.muro .col:nth-child(3){margin-top:-25px}
+.muro .cartel{width:100%;aspect-ratio:3/4;border-radius:8px}
+.velo{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 0%,transparent 18%,rgba(11,11,13,.93) 39%,#0B0B0D 46%)}
+.entrada{position:absolute;left:0;right:0;bottom:0;padding:0 20px 36px}
+.entrada .marca{font-size:24px}
+.entrada h1{font-size:68px;line-height:.92;margin-top:14px}
+.entrada h1 em{font-style:normal;color:var(--amarillo)}
+.entrada p{font-size:17px;line-height:1.42;color:var(--suave);margin-top:14px;max-width:320px}
+.entrada .botones{display:flex;flex-direction:column;gap:10px;margin-top:24px}
+.entrada .sin{display:flex;height:44px;align-items:center;justify-content:center;font-size:15px;font-weight:600;margin-top:8px}
+.entrada .legal{text-align:center;font-size:12.5px;color:var(--tenue);margin-top:4px}
+
+.pie{width:390px;color:#C9C5BC;font-size:14px;margin-top:14px;font-weight:600}
+.col-movil{display:flex;flex-direction:column}
+</style>
+</head>
+<body>
+<script>
+const P = new URLSearchParams(location.search);
+const MODO = P.get('modo') === 'claro' ? 'claro' : '';
+const SOLO = P.get('solo');
+const Y = Number(P.get('y') || 0);
+if (SOLO) document.body.classList.add('suelto');
+
+// Parejas de color por categoría: fondo, figura y tinta del texto del cartel.
+const PAREJAS = {
+  fiesta:   { f: 'var(--rosa)',     g: 'var(--amarillo)', t: 'var(--azul)' },
+  directo:  { f: 'var(--amarillo)', g: 'var(--rojo)',     t: '#111' },
+  tardeo:   { f: 'var(--turquesa)', g: 'var(--amarillo)', t: 'var(--violeta)' },
+  cultura:  { f: 'var(--violeta)',  g: 'var(--rosa)',     t: 'var(--amarillo)' },
+  deporte:  { f: 'var(--azul)',     g: 'var(--turquesa)', t: 'var(--amarillo)' },
+  talleres: { f: 'var(--rojo)',     g: 'var(--amarillo)', t: '#F4F1EA' },
+  social:   { f: '#F4F1EA',         g: 'var(--rosa)',     t: 'var(--azul)' },
+};
+const SERIE = [
+  { f: 'var(--rosa)', g: 'var(--azul)' }, { f: 'var(--amarillo)', g: 'var(--rojo)' },
+  { f: 'var(--turquesa)', g: 'var(--violeta)' }, { f: 'var(--azul)', g: 'var(--amarillo)' },
+];
+
+const PLANES = {
+  salsa:   { titulo: 'Noche de salsa', cat: 'directo', tipo: 'serie', sello: ['Hoy', '23:00'], rotulo: 'Hoy · 23:00', local: 'Café Mercedes Jazz', barrio: 'Russafa', precio: 'Desde 8 €' },
+  idiomas: { titulo: 'Intercambio de idiomas', cat: 'social', tipo: 'inicial', sello: ['Hoy', '20:30'], rotulo: 'Hoy · 20:30', local: 'Bar El Racó', barrio: 'Benimaclet', precio: 'Gratis' },
+  micro:   { titulo: 'Micro abierto', cat: 'cultura', tipo: 'cinta', sello: ['Hoy', '21:30'], rotulo: 'Hoy · 21:30', local: 'La Tramoia', barrio: 'el Carmen', precio: 'Desde 5 €' },
+  cine:    { titulo: 'Cine en versión original', cat: 'cultura', tipo: 'inicial', sello: ['Jue', '21:00'], rotulo: 'Mañana · 21:00', local: 'Cineclub del Carmen', barrio: 'el Carmen', precio: 'Desde 5 €' },
+  techno:  { titulo: 'Techno en la Marina', cat: 'fiesta', tipo: 'foto', sello: ['Vie', '23:00'], hora: '23:00', local: 'Sala Marina', barrio: 'la Marina', precio: 'Desde 15 €', edad: '+21' },
+  paella:  { titulo: 'Taller de paella valenciana', cat: 'talleres', tipo: 'cinta', sello: ['Sáb', '11:00'], hora: '11:00', local: 'Escola de Cuina', barrio: 'el Cabanyal', precio: 'Desde 25 €' },
+  vermut:  { titulo: 'Vermut y vinilos', cat: 'tardeo', tipo: 'inicial', sello: ['Sáb', '13:00'], hora: '13:00', local: 'Bar La Placeta', barrio: 'el Carmen', precio: 'Gratis' },
+  voley:   { titulo: 'Vóley en la playa', cat: 'deporte', tipo: 'serie', sello: ['Dom', '11:00'], hora: '11:00', local: 'Club Vóley', barrio: 'la Malva-rosa', precio: 'Gratis' },
+};
+
+const ICO = {
+  buscar: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/>',
+  corazon: '<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10Z"/>',
+  compartir: '<path d="M12 15V4m0 0L8 8m4-4 4 4"/><path d="M5 12v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',
+  atras: '<path d="M15 5l-7 7 7 7"/>',
+  calendario: '<rect x="4" y="5.5" width="16" height="14.5" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
+  pin: '<path d="M12 21s-6.5-5.7-6.5-11a6.5 6.5 0 0 1 13 0C18.500 15.3 12 21 12 21Z"/><circle cx="12" cy="10" r="2.4"/>',
+  entrada: '<path d="M4 8.5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1.6a2 2 0 0 0 0 3.800V15.500a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1.600a2 2 0 0 0 0-3.800Z"/><path d="M14.500 7v10" stroke-dasharray="1.6 2.6"/>',
+  fuera: '<path d="M8 16 16.500 7.500M9.500 7.500h7v7"/>',
+  ir: '<path d="m20 4-7.200 16-2.300-6.500L4 11.200 20 4Z"/>',
+  chevron: '<path d="m9 5 7 7-7 7"/>',
+  planes: '<path d="M12 3.5l1.900 5.100 5.100 1.900-5.100 1.900L12 17.500l-1.900-5.100L5 10.500l5.100-1.900L12 3.500Z"/><path d="M18.500 15.500l.8 2.200 2.200.8-2.200.8-.8 2.200-.8-2.200-2.200-.8 2.200-.8.8-2.200Z"/>',
+  mapa: '<path d="M9 5 4 7v12l5-2 6 2 5-2V5l-5 2-6-2Z"/><path d="M9 5v12M15 7v12"/>',
+  perfil: '<circle cx="12" cy="8.500" r="3.700"/><path d="M4.800 20a7.200 7.200 0 0 1 14.400 0"/>',
+  apple: '',
+};
+const ico = (n, extra = '') => `<svg class="ico" viewBox="0 0 24 24" ${extra}>${ICO[n]}</svg>`;
+
+// ── Cartel ────────────────────────────────────────────────────────────
+// u = ancho del cartel en px: todas las medidas de dentro salen de él.
+function cartel(id, ancho, alto, { sello = true, clase = '' } = {}) {
+  const p = PLANES[id], c = PAREJAS[p.cat];
+  const estilo = `--u:${ancho}px;--pf:${c.f};--pg:${c.g};--pt:${c.t};width:${ancho}px;height:${alto}px`;
+  const T = p.titulo.toUpperCase();
+  let dentro = '';
+  if (p.tipo === 'cinta') {
+    const cuerpo = Math.round(alto / 4.300);
+    const fila = (i) => `<span class="fila" style="margin-left:${-(i * 23) % 60}%">${(T + ' · ').repeat(6)}</span>`;
+    dentro = `<div class="filas" style="font-size:${cuerpo}px">${[0, 1, 2, 3, 4, 5, 6].map(fila).join('')}</div><div class="trama b"></div>`;
+  } else if (p.tipo === 'inicial') {
+    const cuerpo = Math.round(alto * 1.220);
+    dentro = `<div class="disco"></div><div class="trama a"></div><div class="eco" style="font-size:${cuerpo}px">${T[0]}</div><div class="letra" style="font-size:${cuerpo}px">${T[0]}</div>`;
+  } else if (p.tipo === 'serie') {
+    const cuerpo = Math.round(Math.min(alto * 0.46, ancho * 0.56));
+    dentro = SERIE.map((s) => `<div class="celda" style="--cf:${s.f};--cg:${s.g}"><span style="font-size:${cuerpo}px">${T[0]}</span></div>`).join('');
+  } else {
+    const luces = [[18, 22, 46, '#FF3EA5', .9], [70, 16, 40, '#3B5BFF', .85], [48, 40, 30, '#FFD400', .5], [84, 46, 34, '#FF3EA5', .7], [10, 54, 30, '#22D3C5', .55], [38, 12, 18, '#FFFFFF', .7], [62, 30, 12, '#FFFFFF', .8]];
+    dentro = luces.map(([x, y, d, col, o]) => `<i style="left:${x - d / 2}%;top:${y - d / 2}%;width:${d}%;aspect-ratio:1;background:${col};opacity:${o}"></i>`).join('') + '<div class="gente"></div><div class="grano"></div>';
+  }
+  const gratis = p.precio === 'Gratis';
+  const s = sello && p.sello ? `<div class="sello ${ancho < 200 ? 'peq' : ''}"><small>${p.sello[0]}</small><strong>${p.sello[1]}</strong></div>` : '';
+  return `<div class="cartel ${p.tipo} ${clase}" style="${estilo}" role="img" aria-label="Cartel de ${p.titulo}">${dentro}${s}</div>`;
+}
+
+const precio = (p) => `<span class="pastilla ${p.precio === 'Gratis' ? 'gratis' : ''}">${p.precio}</span>${p.edad ? `<span class="pastilla linea">${p.edad}</span>` : ''}`;
+const estado = () => `<div class="estado"><span>21:04</span><span class="der"><span class="barras"><i style="height:5px"></i><i style="height:7px"></i><i style="height:9px"></i><i style="height:11px"></i></span><span class="pila"></span></span></div>`;
+const pestanas = (on) => `<nav class="pestanas">${[['planes', 'Planes'], ['mapa', 'Mapa'], ['corazon', 'Guardados'], ['perfil', 'Perfil']].map(([i, t], n) => `<div class="pestana ${n === on ? 'on' : ''}">${ico(i)}${t}</div>`).join('')}</nav>`;
+
+// ── Pantallas ─────────────────────────────────────────────────────────
+function feed(y = 0) {
+  const mini = (id) => { const p = PLANES[id]; return `<article class="mini">${cartel(id, 164, 212)}<div class="rotulo">${p.rotulo}</div><h4>${p.titulo}</h4><p>${p.barrio} · ${p.precio}</p></article>`; };
+  const fila = (id) => { const p = PLANES[id]; return `<article class="filaPlan">${cartel(id, 84, 84, { sello: false })}<div class="txt"><h4>${p.titulo}</h4><p>${p.hora} · ${p.local}, ${p.barrio}</p><div class="meta">${precio(p)}</div></div>${ico('corazon', 'style="color:var(--tenue)"')}</article>`; };
+  const h = PLANES.salsa;
+  return `<div class="pagina" style="transform:translateY(${-y}px)">
+    ${estado()}
+    <header class="cab"><div class="marca">ROTLL<b></b></div><div class="redondo" aria-label="Buscar">${ico('buscar')}</div></header>
+    <div class="titular"><div class="rotulo suave" style="color:var(--suave)">Miércoles 11 nov · Valencia</div><h1 class="display">¿Qué hacemos<br><em>esta noche?</em></h1></div>
+    <div class="chips"><span class="chip on">Todo</span><span class="chip">Hoy</span><span class="chip">Este finde</span><span class="chip">Gratis</span><span class="chip">Fiesta</span><span class="chip">Directos</span></div>
+    <section class="heroe">
+      <div class="tarjeta">${cartel('salsa', 358, 236)}
+      <div class="info">
+        <div class="rotulo vivo">Empieza en 2 h</div>
+        <h2 class="display">${h.titulo}</h2>
+        <p class="lugar">${h.local} · ${h.barrio}</p>
+        <div class="acciones">${precio(h)}<span class="hueco"></span><span class="redondo" aria-label="Compartir">${ico('compartir')}</span><span class="redondo" aria-label="Guardar">${ico('corazon')}</span></div>
+      </div></div>
+    </section>
+    <div class="seccion"><h3 class="display">Hoy también</h3><a>Ver todo</a></div>
+    <div class="carril">${mini('idiomas')}${mini('micro')}${mini('cine')}</div>
+    <div class="seccion"><h3 class="display">Este finde</h3><a>Ver todo</a></div>
+    <div class="dia"><span>Viernes 13</span></div>${fila('techno')}
+    <div class="dia"><span>Sábado 14</span></div>${fila('paella')}${fila('vermut')}
+    <div class="dia"><span>Domingo 15</span></div>${fila('voley')}
+    <div style="height:120px"></div>
+  </div>${pestanas(0)}`;
+}
+
+function ficha(y = 0) {
+  const p = PLANES.salsa;
+  const mini = (id) => { const q = PLANES[id]; return `<article class="mini">${cartel(id, 164, 212)}<div class="rotulo">${q.rotulo}</div><h4>${q.titulo}</h4><p>${q.barrio} · ${q.precio}</p></article>`; };
+  return `<div class="pagina" style="transform:translateY(${-y}px)">
+    <div class="portada">${cartel('salsa', 390, 440, { sello: false })}<div class="arriba"></div></div>
+    <div class="cuerpo">
+      <div style="display:flex;align-items:center;gap:12px"><span class="pastilla linea">Música en directo</span><span class="rotulo vivo">Empieza en 2 h</span></div>
+      <h1 class="display">${p.titulo}</h1>
+      <div class="datos">
+        <div class="dato"><span class="redondo">${ico('calendario')}</span><div><b>Hoy, 23:00</b><span>Miércoles 11 de noviembre · hasta el cierre</span></div></div>
+        <div class="dato"><span class="redondo">${ico('pin')}</span><div><b>${p.local}</b><span>Calle de Sueca 27 · ${p.barrio}</span></div>${ico('chevron', 'class="ico flecha"')}</div>
+        <div class="dato"><span class="redondo">${ico('entrada')}</span><div><b>Desde 8 €</b><span>La entrada se compra en la web del local</span></div></div>
+      </div>
+    </div>
+    <div class="bloque"><h3 class="display">De qué va</h3>
+      <p class="entradilla">Abrimos con una clase de iniciación para que nadie se quede mirando.</p>
+      <p class="parrafo">Después, pista libre con DJ hasta el cierre. No hace falta pareja ni saber bailar: vienes, pides algo y te sueltas.</p>
+    </div>
+    <div class="gente"><div class="corro"></div><h3 class="display">Mejor con<br>tu gente</h3><p>Pásale el plan a tu grupo y os vais juntos.</p><span class="boton tinta">${ico('compartir')}Compartir plan</span></div>
+    <div class="bloque"><h3 class="display">Dónde es</h3>
+      <div class="mapa"><svg viewBox="0 0 358 150" preserveAspectRatio="none"><g stroke="var(--linea)" stroke-width="9" fill="none" stroke-linecap="round"><path d="M-10 40 120 20 370 60M-10 110 150 96 370 130M60-10 90 160M200-10 178 160M300-10 318 160"/></g><g stroke="var(--sup2)" stroke-width="3" fill="none"><path d="M-10 74 370 96M140-10 126 160M250-10 262 160"/></g></svg><span class="pin"></span></div>
+      <div class="sitio"><div><b>${p.local}</b><span>Calle de Sueca 27, ${p.barrio}</span></div><span class="boton sup">${ico('ir')}Cómo llegar</span></div>
+    </div>
+    <div class="seccion"><h3 class="display">Más planes hoy</h3><a>Ver todo</a></div>
+    <div class="carril">${mini('idiomas')}${mini('micro')}${mini('cine')}</div>
+    <div style="height:150px"></div>
+  </div>
+  ${y > 380
+    ? `<div class="fija"><span class="redondo" aria-label="Volver">${ico('atras')}</span><b>${p.titulo}</b><span class="redondo" aria-label="Compartir">${ico('compartir')}</span><span class="redondo" aria-label="Guardar">${ico('corazon')}</span></div>`
+    : `<div class="portada" style="position:absolute;left:0;right:0;top:0;height:0"><div class="botones"><span class="redondo cristal" aria-label="Volver">${ico('atras')}</span><span class="hueco"></span><span class="redondo cristal" aria-label="Compartir">${ico('compartir')}</span><span class="redondo cristal" aria-label="Guardar">${ico('corazon')}</span></div></div>`}
+  <div class="barra"><div class="precio"><b>Desde 8 €</b><span>En la web del local</span></div><span class="boton">Pillar entrada${ico('fuera')}</span></div>`;
+}
+
+function bienvenida() {
+  const col = (ids) => `<div class="col">${ids.map((id) => cartel(id, 178, 237, { sello: false })).join('')}</div>`;
+  return `<div class="muro">${col(['paella', 'salsa', 'vermut'])}${col(['voley', 'idiomas', 'micro', 'techno'])}${col(['cine', 'techno', 'voley'])}</div>
+  <div class="velo"></div>
+  <div class="entrada">
+    <div class="marca">ROTLL<b></b></div>
+    <h1 class="display">Valencia<br>tiene <em>plan.</em></h1>
+    <p>Fiesta, directos, tardeo y deporte. Lo de hoy y lo del finde, en un sitio.</p>
+    <div class="botones">
+      <span class="boton blanco"><svg class="ico" viewBox="0 0 24 24" style="stroke:none;fill:#111"><path d="M16.400 12.600c0-2.300 1.900-3.400 2-3.500-1.100-1.600-2.800-1.800-3.400-1.800-1.400-.1-2.800.9-3.500.9s-1.800-.9-3-.8c-1.500 0-3 .9-3.800 2.300-1.600 2.800-.4 7 1.200 9.300.8 1.100 1.700 2.400 2.900 2.300 1.200 0 1.600-.7 3-.7s1.800.7 3 .7 2-1.100 2.800-2.200c.9-1.300 1.200-2.500 1.300-2.600 0 0-2.500-1-2.500-3.900ZM14.200 5.800c.6-.8 1.100-1.900.9-3-1 0-2.100.6-2.800 1.400-.6.700-1.100 1.800-1 2.900 1.100.1 2.200-.5 2.900-1.300Z"/></svg>Seguir con Apple</span>
+      <span class="boton sup">Seguir con Google</span>
+      <span class="boton linea">Seguir con email</span>
+    </div>
+    <div class="sin">Mirar sin cuenta</div>
+    <div class="legal">Solo para mayores de 18</div>
+  </div>`;
+}
+
+const PANTALLAS = [
+  ['bienvenida', () => bienvenida(), 'Bienvenida y entrar, en una sola pantalla'],
+  ['feed', () => feed(0), 'Feed · arriba'],
+  ['feed2', () => feed(700), 'Feed · al bajar'],
+  ['ficha', () => ficha(0), 'Ficha del plan · arriba'],
+  ['ficha2', () => ficha(800), 'Ficha del plan · al bajar'],
+];
+for (const [id, pinta, pie] of PANTALLAS) {
+  if (SOLO && SOLO !== id) continue;
+  document.write(`<div class="col-movil"><div class="movil ${id === 'bienvenida' ? '' : MODO}" id="${id}">${id.startsWith('feed') && Y ? feed(Y) : id.startsWith('ficha') && Y ? ficha(Y) : pinta()}</div>${SOLO ? '' : `<div class="pie">${pie}</div>`}</div>`);
+}
+</script>
+</body>
+</html>
