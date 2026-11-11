@@ -1,137 +1,157 @@
-// Tokens de diseño de Rotllo (Serie Warhol): la única fuente de colores, espacios y tamaños.
+// Tokens de diseño de Rotllo («Cartelera»): la única fuente de colores, espacios y tamaños.
 // Son la versión en código de docs/diseno.md: si cambias algo aquí, cámbialo también allí.
 // El contraste de los pares de texto lo comprueba src/theme/tokens.test.ts.
 
 export type Modo = 'claro' | 'oscuro';
 
-// Colores sueltos de la serie (las ilustraciones y las parejas de categoría salen de aquí)
-export const serie = {
+// Colores pop. Solo viven dentro de los carteles y en algún momento de marca;
+// la interfaz usa los colores del tema de abajo.
+export const pop = {
   rosa: '#FF3EA5',
   azul: '#1D2B8F',
   amarillo: '#FFD400',
-  rojo: '#C81E1E',
+  rojo: '#E5341F',
   turquesa: '#00B3A6',
   violeta: '#6B1E87',
   tinta: '#111111',
   papel: '#F4F1EA',
-  blanco: '#FFFFFF',
 } as const;
 
 export type Colores = {
   fondo: string;
-  superficie: string;
+  superficie: string; // tarjetas y campos
+  superficie2: string; // botones secundarios, encima de una superficie
+  linea: string; // separadores (decorativo)
   texto: string;
-  textoSuave: string;
-  marco: string;
-  separador: string; // solo decorativo
-  principal: string; // fondo del botón principal y del chip activo
-  sobrePrincipal: string; // texto encima de `principal`
-  indicador: string; // pestaña activa y foco
+  textoSuave: string; // datos secundarios
+  textoTenue: string; // lo menos importante: pestañas inactivas, notas
+  acento: string; // fondo del botón principal
+  sobreAcento: string;
+  rotulo: string; // rótulos en mayúsculas ("HOY · 23:00") e indicador de la pestaña activa
+  vivo: string; // el punto de "Empieza en 2 h"
   error: string;
-  precio: string; // fondo de la etiqueta de precio
-  sobrePrecio: string;
-  gratis: string;
+  gratis: string; // fondo de la pastilla "Gratis"
   sobreGratis: string;
 };
 
 export const temas: Record<Modo, Colores> = {
-  claro: {
-    fondo: serie.papel,
-    superficie: serie.blanco,
-    texto: serie.tinta,
-    textoSuave: '#4A4640',
-    marco: serie.tinta,
-    separador: '#D9D4C9',
-    principal: serie.tinta,
-    sobrePrincipal: serie.papel,
-    indicador: serie.azul,
-    error: serie.rojo,
-    precio: serie.tinta,
-    sobrePrecio: serie.papel,
-    gratis: serie.turquesa,
-    sobreGratis: serie.tinta,
-  },
   oscuro: {
-    fondo: '#0D0D0F',
-    superficie: '#1A1A1F',
-    texto: serie.papel,
-    textoSuave: '#B9B4AA',
-    marco: serie.papel,
-    separador: '#3A3A42',
-    principal: serie.amarillo,
-    sobrePrincipal: serie.tinta,
-    indicador: serie.rosa,
-    error: '#FF6FBF',
-    precio: serie.papel,
-    sobrePrecio: serie.tinta,
-    gratis: serie.turquesa,
-    sobreGratis: serie.tinta,
+    fondo: '#0B0B0D',
+    superficie: '#17171B',
+    superficie2: '#26262D',
+    linea: '#2B2B32',
+    texto: pop.papel,
+    textoSuave: '#A9A49B',
+    textoTenue: '#8F8A82',
+    acento: pop.amarillo,
+    sobreAcento: pop.tinta,
+    rotulo: pop.amarillo,
+    vivo: pop.rosa,
+    error: '#FF8A7A',
+    gratis: pop.turquesa,
+    sobreGratis: pop.tinta,
+  },
+  claro: {
+    fondo: pop.papel,
+    superficie: '#FFFFFF',
+    superficie2: '#E9E5DB',
+    linea: '#DCD7CB',
+    texto: pop.tinta,
+    textoSuave: '#57524B',
+    textoTenue: '#6A655E',
+    acento: pop.tinta,
+    sobreAcento: pop.papel,
+    rotulo: pop.azul,
+    vivo: '#D6157E',
+    error: '#B3261E',
+    gratis: pop.turquesa,
+    sobreGratis: pop.tinta,
   },
 };
 
-// Pareja fondo / figura de cada categoría (lista cerrada de docs/system-design.md).
-export type Pareja = { fondo: string; figura: string; texto: string };
+// ── Carteles ────────────────────────────────────────────────────────────────
+// Combinaciones de color de un cartel generado. Es una lista cerrada: el local elige una
+// (o se le asigna la de su categoría). `tinta` es el color del texto del cartel.
+export type ColorCartel = { fondo: string; figura: string; tinta: string };
 
-export const parejasCategoria: Record<string, Pareja> = {
-  fiesta: { fondo: serie.rosa, figura: serie.azul, texto: serie.tinta },
-  'musica-en-directo': { fondo: serie.amarillo, figura: serie.rojo, texto: serie.tinta },
-  'bar-y-tardeo': { fondo: serie.turquesa, figura: serie.violeta, texto: serie.tinta },
-  gastro: { fondo: serie.rojo, figura: serie.amarillo, texto: serie.blanco },
-  cultura: { fondo: serie.violeta, figura: serie.rosa, texto: serie.blanco },
-  deporte: { fondo: serie.azul, figura: serie.amarillo, texto: serie.blanco },
-  talleres: { fondo: serie.amarillo, figura: serie.azul, texto: serie.tinta },
-  social: { fondo: serie.rosa, figura: serie.amarillo, texto: serie.tinta },
-  'aire-libre': { fondo: serie.turquesa, figura: serie.amarillo, texto: serie.tinta },
+export const coloresCartel = {
+  rosa: { fondo: pop.rosa, figura: pop.amarillo, tinta: pop.azul },
+  amarillo: { fondo: pop.amarillo, figura: pop.rojo, tinta: pop.tinta },
+  turquesa: { fondo: pop.turquesa, figura: pop.amarillo, tinta: pop.violeta },
+  violeta: { fondo: pop.violeta, figura: pop.rosa, tinta: pop.amarillo },
+  azul: { fondo: pop.azul, figura: pop.turquesa, tinta: pop.amarillo },
+  rojo: { fondo: pop.rojo, figura: pop.amarillo, tinta: pop.papel },
+  papel: { fondo: pop.papel, figura: pop.rosa, tinta: pop.azul },
+} as const satisfies Record<string, ColorCartel>;
+
+export type NombreColorCartel = keyof typeof coloresCartel;
+
+// El color de cartel de cada categoría (lista cerrada de docs/system-design.md).
+export const colorDeCategoria: Record<string, NombreColorCartel> = {
+  fiesta: 'rosa',
+  'musica-en-directo': 'amarillo',
+  'bar-y-tardeo': 'turquesa',
+  gastro: 'rojo',
+  cultura: 'violeta',
+  deporte: 'azul',
+  talleres: 'amarillo',
+  social: 'papel',
+  'aire-libre': 'turquesa',
 };
 
-export function parejaDe(categoria: string): Pareja {
-  return parejasCategoria[categoria] ?? parejasCategoria.fiesta;
-}
+// Las 4 celdas del cartel en serie (2×2), en orden.
+export const celdasSerie = [
+  { fondo: pop.rosa, figura: pop.azul },
+  { fondo: pop.amarillo, figura: pop.rojo },
+  { fondo: pop.turquesa, figura: pop.violeta },
+  { fondo: pop.azul, figura: pop.amarillo },
+] as const;
 
-// Las 4 parejas del destacado, en orden.
-export const parejasSerie: Pareja[] = [
-  { fondo: serie.rosa, figura: serie.azul, texto: serie.tinta },
-  { fondo: serie.amarillo, figura: serie.rojo, texto: serie.tinta },
-  { fondo: serie.turquesa, figura: serie.violeta, texto: serie.tinta },
-  { fondo: serie.azul, figura: serie.amarillo, texto: serie.blanco },
-];
-
-// Letras del logo, cada una de un color de la serie.
-export const coloresLogo = [serie.rosa, serie.amarillo, serie.turquesa, serie.azul, serie.rosa, serie.amarillo];
-
+// ── Tipografía ──────────────────────────────────────────────────────────────
 export const fuentes = {
-  titulo: 'ArchivoBlack_400Regular',
+  cartel: 'Anton_400Regular', // títulos, siempre en mayúsculas
   normal: 'Inter_400Regular',
   media: 'Inter_600SemiBold',
   negrita: 'Inter_700Bold',
 } as const;
 
+// Anton es muy alta: el interlineado es 1,1 veces el tamaño para que no se corten las tildes.
+const cartel = (tamano: number) =>
+  ({ fontFamily: fuentes.cartel, fontSize: tamano, lineHeight: Math.round(tamano * 1.1), textTransform: 'uppercase' }) as const;
+
+export const texto = {
+  titular: cartel(50), // "¿Qué hacemos esta noche?"
+  titulo: cartel(40), // el plan destacado, títulos de pantalla
+  seccion: cartel(26), // "Hoy también", "De qué va"
+  dia: { ...cartel(17), letterSpacing: 0.5 }, // "Viernes 13" en la agenda
+  l: { fontFamily: fuentes.media, fontSize: 19, lineHeight: 27 }, // entradilla
+  m: { fontFamily: fuentes.normal, fontSize: 17, lineHeight: 25 },
+  s: { fontFamily: fuentes.normal, fontSize: 15, lineHeight: 21 },
+  xs: { fontFamily: fuentes.normal, fontSize: 13, lineHeight: 18 },
+  rotulo: { fontFamily: fuentes.negrita, fontSize: 12, lineHeight: 16, letterSpacing: 1.3, textTransform: 'uppercase' },
+} as const;
+
+// ── Medidas ─────────────────────────────────────────────────────────────────
 export const espacio = {
   1: 4,
   2: 8,
   3: 12,
   4: 16,
+  5: 20,
   6: 24,
   8: 32,
+  10: 40,
   12: 48,
 } as const;
 
 export const radio = {
-  s: 2,
-  m: 4,
-} as const;
-
-export const borde = 2;
-
-export const texto = {
-  xl: { fontFamily: fuentes.titulo, fontSize: 30, lineHeight: 34 },
-  l: { fontFamily: fuentes.titulo, fontSize: 22, lineHeight: 27 },
-  m: { fontFamily: fuentes.normal, fontSize: 17, lineHeight: 24 },
-  s: { fontFamily: fuentes.normal, fontSize: 15, lineHeight: 21 },
-  xs: { fontFamily: fuentes.negrita, fontSize: 13, lineHeight: 17 },
+  s: 8, // carteles pequeños
+  m: 14, // campos, mapa, bloques
+  l: 18, // tarjeta destacada
+  pildora: 999, // botones, chips, pastillas
 } as const;
 
 // Accesibilidad: todo lo que se pulsa mide al menos esto (en puntos).
 export const zonaTactilMinima = 44;
-export const alturaBoton = 52;
-export const alturaPestana = 56;
+export const alturaBoton = 56;
+export const alturaPestana = 60;

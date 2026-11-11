@@ -49,7 +49,7 @@ export function instanteValencia(y: number, m: number, d: number, h: number): Da
 
 // Qué "día de noche" es: la fecha de Valencia restando 6 horas de reloj.
 // Se devuelve como medianoche UTC de esa fecha, para poder sumar días sin líos.
-function diaNocturno(ahora: Date): Date {
+export function diaNocturno(ahora: Date): Date {
   const v = enValencia(ahora);
   const relojMenos6 = new Date(Date.UTC(v.y, v.m - 1, v.d, v.h, v.min, v.s) - 6 * HORA);
   return new Date(Date.UTC(relojMenos6.getUTCFullYear(), relojMenos6.getUTCMonth(), relojMenos6.getUTCDate()));

@@ -5,7 +5,7 @@ import { idDispositivo } from './dispositivo';
 import { filtrarPlanes, type Filtro } from './filtros';
 import { planesEjemplo, buscarPlan } from './planes-ejemplo';
 import { supabase } from './supabase';
-import type { ModoEntradas, Plan } from './tipos';
+import type { ConfigCartel, ModoEntradas, Plan } from './tipos';
 
 // Una fila de la vista planes_feed (ver supabase/migrations/…_v1_esquema.sql).
 type FilaPlanFeed = {
@@ -26,6 +26,7 @@ type FilaPlanFeed = {
   modo_entradas: ModoEntradas;
   url_ticketera: string | null;
   foto_path: string | null;
+  cartel?: ConfigCartel | null;
   estado: 'publicado' | 'cancelado';
 };
 
@@ -53,6 +54,7 @@ function aPlan(fila: FilaPlanFeed): Plan {
     modoEntradas: fila.modo_entradas,
     urlTicketera: fila.url_ticketera,
     fotoUrl: urlFoto(fila.foto_path),
+    cartel: fila.cartel ?? null,
   };
 }
 

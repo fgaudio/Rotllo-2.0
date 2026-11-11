@@ -1,6 +1,6 @@
 import { Pressable, Text } from 'react-native';
 
-import { borde, espacio, fuentes, radio, zonaTactilMinima } from '@/theme/tokens';
+import { espacio, fuentes, radio, zonaTactilMinima } from '@/theme/tokens';
 import { crearEstilos } from '@/theme/useTema';
 
 type Props = {
@@ -9,8 +9,7 @@ type Props = {
   onPress: () => void;
 };
 
-// Chip de filtro o de categoría (docs/diseno.md): 44 de alto, radio 4, marco de 2 px.
-// Activo: los colores del botón principal.
+// Chip de filtro (docs/diseno.md): píldora de 44 de alto. Activo: colores invertidos.
 export function Chip({ etiqueta, activo, onPress }: Props) {
   const s = useEstilos();
   return (
@@ -25,16 +24,9 @@ export function Chip({ etiqueta, activo, onPress }: Props) {
 }
 
 const useEstilos = crearEstilos((c) => ({
-  base: {
-    minHeight: zonaTactilMinima,
-    paddingHorizontal: espacio[4],
-    borderRadius: radio.m,
-    borderWidth: borde,
-    borderColor: c.marco,
-    justifyContent: 'center',
-  },
-  activo: { backgroundColor: c.principal, borderColor: c.principal },
-  pulsado: { opacity: 0.85 },
+  base: { minHeight: zonaTactilMinima, paddingHorizontal: espacio[4] + 2, borderRadius: radio.pildora, justifyContent: 'center', backgroundColor: c.superficie },
+  activo: { backgroundColor: c.texto },
+  pulsado: { opacity: 0.8 },
   texto: { fontFamily: fuentes.media, fontSize: 15, lineHeight: 20, color: c.texto },
-  textoActivo: { color: c.sobrePrincipal },
+  textoActivo: { color: c.fondo },
 }));

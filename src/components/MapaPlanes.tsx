@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
 import type { Plan } from '@/lib/tipos';
-import { serie } from '@/theme/tokens';
+import { pop } from '@/theme/tokens';
 
 // Mapa de planes (ADR-004): Apple Maps en iPhone, Google Maps en Android.
 // En la web se usa MapaPlanes.web.tsx (una lista), porque react-native-maps no va en navegador.
@@ -24,7 +24,7 @@ export function MapaPlanes({ planes }: { planes: Plan[] }) {
           coordinate={{ latitude: plan.lat, longitude: plan.lng }}
           title={plan.titulo}
           description={`${plan.local} · ${plan.barrio}`}
-          pinColor={serie.rosa}
+          pinColor={pop.rosa}
           onCalloutPress={() => router.push({ pathname: '/p/[id]', params: { id: plan.id } })}
         />
       ))}

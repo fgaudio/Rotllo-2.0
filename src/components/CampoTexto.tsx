@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import { Text, TextInput, View, type TextInputProps } from 'react-native';
 
-import { alturaBoton, borde, espacio, fuentes, radio, texto } from '@/theme/tokens';
+import { alturaBoton, espacio, fuentes, radio, texto } from '@/theme/tokens';
 import { crearEstilos, useTema } from '@/theme/useTema';
 
 type Props = Omit<TextInputProps, 'value' | 'onChangeText' | 'style'> & {
@@ -12,9 +12,8 @@ type Props = Omit<TextInputProps, 'value' | 'onChangeText' | 'style'> & {
   conError?: boolean; // marca la caja en rojo cuando el mensaje se enseña fuera (varios campos)
 };
 
-// Campo de formulario (docs/diseno.md): etiqueta arriba, caja de 52 con marco de 2 px y,
-// si hay error, el marco y el mensaje en color de error (el mensaje se lee en voz alta).
-// Con el foco, el marco pasa al color indicador.
+// Campo de formulario (docs/diseno.md): etiqueta arriba y caja de 56. Con el foco, contorno
+// del color de los rótulos; con error, contorno y mensaje en color de error (se lee en voz alta).
 export function CampoTexto({ etiqueta, valor, onCambio, error, conError, ...resto }: Props) {
   const s = useEstilos();
   const { c } = useTema();
@@ -30,7 +29,7 @@ export function CampoTexto({ etiqueta, valor, onCambio, error, conError, ...rest
         onChangeText={onCambio}
         accessibilityLabel={etiqueta}
         accessibilityLabelledBy={id}
-        placeholderTextColor={c.textoSuave}
+        placeholderTextColor={c.textoTenue}
         style={[s.caja, enfocado && s.cajaEnfocada, error || conError ? s.cajaError : null]}
         {...resto}
         onFocus={(e) => {
@@ -53,21 +52,21 @@ export function CampoTexto({ etiqueta, valor, onCambio, error, conError, ...rest
 
 const useEstilos = crearEstilos((c) => ({
   contenedor: { gap: espacio[2] },
-  etiqueta: { ...texto.xs, color: c.texto },
+  etiqueta: { ...texto.xs, fontFamily: fuentes.media, color: c.textoSuave },
   caja: {
     minHeight: alturaBoton,
-    paddingHorizontal: espacio[3],
-    borderWidth: borde,
-    borderColor: c.marco,
+    paddingHorizontal: espacio[4],
+    borderWidth: 2,
+    borderColor: c.superficie,
     borderRadius: radio.m,
     backgroundColor: c.superficie,
     fontFamily: fuentes.normal,
     fontSize: 17,
     color: c.texto,
     outlineStyle: 'solid',
-    outlineWidth: 0, // en la web, el foco se ve con el color del marco (cajaEnfocada)
+    outlineWidth: 0, // en la web, el foco se ve con el color del contorno (cajaEnfocada)
   },
-  cajaEnfocada: { borderColor: c.indicador },
+  cajaEnfocada: { borderColor: c.rotulo },
   cajaError: { borderColor: c.error },
   error: { ...texto.s, color: c.error },
 }));

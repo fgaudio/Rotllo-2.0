@@ -1,10 +1,11 @@
 import type { Textos } from './es';
 
-// Italiano. Primera versión: conviene que la revise una persona nativa.
+// Italiano. Stesso tono dello spagnolo: informale (tu), frasi corte, diretto.
 export const it: Textos = {
   comun: {
     volver: 'Indietro',
     cargando: 'Caricamento eventi…',
+    ciudad: 'Valencia',
     error: {
       titulo: 'Ops, qualcosa è andato storto',
       texto: 'Non siamo riusciti a caricare gli eventi. Controlla la connessione e riprova.',
@@ -18,34 +19,67 @@ export const it: Textos = {
     perfil: 'Profilo',
   },
   feed: {
-    titulo: 'Che si fa?',
-    subtitulo: 'Eventi a Valencia',
+    pregunta: 'Che si fa',
+    momento: {
+      hoy: 'oggi?',
+      tarde: 'oggi pomeriggio?',
+      noche: 'stasera?',
+      finde: 'questo weekend?',
+      gratis: 'gratis?',
+    },
     filtros: 'Filtra gli eventi',
     filtro: {
+      todo: 'Tutto',
       hoy: 'Oggi',
       finde: 'Questo weekend',
       gratis: 'Gratis',
     },
-    destacado: {
-      hoy: 'Il piano di oggi',
-      proximo: 'Prossimamente',
-    },
+    hoyTambien: 'Anche oggi',
+    loQueViene: 'In arrivo',
     vacio: {
       titulo: 'Qui non c’è niente',
       texto: 'Nessun evento con questo filtro. Provane un altro.',
       boton: 'Vedi tutti',
     },
-    sinResultados: {
-      titulo: 'Niente per «{{consulta}}»',
-      texto: 'Prova con un’altra parola, un quartiere o il nome del locale.',
-      boton: 'Cancella ricerca',
+    sinPlanes: {
+      titulo: 'Ancora nessun evento',
+      texto: 'Stiamo riempiendo il cartellone. Torna tra poco.',
+      boton: 'Aggiorna',
     },
-    datosEjemplo: 'Dati di esempio finché non colleghiamo Supabase',
+    datosEjemplo: 'Dati di esempio finché non si collega Supabase',
   },
-  busqueda: {
+  cuando: {
+    hoy: 'Oggi',
+    manana: 'Domani',
+    empiezaEn: 'Inizia tra {{tiempo}}',
+    enCurso: 'È già iniziato',
+    horas: '{{h}} h',
+    minutos: '{{m}} min',
+    horasMinutos: '{{h}} h {{m}} min',
+    hasta: 'fino alle {{hora}}',
+  },
+  buscar: {
+    abrir: 'Cerca eventi',
     placeholder: 'Cerca eventi o locali',
     etiqueta: 'Cerca eventi',
     borrar: 'Cancella ricerca',
+    pista: 'Cerca per nome, locale o quartiere.',
+    sinResultados: {
+      titulo: 'Non c’è niente',
+      texto: 'Nessun evento con «{{consulta}}». Prova con un’altra parola, un quartiere o il nome del locale.',
+      boton: 'Cancella ricerca',
+    },
+  },
+  categorias: {
+    fiesta: 'Festa',
+    'musica-en-directo': 'Musica dal vivo',
+    'bar-y-tardeo': 'Bar e aperitivo',
+    gastro: 'Gastronomia',
+    cultura: 'Cultura',
+    deporte: 'Sport',
+    talleres: 'Laboratori',
+    social: 'Conoscere gente',
+    'aire-libre': 'All’aperto',
   },
   precio: {
     gratis: 'Gratis',
@@ -57,13 +91,25 @@ export const it: Textos = {
     comoLlegar: 'Come arrivare',
     comoLlegarAyuda: 'Apre l’app delle mappe',
     pillarEntrada: 'Prendi il biglietto',
-    seCompraFuera: 'Si compra sul sito del locale',
+    seCompraFuera: 'Il biglietto si compra sul sito del locale',
+    enLaWeb: 'Sul sito del locale',
     entradaLibre: 'Ingresso libero, senza prenotazione',
+    enPuerta: 'Si paga nel locale',
+    sinReserva: 'Senza prenotazione',
     edadMinima: '+{{edad}}',
     edadMinimaAyuda: 'Età minima: {{edad}} anni. Porta un documento.',
+    cartel: 'Locandina di {{titulo}}',
     compartir: 'Condividi evento',
     compartirMensaje: '{{titulo}}, su Rotllo: {{url}}',
-    foto: 'Foto di {{titulo}}',
+    enlaceCopiado: 'Link copiato',
+    guardar: 'Salva evento',
+    quitar: 'Togli dai salvati',
+    gente: {
+      titulo: 'Meglio con i tuoi',
+      texto: 'Mandalo al tuo gruppo e andateci insieme.',
+      boton: 'Condividi evento',
+    },
+    masPlanes: 'Altri eventi',
     noExiste: {
       titulo: 'Questo evento non esiste',
       texto: 'Forse è stato rimosso. Guarda altri eventi.',
@@ -75,46 +121,32 @@ export const it: Textos = {
     verPlan: 'Vedi evento',
   },
   guardados: {
+    titulo: 'Salvati',
     vacio: {
       titulo: 'Non hai ancora salvato niente',
-      texto: 'Quando salvi un evento, lo trovi qui.',
+      texto: 'Tocca il cuore di un evento e lo trovi qui.',
       boton: 'Vedi eventi',
     },
   },
   perfil: {
+    titulo: 'Profilo',
     entrar: {
       titulo: 'Entra in Rotllo',
-      texto: 'Crea il tuo account per salvare gli eventi e averli sempre a portata di mano.',
+      texto: 'Con il tuo account hai gli eventi salvati su qualsiasi telefono.',
       boton: 'Entra',
     },
     idioma: 'Lingua',
   },
-  bienvenida: {
-    saltar: 'Salta',
-    siguiente: 'Avanti',
-    empezar: 'Iniziamo',
-    paso: 'Passo {{actual}} di {{total}}',
-    uno: {
-      titulo: 'Valencia ha sempre un piano',
-      texto: 'Feste, concerti, aperitivi e sport. Stasera e nel weekend, tutto in un posto.',
-    },
-    dos: {
-      titulo: 'Arriva senza perderti',
-      texto: "Guarda dov'è e apri il percorso nella tua app di mappe con un tocco.",
-    },
-    tres: {
-      titulo: 'Prendi il biglietto',
-      texto: "Se l'evento ha biglietti, ti portiamo dritto al sito del locale.",
-    },
-  },
   entrar: {
-    titulo: 'Entra e salva i tuoi eventi',
-    texto: 'I tuoi eventi salvati, su qualsiasi telefono.',
+    lema: 'Valencia ha',
+    lemaFin: 'un piano.',
+    texto: 'Entra e tieni i tuoi eventi salvati su qualsiasi telefono.',
+    muro: 'Festa·Aperitivo·Live·Vermut·Paella·Salsa·Spiaggia·Techno·Cinema',
     apple: 'Continua con Apple',
     google: 'Continua con Google',
     email: 'Continua con email',
     sinCuenta: 'Dai prima un’occhiata',
-    mayores: 'Rotllo è solo per maggiorenni.',
+    mayores: 'Solo per maggiorenni',
     prueba: 'Schermata di prova: gli account arrivano presto',
     correo: {
       titulo: 'Qual è la tua email?',

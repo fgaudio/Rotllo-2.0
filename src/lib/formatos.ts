@@ -34,3 +34,30 @@ export function formatearPrecio(centimos: number, idioma: string): string {
     minimumFractionDigits: Number.isInteger(euros) ? 0 : 2,
   }).format(euros);
 }
+
+// "23:00"
+export function formatearHora(iso: string, idioma: string): string {
+  return new Intl.DateTimeFormat(locale(idioma), { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: ZONA }).format(new Date(iso));
+}
+
+// Los días de la agenda son "días de noche" (ver filtros.ts) y llegan como medianoche UTC:
+// por eso estos formatos van en UTC y no en hora de Valencia.
+type ParteDia = 'largo' | 'agenda' | 'corto';
+const PARTES: Record<ParteDia, Intl.DateTimeFormatOptions> = {
+  largo: { weekday: 'long', day: 'numeric', month: 'long' }, // "miércoles, 11 de noviembre"
+  agenda: { weekday: 'long', day: 'numeric' }, // "viernes 13"
+  corto: { weekday: 'short' }, // "vie"
+};
+
+export function formatearDia(dia: Date, idioma: string, parte: ParteDia): string {
+  const texto = new Intl.DateTimeFormat(locale(idioma), { ...PARTES[parte], timeZone: 'UTC' }).format(dia);
+  return texto.replace(',', '').replace('.', '');
+}
+
+// La fecha de hoy para la cabecera del feed: "miércoles 11 nov"
+export function formatearHoy(ahora: Date, idioma: string): string {
+  return new Intl.DateTimeFormat(locale(idioma), { weekday: 'long', day: 'numeric', month: 'short', timeZone: ZONA })
+    .format(ahora)
+    .replace(',', '')
+    .replace('.', '');
+}

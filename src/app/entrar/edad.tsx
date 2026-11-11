@@ -7,7 +7,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AvisoPrueba } from '@/components/AvisoPrueba';
 import { Boton } from '@/components/Boton';
 import { CampoTexto } from '@/components/CampoTexto';
-import { marcarBienvenidaVista } from '@/lib/bienvenida';
 import { comprobarNacimiento } from '@/lib/edad';
 import { espacio, texto } from '@/theme/tokens';
 import { crearEstilos, useTema } from '@/theme/useTema';
@@ -32,7 +31,6 @@ export default function EdadScreen() {
   const seguir = () => {
     const resultado = comprobarNacimiento(dia, mes, anio);
     if (resultado.estado !== 'ok') return setAviso(resultado.estado);
-    marcarBienvenidaVista();
     router.dismissAll();
     router.replace('/');
   };
@@ -75,9 +73,9 @@ export default function EdadScreen() {
 
 const useEstilos = crearEstilos((c) => ({
   pantalla: { flex: 1, backgroundColor: c.fondo },
-  cuerpo: { padding: espacio[4], gap: espacio[6] },
+  cuerpo: { paddingHorizontal: espacio[4], paddingTop: espacio[2], paddingBottom: espacio[4], gap: espacio[6] },
   cabecera: { gap: espacio[2] },
-  titulo: { ...texto.xl, color: c.texto },
+  titulo: { ...texto.titulo, color: c.texto },
   texto: { ...texto.m, color: c.textoSuave },
   fila: { flexDirection: 'row', gap: espacio[3] },
   corto: { flex: 1 },

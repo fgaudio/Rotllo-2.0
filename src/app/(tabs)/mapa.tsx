@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MapaPlanes } from '@/components/MapaPlanes';
 import { usePlanes } from '@/lib/usePlanes';
@@ -8,9 +8,9 @@ export default function MapaScreen() {
   const { datos } = usePlanes();
   const s = useEstilos();
   return (
-    <View style={s.pantalla}>
+    <SafeAreaView style={s.pantalla} edges={['top']}>
       <MapaPlanes planes={datos} />
-    </View>
+    </SafeAreaView>
   );
 }
 

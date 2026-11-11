@@ -111,9 +111,9 @@ export default function EmailScreen() {
 
 const useEstilos = crearEstilos((c) => ({
   pantalla: { flex: 1, backgroundColor: c.fondo },
-  cuerpo: { padding: espacio[4], gap: espacio[6] },
+  cuerpo: { paddingHorizontal: espacio[4], paddingTop: espacio[2], paddingBottom: espacio[4], gap: espacio[6] },
   cabecera: { gap: espacio[2] },
-  titulo: { ...texto.xl, color: c.texto },
+  titulo: { ...texto.titulo, color: c.texto },
   texto: { ...texto.m, color: c.textoSuave },
   abajo: { padding: espacio[4], gap: espacio[2] },
 }));
