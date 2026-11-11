@@ -257,6 +257,7 @@ Las traducciones al inglés y al italiano son una primera propuesta: conviene qu
 | `url_ticketera` | text | Si `modo_entradas = enlace_externo`. |
 | `admite_devoluciones` | bool | **v2 · entradas.** Por defecto `false`. |
 | `devoluciones_hasta_horas` | int | **v2 · entradas.** Por ejemplo, `24`: se puede devolver hasta 24 h antes de empezar. Solo si `admite_devoluciones`. |
+| `cartel` | jsonb, opcional | Cómo quiere el local su cartel cuando no sube foto ni flyer: `{estilo, color, texto}`. `estilo` es `cinta`, `inicial` o `serie`; `color`, uno de la lista cerrada de la app; `texto`, hasta 40 letras (si falta, el título). Lo que falte lo decide la app. Ver `docs/diseno.md`. |
 | `estado` | enum `borrador`/`publicado`/`cancelado`/`finalizado` | Ver casos límite. |
 | `motivo_cancelacion` | text | |
 | `publicado_en`, `cancelado_en` | timestamptz | |
