@@ -1,6 +1,8 @@
 # Propuesta de rediseño: «Cartelera»
 
-**Estado:** propuesta, pendiente de aprobar. No se ha tocado la app.
+**Estado:** aprobada el 11 de noviembre de 2026 y aplicada a la app. La guía vigente es `docs/diseno.md`.
+
+**Cambios al aprobarla:** el cartel lo puede personalizar el local (estilo, color y texto, o su propio flyer); no hay pantalla de bienvenida, la app se abre directamente en los planes; la búsqueda es un icono.
 **Fecha:** 11 de noviembre de 2026.
 **Previsualización:** `prototipos/rediseno/` (abre `index.html` o mira las tres láminas PNG).
 

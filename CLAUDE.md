@@ -44,7 +44,7 @@ Decidido en la Fase 1. El porqué de cada decisión está en `docs/adr/`.
 
 ```
 src/app/        Pantallas y rutas (Expo Router). Cada archivo es una URL: src/app/p/[id].tsx = rotllo.app/p/123.
-src/components/ Componentes reutilizables (Boton, Chip, TarjetaPlan...). Un archivo .web.tsx es la versión para navegador.
+src/components/ Componentes reutilizables (Boton, Chip, Cartel, FilaPlan...). Un archivo .web.tsx es la versión para navegador.
 src/lib/        Conexiones (supabase.ts), tipos, formatos, filtros y mapas.
 src/i18n/       Textos: es.ts (principal), en.ts, it.ts.
 src/theme/      Tokens de diseño (colores, espacios, tipografía). Ningún color o medida fuera de aquí.
