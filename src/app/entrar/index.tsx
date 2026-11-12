@@ -1,6 +1,6 @@
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Platform, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
@@ -10,6 +10,9 @@ import { BotonRedondo } from '@/components/BotonRedondo';
 import { Cartel } from '@/components/Cartel';
 import { Marca } from '@/components/Marca';
 import { ESTILOS_CARTEL } from '@/lib/cartel';
+import { volverOInicio } from '@/lib/navegar';
+import { siguientePaso, useSesion } from '@/lib/sesion';
+import { supabaseConfigurado } from '@/lib/supabase';
 import { coloresCartel, espacio, pop, temas, texto, type NombreColorCartel } from '@/theme/tokens';
 import { TemaFijo } from '@/theme/useTema';
 
@@ -18,21 +21,21 @@ const COLORES = Object.keys(coloresCartel) as NombreColorCartel[];
 const ANCHO_CARTEL = 172;
 const ALTO_CARTEL = 228;
 
-function salir() {
-  if (router.canGoBack()) router.back();
-  else router.replace('/');
-}
-
-// Entrar (docs/diseno.md): un muro de carteles y, debajo, Apple (solo en iPhone), Google o email.
+// Entrar (docs/diseno.md): un muro de carteles y el botón para entrar con el email.
 // No es obligatorio: la app se abre en los planes y aquí se llega desde Perfil.
-// El inicio de sesión de verdad llega con el módulo 1 (Supabase Auth); de momento Apple y Google
-// pasan directo a la fecha de nacimiento, que es lo que verá quien entre por primera vez.
+// Apple y Google se añadirán cuando existan sus cuentas de desarrollador; hasta entonces
+// no se enseñan botones que no funcionan.
 export default function EntrarScreen() {
   const { t } = useTranslation();
   const { width, height } = useWindowDimensions();
+  const paso = siguientePaso(useSesion());
   const palabras = t('entrar.muro').split('·');
   const columnas = [0, 1, 2].map((col) => palabras.filter((_, i) => i % 3 === col));
   const bajo = height < 700; // en móviles pequeños, el lema va más pequeño y sin la frase de apoyo
+
+  // Quien ya ha entrado no tiene nada que hacer aquí.
+  if (paso === 'fecha-nacimiento') return <Redirect href="/entrar/edad" />;
+  if (paso === 'listo') return <Redirect href="/perfil" />;
 
   return (
     <TemaFijo modo="oscuro">
@@ -62,9 +65,9 @@ export default function EntrarScreen() {
         <Svg width={width} height={height} style={StyleSheet.absoluteFill} pointerEvents="none">
           <Defs>
             <LinearGradient id="velo" x1={0} y1={0} x2={0} y2={1}>
-              <Stop offset={0.14} stopColor={c.fondo} stopOpacity={0} />
-              <Stop offset={0.38} stopColor={c.fondo} stopOpacity={0.93} />
-              <Stop offset={0.46} stopColor={c.fondo} stopOpacity={1} />
+              <Stop offset={0.24} stopColor={c.fondo} stopOpacity={0} />
+              <Stop offset={0.5} stopColor={c.fondo} stopOpacity={0.93} />
+              <Stop offset={0.58} stopColor={c.fondo} stopOpacity={1} />
             </LinearGradient>
           </Defs>
           <Rect width={width} height={height} fill="url(#velo)" />
@@ -72,7 +75,7 @@ export default function EntrarScreen() {
 
         <SafeAreaView style={estilos.encima}>
           <View style={estilos.arriba}>
-            <BotonRedondo icono="close" etiqueta={t('comun.volver')} variante="cristal" onPress={salir} />
+            <BotonRedondo icono="close" etiqueta={t('comun.volver')} variante="cristal" onPress={volverOInicio} />
           </View>
           <View style={estilos.abajo}>
             <Marca tamano={24} color={pop.papel} />
@@ -81,19 +84,10 @@ export default function EntrarScreen() {
             </Text>
             {bajo ? null : <Text style={estilos.texto}>{t('entrar.texto')}</Text>}
             <View style={estilos.botones}>
-              <AvisoPrueba texto={t('entrar.prueba')} />
-              {Platform.OS === 'android' ? null : (
-                <Boton titulo={t('entrar.apple')} icono="logo-apple" variante="claro" onPress={() => router.push('/entrar/edad')} />
-              )}
-              <Boton
-                titulo={t('entrar.google')}
-                icono="logo-google"
-                variante={Platform.OS === 'android' ? 'claro' : 'superficie'}
-                onPress={() => router.push('/entrar/edad')}
-              />
-              <Boton titulo={t('entrar.email')} icono="mail-outline" variante="linea" onPress={() => router.push('/entrar/email')} />
+              {supabaseConfigurado ? null : <AvisoPrueba texto={t('entrar.sinServicio')} />}
+              <Boton titulo={t('entrar.email')} icono="mail-outline" desactivado={!supabaseConfigurado} onPress={() => router.push('/entrar/email')} />
             </View>
-            <Boton titulo={t('entrar.sinCuenta')} variante="texto" onPress={salir} />
+            <Boton titulo={t('entrar.sinCuenta')} variante="texto" onPress={volverOInicio} />
             <Text style={estilos.legal}>{t('entrar.mayores')}</Text>
           </View>
         </SafeAreaView>
@@ -113,6 +107,6 @@ const estilos = StyleSheet.create({
   lemaBajo: { fontSize: 42, lineHeight: 46 },
   lemaFin: { color: pop.amarillo },
   texto: { ...texto.m, color: c.textoSuave, marginTop: espacio[2] },
-  botones: { gap: espacio[2] + 2, marginTop: espacio[5], marginBottom: espacio[1] },
+  botones: { gap: espacio[2] + 2, marginTop: espacio[6], marginBottom: espacio[1] },
   legal: { ...texto.xs, color: c.textoTenue, textAlign: 'center' },
 });

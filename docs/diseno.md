@@ -91,7 +91,7 @@ Todos los carteles generados llevan una **trama de puntos** que se desvanece en 
 |---|---|---|
 | **Logo** (provisional) | `Marca` | «ROTLL» en Anton y un círculo en lugar de la última O. El círculo es el corro de gente que da nombre a la app |
 | **Cartel** | `Cartel` | Ver arriba |
-| **Botón** | `Boton` | Píldora de 56. `primario` (uno por pantalla), `superficie`, `linea`, `texto`; `claro` y `tinta` para ir encima de un color |
+| **Botón** | `Boton` | Píldora de 56. `primario` (uno por pantalla), `superficie`, `linea`, `texto`; `claro` y `tinta` para ir encima de un color; `peligro` (contorno y texto en `error`) para lo que no se puede deshacer. Mientras se envía algo enseña una rueda y no deja pulsar |
 | **Botón redondo** | `BotonRedondo` | Icono en un círculo de 44. `cristal` va encima de un cartel |
 | **Guardar** | `BotonGuardar` | El corazón. Guarda el plan en el móvil, sin cuenta. Lleno y en `vivo` si está guardado |
 | **Chip** | `Chip` | Píldora de 44. Activo: colores invertidos |
@@ -117,8 +117,8 @@ Al pulsar, botones y chips bajan su opacidad y encogen un 2 %.
 | **Búsqueda** | `/buscar` | Se abre con la lupa. Por título, local o barrio, sin tildes ni mayúsculas |
 | **Ficha** | `/p/<id>` | Cartel a todo el ancho; categoría y rótulo vivo; título; cuándo, dónde, cuánto y edad; «De qué va»; bloque «Mejor con tu gente»; «Dónde es» con mapa; «Más planes». Arriba, volver, compartir y guardar. Abajo, fijo, el precio y la acción principal |
 | **Guardados** | `/guardados` | Los planes con corazón |
-| **Perfil** | `/perfil` | Entrar e idioma |
-| **Entrar** | `/entrar` | Muro de carteles, «Valencia tiene plan.» y Apple, Google o email. Opcional: se llega desde Perfil |
+| **Perfil** | `/perfil` | Sin sesión: entrar. Con sesión: el email, cerrar sesión y borrar cuenta (con confirmación en la misma tarjeta). Y el idioma |
+| **Entrar** | `/entrar` | Muro de carteles, «Valencia tiene plan.» y «Seguir con email». Opcional: se llega desde Perfil. Apple y Google, cuando existan sus cuentas |
 | **Email y fecha de nacimiento** | `/entrar/email`, `/entrar/edad` | Código de 6 cifras; día, mes y año en tres campos |
 
 **La acción principal de la ficha** depende del plan: «Pillar entrada» si tiene ticketera; «Cómo llegar» si no.

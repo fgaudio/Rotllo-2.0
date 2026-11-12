@@ -21,7 +21,7 @@
 | Qué hace falta | Estado en Rotllo | Abogado |
 |---|---|---|
 | **Edad mínima de 18**, declarada al registrarse | ✅ La base de datos rechaza a los menores y la fecha solo se pone una vez | ✅ Confirmar que basta con la declaración más el DNI en la puerta, sobre todo en planes con alcohol |
-| **Borrar la cuenta desde la app**: lo exigen Apple (App Review Guideline 5.1.1) y Google Play (también con un enlace web), además del derecho de supresión del RGPD | Por hacer en el módulo 1. Hay que anonimizar el perfil y borrar favoritos, reportes y fotos | — |
+| **Borrar la cuenta desde la app**: lo exigen Apple (App Review Guideline 5.1.1) y Google Play (también con un enlace web), además del derecho de supresión del RGPD | Hecho en la app (Perfil → Borrar cuenta), ver `docs/login.md`. Falta el enlace web que pide Google Play y borrar las fotos de perfil cuando existan | — |
 | **Permiso de ubicación**: pedirlo solo al usar "Cerca de mí" y explicar para qué | Por hacer en el módulo 4. Texto con el tono Rotllo, por ejemplo "Para enseñarte lo que tienes cerca. No guardamos dónde estás." | — |
 | **Notificaciones push**: permiso del sistema y preferencias por tipo | v1.1 (ADR-006) | — |
 
