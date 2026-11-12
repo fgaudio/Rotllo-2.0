@@ -151,6 +151,18 @@ A estas cifras aún hay que restarles los costes fijos (35-95 $ al mes) y los im
 - Frente a Fever y Wegow, la tarifa A está a la par. Para compras en grupo hay una alternativa por compra (opción B en `docs/competencia.md`) si las ventas lo piden.
 - Como la tarifa sale de `tarifas_gestion`, se puede cambiar sin tocar código.
 
+## Camino de las actividades de pago (decidido el 12 de noviembre de 2026)
+
+No se venden entradas dentro de la app hasta que los locales lo pidan. Se llega en tres pasos:
+
+| Paso | Qué ve la persona | Qué gana el local | Estado |
+|---|---|---|---|
+| **1. Enlace o pago en el local** | «Pillar entrada» abre la web del local, o pone «Se paga en el local» | Rotllo cuenta los clics: «te mandé 140 personas este mes» | Hecho (v1) |
+| **2. «Me apunto»** | Un botón para apuntarse, sin pagar. El plan enseña «32 apuntados» | Una lista de quién viene | Siguiente, después del login y del panel de locales |
+| **3. Venta propia** | Compra dentro de la app, con QR | Cobro directo con Stripe Connect y la tarifa A | Cuando varios locales lo pidan (v2) |
+
+**Por qué «Me apunto» antes que vender:** da a la gente un motivo real para crear cuenta, enseña que el plan tiene tirón y da al local algo útil, sin pagos, facturas ni devoluciones. Necesita una tabla nueva (`apuntados`), que se diseñará en su módulo.
+
 ## Consecuencias
 
 - **Más fácil:** lanzar la v1 ya, sin tocar dinero. Con Connect, la v2 no nos convierte en entidad de pago.

@@ -1,4 +1,4 @@
--- Tests del cartel del plan (migración 20261111220000_v1_cartel_del_plan).
+-- Tests del cartel del plan (migración 20261112174225_v1_cartel_del_plan).
 
 begin;
 create extension if not exists pgtap with schema extensions;

@@ -23,6 +23,7 @@ App de planes y actividades en Valencia para gente joven, estudiantes y gente so
 - **Promoción en Instagram:** cada plan genera una imagen/enlace para compartir en stories.
 
 ### Después (v2 y siguientes)
+- **«Me apunto»:** apuntarse a un plan sin pagar; el plan enseña cuántos van y el local ve la lista. Va antes que la venta de entradas (ADR-003).
 - **Entradas propias:** compra dentro de la app con QR para mostrar en la puerta; el panel de locales muestra las entradas vendidas.
 - **Jam:** chat en tiempo real por plan o por zona, con votaciones (ej. "¿A dónde vamos el viernes?").
 - **Notificaciones.**
