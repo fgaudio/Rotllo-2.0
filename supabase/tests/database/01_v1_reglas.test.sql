@@ -269,8 +269,11 @@ select is(
   (select array_agg(p.proname::text order by p.proname)
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and p.prosecdef),
-  array['crear_local', 'registrar_clic'],
-  'En el esquema público solo quedan las dos funciones que usa la app');
+  array['borrar_mi_cuenta', 'crear_local', 'registrar_clic'],
+  'En el esquema público solo quedan las tres funciones que usa la app');
+select ok(
+  not has_function_privilege('anon', 'public.borrar_mi_cuenta()', 'execute'),
+  'Sin cuenta no se puede llamar a borrar_mi_cuenta');
 select ok(
   not has_function_privilege('anon',
     'public.crear_local(text, text, public.tipo_local, text, double precision, double precision, text, text, text, text, text, integer)',
