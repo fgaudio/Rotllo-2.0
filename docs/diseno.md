@@ -96,6 +96,7 @@ Todos los carteles generados llevan una **trama de puntos** que se desvanece en 
 | **Guardar** | `BotonGuardar` | El corazón. Guarda el plan en el móvil, sin cuenta. Lleno y en `vivo` si está guardado |
 | **Chip** | `Chip` | Píldora de 44. Activo: colores invertidos |
 | **Pastillas** | `Pastilla` | Precio (invertida), «Gratis» (turquesa), «+21» y categoría (con contorno) |
+| **Etiqueta de estado** | `EtiquetaEstado` | Punto de color y el estado escrito: «En revisión» (color de rótulo), «Verificado» (turquesa), «No aprobado» (color de error). Nunca solo el color |
 | **Rótulo vivo** | `RotuloVivo` | Punto encendido + «EMPIEZA EN 2 H» o «YA HA EMPEZADO». Sale si faltan menos de 6 horas |
 | **Plan destacado** | `TarjetaDestacada` | Cartel ancho y, pegado debajo, rótulo, título, sitio, precio, compartir y guardar. Se ve entero sin bajar |
 | **Tarjeta pequeña** | `TarjetaMini` | Cartel vertical de 164 × 212 con sello, para carruseles |
@@ -119,6 +120,9 @@ Al pulsar, botones y chips bajan su opacidad y encogen un 2 %.
 | **Guardados** | `/guardados` | Los planes con corazón |
 | **Perfil** | `/perfil` | Sin sesión: entrar. Con sesión: el email, cerrar sesión y borrar cuenta (con confirmación en la misma tarjeta). Y el idioma |
 | **Entrar** | `/entrar` | Muro de carteles, «Valencia tiene plan.» y «Seguir con email». Opcional: se llega desde Perfil. Apple y Google, cuando existan sus cuentas |
+| **Alta del local** | `/local/nuevo` | Formulario en una columna; la dirección se busca en el mapa antes de enviar |
+| **Mi local** | `/local` | Nombre, datos y una tarjeta con la etiqueta de estado |
+| **Locales por revisar** | `/admin/locales` | Solo para el equipo: una tarjeta por local con Rechazar y Aprobar |
 | **Email y fecha de nacimiento** | `/entrar/email`, `/entrar/edad` | Código de 6 cifras; día, mes y año en tres campos |
 
 **La acción principal de la ficha** depende del plan: «Pillar entrada» si tiene ticketera; «Cómo llegar» si no.

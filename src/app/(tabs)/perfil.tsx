@@ -7,8 +7,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Boton } from '@/components/Boton';
 import { Chip } from '@/components/Chip';
 import { idiomasDisponibles } from '@/i18n';
+import { EtiquetaEstado } from '@/components/EtiquetaEstado';
 import { borrarCuenta, cerrarSesion } from '@/lib/auth';
+import { esAdmin, obtenerLocalesPorRevisar, obtenerMisLocales, type Local } from '@/lib/locales';
 import { siguientePaso, useSesion } from '@/lib/sesion';
+import { useCarga } from '@/lib/usePlanes';
 import { espacio, radio, texto } from '@/theme/tokens';
 import { crearEstilos } from '@/theme/useTema';
 
@@ -47,6 +50,7 @@ export default function PerfilScreen() {
                 <Boton titulo={t('perfil.completar.boton')} onPress={() => router.push('/entrar/edad')} />
               </View>
             ) : null}
+            {paso === 'listo' ? <ZonaLocal /> : null}
             <Cuenta email={sesion.email} />
           </>
         ) : null}
@@ -61,6 +65,57 @@ export default function PerfilScreen() {
         </View>
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+type DatosLocal = { locales: Local[]; porRevisar: number | null };
+const SIN_DATOS: DatosLocal = { locales: [], porRevisar: null };
+const TONO = { verificado: 'bien', pendiente: 'espera', rechazado: 'mal', suspendido: 'mal' } as const;
+
+// Si algo de esto falla (sin conexión), simplemente no sale: no es imprescindible en Perfil.
+async function cargarZonaLocal(): Promise<DatosLocal> {
+  const [locales, admin] = await Promise.all([obtenerMisLocales(), esAdmin()]);
+  return { locales, porRevisar: admin ? (await obtenerLocalesPorRevisar()).length : null };
+}
+
+// Para quien tiene cuenta completa: su local (o la invitación a darlo de alta) y, para el
+// equipo de Rotllo, los locales por revisar.
+function ZonaLocal() {
+  const { t } = useTranslation();
+  const s = useEstilos();
+  const { datos, cargando, error } = useCarga(cargarZonaLocal, SIN_DATOS);
+  if (cargando || error) return null;
+  const local = datos.locales[0];
+  return (
+    <>
+      {datos.porRevisar !== null ? (
+        <View style={s.tarjeta}>
+          <Text style={s.tarjetaTitulo} accessibilityRole="header">
+            {t('admin.porRevisar')}
+          </Text>
+          <Text style={s.tarjetaTexto}>{datos.porRevisar > 0 ? t('admin.porRevisarN', { n: datos.porRevisar }) : t('admin.vacio.texto')}</Text>
+          <Boton titulo={t('admin.porRevisar')} variante="superficie" onPress={() => router.push('/admin/locales')} />
+        </View>
+      ) : null}
+      {local ? (
+        <View style={s.tarjeta}>
+          <Text style={s.rotulo}>{t('local.miLocal')}</Text>
+          <Text style={s.tarjetaTitulo} accessibilityRole="header">
+            {local.nombre}
+          </Text>
+          <EtiquetaEstado texto={t(`local.estado.${local.estado}`)} tono={TONO[local.estado]} />
+          <Boton titulo={t('local.ver')} variante="superficie" onPress={() => router.push('/local')} />
+        </View>
+      ) : (
+        <View style={s.tarjeta}>
+          <Text style={s.tarjetaTitulo} accessibilityRole="header">
+            {t('local.tengo.titulo')}
+          </Text>
+          <Text style={s.tarjetaTexto}>{t('local.tengo.texto')}</Text>
+          <Boton titulo={t('local.tengo.boton')} variante="superficie" onPress={() => router.push('/local/nuevo')} />
+        </View>
+      )}
+    </>
   );
 }
 

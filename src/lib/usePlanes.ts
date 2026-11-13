@@ -59,7 +59,9 @@ export function usePlanes(filtro: Filtro | null = null) {
 // ── Un plan (ficha) ──────────────────────────────────────────────────────────
 type Respuesta<T> = { cargar: () => Promise<T>; intento: number; datos?: T; error?: boolean };
 
-function useCarga<T>(cargar: () => Promise<T>, inicial: T) {
+// Hook genérico: llama a `cargar` y dice si está cargando o si ha fallado. `cargar` tiene que
+// ser siempre la misma función (useCallback o una función de fuera del componente).
+export function useCarga<T>(cargar: () => Promise<T>, inicial: T) {
   const [intento, setIntento] = useState(0);
   const [respuesta, setRespuesta] = useState<Respuesta<T> | null>(null);
 

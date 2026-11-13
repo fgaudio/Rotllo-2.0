@@ -14,7 +14,8 @@ import { useTema } from '@/theme/useTema';
 // La pantalla de inicio se queda puesta hasta que cargan las fuentes (Anton + Inter).
 SplashScreen.preventAutoHideAsync();
 
-// Raíz de la app: pestañas, ficha del plan (rotllo.app/p/<id>), búsqueda y entrar.
+// Raíz de la app: pestañas, ficha del plan (rotllo.app/p/<id>), búsqueda, entrar, el panel
+// del local y la revisión de locales (equipo de Rotllo).
 // Se abre directamente en los planes, sin bienvenida ni registro. Sigue el modo del móvil.
 export default function RootLayout() {
   const { t } = useTranslation();
@@ -47,6 +48,9 @@ export default function RootLayout() {
         <Stack.Screen name="entrar/index" options={{ headerShown: false }} />
         <Stack.Screen name="entrar/email" />
         <Stack.Screen name="entrar/edad" />
+        <Stack.Screen name="local/index" />
+        <Stack.Screen name="local/nuevo" />
+        <Stack.Screen name="admin/locales" />
       </Stack>
     </>
   );
