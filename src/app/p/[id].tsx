@@ -12,6 +12,7 @@ import { BotonGuardar } from '@/components/BotonGuardar';
 import { BotonRedondo } from '@/components/BotonRedondo';
 import { Cargando } from '@/components/Cargando';
 import { Cartel } from '@/components/Cartel';
+import { ElegirMapa } from '@/components/ElegirMapa';
 import { EstadoVacio } from '@/components/EstadoVacio';
 import { MapaMini } from '@/components/MapaMini';
 import { PastillaLinea, useTextoPrecio } from '@/components/Pastilla';
@@ -22,7 +23,6 @@ import { diaDe } from '@/lib/agenda';
 import { nombreCategoria } from '@/lib/categorias';
 import { enlacePlan } from '@/lib/enlaces';
 import { formatearHora } from '@/lib/formatos';
-import { abrirComoLlegar } from '@/lib/mapas';
 import { enlaceEntradas } from '@/lib/planes';
 import { textosDeFecha } from '@/lib/textosPlan';
 import type { Plan } from '@/lib/tipos';
@@ -78,6 +78,8 @@ function Ficha({ plan }: { plan: Plan }) {
   const margenes = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const [barraSolida, setBarraSolida] = useState(false);
+  const [eligiendoMapa, setEligiendoMapa] = useState(false);
+  const comoLlegar = () => setEligiendoMapa(true);
   const otros = usePlanes(null).datos.filter((otro) => otro.id !== plan.id).slice(0, 6);
 
   const ancho = Math.min(width, ANCHO_MAXIMO);
@@ -136,7 +138,7 @@ function Ficha({ plan }: { plan: Plan }) {
                 icono="location-outline"
                 titulo={plan.local}
                 texto={[plan.direccion, plan.barrio].filter(Boolean).join(' · ')}
-                onPress={() => abrirComoLlegar(plan)}
+                onPress={comoLlegar}
                 ayuda={t('plan.comoLlegarAyuda')}
               />
               <Dato icono="ticket-outline" titulo={precio ?? comoSeEntraCorto} texto={comoSeEntra} />
@@ -170,9 +172,7 @@ function Ficha({ plan }: { plan: Plan }) {
                 <Text style={s.sitioNombre}>{plan.local}</Text>
                 <Text style={s.sitioDireccion}>{plan.direccion}</Text>
               </View>
-              {tieneTicketera ? (
-                <Boton titulo={t('plan.comoLlegar')} ayuda={t('plan.comoLlegarAyuda')} icono="navigate-outline" variante="superficie" compacto onPress={() => abrirComoLlegar(plan)} />
-              ) : null}
+              <Boton titulo={t('plan.comoLlegar')} ayuda={t('plan.comoLlegarAyuda')} icono="navigate-outline" variante="superficie" compacto onPress={comoLlegar} />
             </View>
           </Bloque>
 
@@ -205,6 +205,8 @@ function Ficha({ plan }: { plan: Plan }) {
         <BotonGuardar planId={plan.id} variante={barraSolida ? 'plano' : 'cristal'} />
       </View>
 
+      <ElegirMapa visible={eligiendoMapa} destino={plan} alCerrar={() => setEligiendoMapa(false)} />
+
       {/* Abajo, siempre a mano: el precio y la acción principal. */}
       <View style={[s.barra, { paddingBottom: Math.max(margenes.bottom, espacio[3]), paddingHorizontal: lateral + espacio[4] }]}>
         <View style={s.barraPrecio}>
@@ -220,7 +222,7 @@ function Ficha({ plan }: { plan: Plan }) {
         {tieneTicketera ? (
           <Boton titulo={t('plan.pillarEntrada')} ayuda={t('plan.seCompraFuera')} icono="open-outline" iconoAlFinal onPress={() => abrirEntradas(plan)} />
         ) : (
-          <Boton titulo={t('plan.comoLlegar')} ayuda={t('plan.comoLlegarAyuda')} icono="navigate-outline" onPress={() => abrirComoLlegar(plan)} />
+          <Boton titulo={t('plan.comoLlegar')} ayuda={t('plan.comoLlegarAyuda')} icono="navigate-outline" onPress={comoLlegar} />
         )}
       </View>
     </View>

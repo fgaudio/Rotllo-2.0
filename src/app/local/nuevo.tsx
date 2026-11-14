@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Boton } from '@/components/Boton';
 import { CampoTexto } from '@/components/CampoTexto';
 import { Chip } from '@/components/Chip';
+import { ElegirMapa } from '@/components/ElegirMapa';
 import { EstadoVacio } from '@/components/EstadoVacio';
 import { MapaMini } from '@/components/MapaMini';
 import { buscarDireccion } from '@/lib/geocodificar';
@@ -34,6 +35,7 @@ export default function NuevoLocalScreen() {
   const emailContacto = emailEscrito ?? emailCuenta; // por defecto, el de la cuenta
 
   const [buscando, setBuscando] = useState(false);
+  const [comprobando, setComprobando] = useState(false);
   const [errorDireccion, setErrorDireccion] = useState<string | null>(null);
   const [mal, setMal] = useState<CampoAlta[]>([]);
   const [enviando, setEnviando] = useState(false);
@@ -151,6 +153,9 @@ export default function NuevoLocalScreen() {
                   {t('local.alta.encontrada', { direccion })}
                 </Text>
                 <MapaMini lat={punto.lat} lng={punto.lng} etiqueta={direccion} />
+                <View style={s.comprobar}>
+                  <Boton titulo={t('mapas.comprobar')} ayuda={t('plan.comoLlegarAyuda')} icono="navigate-outline" variante="superficie" compacto onPress={() => setComprobando(true)} />
+                </View>
               </>
             ) : (
               <Boton titulo={t('local.alta.buscar')} icono="search" variante="superficie" compacto cargando={buscando} onPress={buscar} />
@@ -198,6 +203,7 @@ export default function NuevoLocalScreen() {
         <View style={s.abajo}>
           <Boton titulo={t('local.alta.enviar')} cargando={enviando} onPress={enviar} />
         </View>
+        {punto ? <ElegirMapa visible={comprobando} destino={{ ...punto, direccion }} alCerrar={() => setComprobando(false)} /> : null}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -213,6 +219,7 @@ const useEstilos = crearEstilos((c) => ({
   etiqueta: { ...texto.xs, fontFamily: texto.l.fontFamily, color: c.textoSuave },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: espacio[2] },
   encontrada: { ...texto.s, color: c.texto },
+  comprobar: { alignSelf: 'flex-start' },
   ayuda: { ...texto.xs, color: c.textoTenue, marginTop: -espacio[1] },
   error: { ...texto.s, color: c.error },
   abajo: { padding: espacio[4], width: '100%', maxWidth: 560, alignSelf: 'center' },

@@ -103,6 +103,7 @@ Todos los carteles generados llevan una **trama de puntos** que se desvanece en 
 | **Fila de plan** | `FilaPlan` | Cartel de 84, título, hora y sitio, precio y corazón. Agenda, búsqueda y guardados |
 | **Campo de texto** | `CampoTexto` | Etiqueta arriba y caja de 56. Foco: contorno en `rotulo`. Error: contorno y mensaje en `error` |
 | **Barra de búsqueda** | `BarraBusqueda` | Píldora de 48 con lupa y botón de borrar |
+| **Elegir mapa** | `ElegirMapa` | Hoja que sube desde abajo con dos opciones de 56 de alto, Google Maps y Apple Maps, y «Cancelar». Sale al tocar «Cómo llegar» o «Ver en el mapa» |
 | **Estado vacío** | `EstadoVacio` | Círculo de marca, qué pasa y qué hacer ahora |
 | **Cargando** | `Cargando` | La silueta de lo que va a salir, en vez de una rueda |
 | **Aviso de prueba** | `AvisoPrueba` | Contorno discontinuo: la pantalla aún no hace lo que dice. Se quita cuando funcione |

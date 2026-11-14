@@ -75,3 +75,18 @@ En el MVP, el mapa es una herramienta, no la seña de identidad. Lo que diferenc
 2. [ ] Crear el componente `BotonComoLlegar` con los enlaces de Apple y Google.
 3. [ ] Google Places Autocomplete solo en el panel de locales, con alertas de presupuesto en Google Cloud.
 4. [ ] Agrupar los puntos cercanos del mapa cuando haya muchos planes (más adelante).
+
+## Actualización del 14 de noviembre de 2026: elegir Google Maps o Apple Maps
+
+«Cómo llegar» y «Ver en el mapa» abren una hoja con las dos opciones, en cualquier móvil. Antes se abría una sola según el móvil (Apple Maps en iPhone, Google Maps en Android).
+
+| App | Enlace | Qué pasa al tocarlo |
+|---|---|---|
+| **Google Maps** | `https://www.google.com/maps/dir/?api=1&destination=<lat>,<lng>` | Abre la app de Google Maps si está instalada (iPhone o Android); si no, el navegador |
+| **Apple Maps** | `https://maps.apple.com/?daddr=<lat>,<lng>` | En iPhone abre la app Mapas. En Android o en un ordenador abre Apple Maps en el navegador |
+
+- **Formatos oficiales:** son los que documentan Google («Maps URLs») y Apple («Map Links»). El de Apple es el clásico, que vale para cualquier versión de iOS; la propia Apple lo redirige a su formato nuevo (`/directions?destination=`).
+- **El destino es el punto exacto** (latitud y longitud), no el texto de la dirección: así las dos apps llevan al mismo sitio. Si un plan no tuviera punto, se manda la dirección escrita.
+- **No se fija el modo de viaje** (a pie, en bici, en metro): cada persona lo elige en su app.
+- **Comprobado:** los dos enlaces responden bien pidiendo como iPhone, como Android y como ordenador, y Google conserva el destino. Hay tests con los enlaces exactos (`src/lib/mapas.test.ts`).
+- **Sin comprobar:** que en un iPhone y en un Android de verdad se abra la app instalada y no el navegador. Es el comportamiento que documentan Google y Apple, pero hay que verlo en un móvil.

@@ -1,6 +1,7 @@
 // Los locales (bares, discotecas, sitios de actividades): darlos de alta, ver el mío y,
 // para el equipo de Rotllo, revisarlos. Las reglas de quién puede qué están en la base de datos.
 import { esEmailValido, limpiarEmail } from './auth';
+import { puntoDeEwkb } from './mapas';
 import { supabase } from './supabase';
 
 export const TIPOS_LOCAL = ['bar', 'discoteca', 'actividad', 'cultura', 'otro'] as const;
@@ -14,6 +15,7 @@ export type Local = {
   direccion: string;
   barrio: string | null;
   instagram: string | null;
+  punto: { lat: number; lng: number } | null; // dónde está en el mapa
   estado: EstadoLocal;
   motivoRechazo: string | null;
   rol: 'propietario' | 'editor' | 'portero';
@@ -84,10 +86,11 @@ type FilaLocal = {
   direccion: string;
   barrio: string | null;
   instagram: string | null;
+  ubicacion: string | null; // punto geográfico en formato EWKB
   estado_verificacion: EstadoLocal;
   motivo_rechazo: string | null;
 };
-const COLUMNAS = 'id, nombre, tipo, direccion, barrio, instagram, estado_verificacion, motivo_rechazo';
+const COLUMNAS = 'id, nombre, tipo, direccion, barrio, instagram, ubicacion, estado_verificacion, motivo_rechazo';
 
 async function miId(): Promise<string | null> {
   const { data } = (await supabase?.auth.getSession()) ?? { data: { session: null } };
@@ -109,6 +112,7 @@ export async function obtenerMisLocales(): Promise<Local[]> {
       direccion: l!.direccion,
       barrio: l!.barrio,
       instagram: l!.instagram,
+      punto: puntoDeEwkb(l!.ubicacion),
       estado: l!.estado_verificacion,
       motivoRechazo: l!.motivo_rechazo,
       rol,
@@ -165,7 +169,7 @@ export async function obtenerLocalesPorRevisar(): Promise<LocalPorRevisar[]> {
   type Fila = FilaLocal & { creado_en: string; locales_privado: { email_contacto: string | null } | { email_contacto: string | null }[] | null };
   return (data as unknown as Fila[]).map((l) => {
     const privado = Array.isArray(l.locales_privado) ? l.locales_privado[0] : l.locales_privado;
-    return { id: l.id, nombre: l.nombre, tipo: l.tipo, direccion: l.direccion, barrio: l.barrio, instagram: l.instagram, emailContacto: privado?.email_contacto ?? null, creadoEn: l.creado_en };
+    return { id: l.id, nombre: l.nombre, tipo: l.tipo, direccion: l.direccion, barrio: l.barrio, instagram: l.instagram, punto: puntoDeEwkb(l.ubicacion), emailContacto: privado?.email_contacto ?? null, creadoEn: l.creado_en };
   });
 }
 

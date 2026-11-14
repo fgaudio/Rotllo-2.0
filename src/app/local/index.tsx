@@ -1,9 +1,12 @@
 import { Redirect, router } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Boton } from '@/components/Boton';
 import { Cargando } from '@/components/Cargando';
+import { ElegirMapa } from '@/components/ElegirMapa';
 import { EstadoVacio } from '@/components/EstadoVacio';
 import { EtiquetaEstado } from '@/components/EtiquetaEstado';
 import { obtenerMisLocales, type EstadoLocal, type Local } from '@/lib/locales';
@@ -21,6 +24,7 @@ export default function MiLocalScreen() {
   const s = useEstilos();
   const paso = siguientePaso(useSesion());
   const { datos: locales, cargando, error, recargar } = useCarga(obtenerMisLocales, SIN_LOCALES);
+  const [enMapa, setEnMapa] = useState<Local | null>(null); // el local cuyo punto se quiere ver
 
   if (paso === 'entrar' || paso === 'fecha-nacimiento') return <Redirect href="/local/nuevo" />;
 
@@ -58,6 +62,9 @@ export default function MiLocalScreen() {
             <Text style={s.datos}>
               {[t(`local.tipo.${local.tipo}`), local.direccion, local.barrio].filter(Boolean).join(' · ')}
             </Text>
+            <View style={s.enMapa}>
+              <Boton titulo={t('mapas.verEnMapa')} ayuda={t('plan.comoLlegarAyuda')} icono="navigate-outline" variante="superficie" compacto onPress={() => setEnMapa(local)} />
+            </View>
             <View style={s.tarjeta}>
               <EtiquetaEstado texto={t(`local.estado.${local.estado}`)} tono={TONO_ESTADO[local.estado]} />
               <Text style={s.texto}>{t(`local.estadoTexto.${local.estado}`)}</Text>
@@ -66,6 +73,11 @@ export default function MiLocalScreen() {
           </View>
         ))}
       </ScrollView>
+      <ElegirMapa
+        visible={enMapa !== null}
+        destino={{ lat: enMapa?.punto?.lat ?? NaN, lng: enMapa?.punto?.lng ?? NaN, direccion: enMapa?.direccion }}
+        alCerrar={() => setEnMapa(null)}
+      />
     </SafeAreaView>
   );
 }
@@ -78,6 +90,7 @@ const useEstilos = crearEstilos((c) => ({
   rotulo: { ...texto.rotulo, color: c.textoSuave },
   titulo: { ...texto.titulo, color: c.texto },
   datos: { ...texto.s, color: c.textoSuave },
+  enMapa: { alignSelf: 'flex-start', marginTop: espacio[2] },
   tarjeta: { backgroundColor: c.superficie, borderRadius: radio.l, padding: espacio[5], gap: espacio[3], marginTop: espacio[3] },
   texto: { ...texto.m, color: c.texto },
 }));
