@@ -110,3 +110,77 @@ describe('filtros del feed (hora de Valencia, día de 06:00 a 06:00)', () => {
     expect(v.findeFin.toISOString()).toBe(instanteValencia(2030, 3, 18, 6).toISOString());
   });
 });
+
+// Mismos casos que supabase/tests/database/08_cerca_de_mi.test.sql.
+describe('«Cerca de mí»: dentro de cada día, primero lo más cercano', () => {
+  const ayuntamiento = { lat: 39.4699, lng: -0.3763 };
+  const malvarrosa = { lat: 39.478, lng: -0.325 };
+  const en = (base: Plan, lat: number, lng: number, extra: Partial<Plan> = {}): Plan => ({ ...base, lat, lng, ...extra });
+  const hastaElSabadoALaUna = instanteValencia(2030, 3, 16, 1).toISOString();
+  const cercanos = [
+    en(plan('jueves abierto', [2030, 3, 14, 23]), 39.476, -0.379, { terminaEn: hastaElSabadoALaUna }),
+    en(plan('viernes medio', [2030, 3, 15, 20]), 39.485, -0.362),
+    en(plan('viernes lejos', [2030, 3, 15, 22]), 39.478, -0.325),
+    en(plan('viernes cerca', [2030, 3, 16, 0, 30]), 39.462, -0.374),
+    en(plan('sábado gratis', [2030, 3, 16, 18], true), 39.478, -0.325, { categoria: 'musica-en-directo' }),
+    en(plan('sábado tarde', [2030, 3, 16, 19]), 39.47, -0.376),
+    en(plan('sábado noche', [2030, 3, 16, 23]), 39.47, -0.376),
+  ];
+  const viernes2330 = enValencia(15, 23, 30);
+
+  test('primero el día y, dentro del día, lo más cercano', () => {
+    expect(titulos(filtrarPlanes(cercanos, null, viernes2330, null, ayuntamiento))).toEqual([
+      'jueves abierto',
+      'viernes cerca',
+      'viernes medio',
+      'viernes lejos',
+      'sábado tarde',
+      'sábado noche',
+      'sábado gratis',
+    ]);
+  });
+
+  test('sin «Cerca de mí», sigue por orden de fecha', () => {
+    expect(titulos(filtrarPlanes(cercanos, null, viernes2330))).toEqual([
+      'jueves abierto',
+      'viernes medio',
+      'viernes lejos',
+      'viernes cerca',
+      'sábado gratis',
+      'sábado tarde',
+      'sábado noche',
+    ]);
+  });
+
+  test('desde otro sitio, el orden dentro de cada día cambia', () => {
+    expect(titulos(filtrarPlanes(cercanos, null, viernes2330, null, malvarrosa))).toEqual([
+      'viernes lejos',
+      'viernes medio',
+      'viernes cerca',
+      'jueves abierto',
+      'sábado gratis',
+      'sábado tarde',
+      'sábado noche',
+    ]);
+  });
+
+  test('con los filtros de siempre', () => {
+    expect(titulos(filtrarPlanes(cercanos, 'hoy', viernes2330, null, ayuntamiento))).toEqual(['jueves abierto', 'viernes cerca', 'viernes medio', 'viernes lejos']);
+    expect(titulos(filtrarPlanes(cercanos, 'gratis', viernes2330, null, ayuntamiento))).toEqual(['sábado gratis']);
+    expect(titulos(filtrarPlanes(cercanos, 'finde', viernes2330, 'musica-en-directo', ayuntamiento))).toEqual(['sábado gratis']);
+  });
+
+  test('mismo día y mismo sitio: por hora', () => {
+    expect(titulos(filtrarPlanes(cercanos, null, enValencia(16, 12), null, ayuntamiento))).toEqual(['sábado tarde', 'sábado noche', 'sábado gratis']);
+  });
+
+  test('una posición que no existe no devuelve nada', () => {
+    expect(filtrarPlanes(cercanos, null, viernes2330, null, { lat: 91, lng: -0.3763 })).toEqual([]);
+    expect(filtrarPlanes(cercanos, null, viernes2330, null, { lat: 39.4699, lng: 181 })).toEqual([]);
+    expect(filtrarPlanes(cercanos, null, viernes2330, null, { lat: NaN, lng: NaN })).toEqual([]);
+  });
+
+  test('salen los mismos planes que sin «Cerca de mí», solo cambia el orden', () => {
+    expect(titulos(filtrarPlanes(cercanos, null, viernes2330, null, ayuntamiento)).sort()).toEqual(titulos(filtrarPlanes(cercanos, null, viernes2330)).sort());
+  });
+});

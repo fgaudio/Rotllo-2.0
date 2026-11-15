@@ -5,7 +5,10 @@
 // Dos reglas de una app de noche:
 //   · Siempre en hora de Valencia, tenga el móvil la hora que tenga.
 //   · El "día" va de 06:00 a 06:00: a las 23:30 del viernes, la fiesta de las 00:30 es "hoy".
-// "Cerca de mí" llegará con el módulo de mapa (permiso de ubicación).
+//
+// «Cerca de mí» no quita planes: cambia el orden. Los días siguen en su sitio (hoy, mañana...)
+// y, dentro de cada día, sale primero lo más cercano (como buscar_planes_cerca).
+import { distanciaEnMetros, esPuntoValido, type Punto } from './distancia';
 import type { Plan } from './tipos';
 
 export type Filtro = 'hoy' | 'finde' | 'gratis';
@@ -75,9 +78,12 @@ function finDe(plan: Plan): number {
   return plan.terminaEn ? Date.parse(plan.terminaEn) : Date.parse(plan.empiezaEn) + DURACION_SIN_FIN;
 }
 
-export function filtrarPlanes(planes: Plan[], filtro: Filtro | null, ahora = new Date(), categoria: string | null = null): Plan[] {
+const porFecha = (a: Plan, b: Plan) => Date.parse(a.empiezaEn) - Date.parse(b.empiezaEn) || a.id.localeCompare(b.id);
+
+export function filtrarPlanes(planes: Plan[], filtro: Filtro | null, ahora = new Date(), categoria: string | null = null, cerca: Punto | null = null): Plan[] {
   const v = ventanas(ahora);
-  return planes
+  if (cerca && !esPuntoValido(cerca)) return []; // una posición que no existe no devuelve nada
+  const filtrados = planes
     .filter((plan) => finDe(plan) > ahora.getTime())
     .filter((plan) => categoria === null || plan.categoria === categoria)
     .filter((plan) => {
@@ -86,6 +92,10 @@ export function filtrarPlanes(planes: Plan[], filtro: Filtro | null, ahora = new
       if (filtro === 'finde') return empieza < v.findeFin.getTime() && finDe(plan) > v.findeInicio.getTime();
       if (filtro === 'gratis') return plan.esGratis;
       return true;
-    })
-    .sort((a, b) => Date.parse(a.empiezaEn) - Date.parse(b.empiezaEn) || a.id.localeCompare(b.id));
+    });
+  if (!cerca) return filtrados.sort(porFecha);
+  // Un plan que empezó ayer y sigue abierto cuenta como de hoy.
+  const hoy = diaNocturno(ahora).getTime();
+  const dia = (plan: Plan) => Math.max(diaNocturno(new Date(plan.empiezaEn)).getTime(), hoy);
+  return filtrados.sort((a, b) => dia(a) - dia(b) || distanciaEnMetros(cerca, a) - distanciaEnMetros(cerca, b) || porFecha(a, b));
 }
