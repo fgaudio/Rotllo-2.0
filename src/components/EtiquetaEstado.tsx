@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import { espacio, fuentes, radio } from '@/theme/tokens';
 import { crearEstilos } from '@/theme/useTema';
 
-type Tono = 'bien' | 'espera' | 'mal';
+type Tono = 'bien' | 'espera' | 'mal' | 'neutro';
 
 // Etiqueta de estado (docs/diseno.md): un punto de color y el estado escrito, para no depender
 // solo del color. "En revisión", "Verificado", "No aprobado"...
@@ -23,5 +23,6 @@ const useEstilos = crearEstilos((c) => ({
   bien: { backgroundColor: c.gratis },
   espera: { backgroundColor: c.rotulo },
   mal: { backgroundColor: c.error },
+  neutro: { backgroundColor: c.textoTenue },
   texto: { fontFamily: fuentes.negrita, fontSize: 13, lineHeight: 17, color: c.texto },
 }));

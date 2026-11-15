@@ -1,5 +1,5 @@
-import { Redirect, router } from 'expo-router';
-import { useState } from 'react';
+import { Redirect, router, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +9,7 @@ import { Cargando } from '@/components/Cargando';
 import { ElegirMapa } from '@/components/ElegirMapa';
 import { EstadoVacio } from '@/components/EstadoVacio';
 import { EtiquetaEstado } from '@/components/EtiquetaEstado';
+import { PlanesDelLocal } from '@/components/PlanesDelLocal';
 import { obtenerMisLocales, type EstadoLocal, type Local } from '@/lib/locales';
 import { siguientePaso, useSesion } from '@/lib/sesion';
 import { useCarga } from '@/lib/usePlanes';
@@ -18,13 +19,16 @@ import { crearEstilos } from '@/theme/useTema';
 const SIN_LOCALES: Local[] = [];
 const TONO_ESTADO: Record<EstadoLocal, 'bien' | 'espera' | 'mal'> = { verificado: 'bien', pendiente: 'espera', rechazado: 'mal', suspendido: 'mal' };
 
-// Mi local: cómo va la revisión y (en la siguiente ronda) los planes del local.
+// Mi local: cómo va la revisión, dónde está en el mapa y sus planes.
 export default function MiLocalScreen() {
   const { t } = useTranslation();
   const s = useEstilos();
   const paso = siguientePaso(useSesion());
   const { datos: locales, cargando, error, recargar } = useCarga(obtenerMisLocales, SIN_LOCALES);
   const [enMapa, setEnMapa] = useState<Local | null>(null); // el local cuyo punto se quiere ver
+  // Cada vez que se vuelve a esta pantalla (por ejemplo, tras guardar un plan) se recarga la lista.
+  const [version, setVersion] = useState(0);
+  useFocusEffect(useCallback(() => setVersion((n) => n + 1), []));
 
   if (paso === 'entrar' || paso === 'fecha-nacimiento') return <Redirect href="/local/nuevo" />;
 
@@ -70,6 +74,7 @@ export default function MiLocalScreen() {
               <Text style={s.texto}>{t(`local.estadoTexto.${local.estado}`)}</Text>
               {local.estado === 'rechazado' && local.motivoRechazo ? <Text style={s.texto}>{t('local.motivo', { motivo: local.motivoRechazo })}</Text> : null}
             </View>
+            {local.estado === 'pendiente' || local.estado === 'verificado' ? <PlanesDelLocal localId={local.id} version={version} /> : null}
           </View>
         ))}
       </ScrollView>

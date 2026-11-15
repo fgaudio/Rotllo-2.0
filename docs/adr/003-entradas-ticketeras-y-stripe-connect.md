@@ -171,7 +171,7 @@ No se venden entradas dentro de la app hasta que los locales lo pidan. Se llega 
 
 ## Acciones
 
-1. [ ] **v1:** campo `url_ticketera` + `utm_source=rotllo` + contador de clics.
+1. [x] **v1:** campo `url_ticketera` + `utm_source=rotllo` + contador de clics. Hecho: el local pone el enlace al crear el plan y ve los clics en su panel.
 2. [ ] **v1:** escribir a partners@xceed.me y a Fourvenues para preguntar por afiliación y API.
 3. [ ] **Antes de la v2:** reunión con una gestoría sobre el IVA de las entradas y de los gastos de gestión, la factura simplificada, Verifactu y la forma jurídica de Rotllo.
 4. [ ] **v2:** crear la cuenta de plataforma de Stripe Connect, probarlo todo en modo test y comprobar Bizum.

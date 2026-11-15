@@ -103,6 +103,7 @@ Todos los carteles generados llevan una **trama de puntos** que se desvanece en 
 | **Fila de plan** | `FilaPlan` | Cartel de 84, título, hora y sitio, precio y corazón. Agenda, búsqueda y guardados |
 | **Campo de texto** | `CampoTexto` | Etiqueta arriba y caja de 56. Foco: contorno en `rotulo`. Error: contorno y mensaje en `error` |
 | **Barra de búsqueda** | `BarraBusqueda` | Píldora de 48 con lupa y botón de borrar |
+| **Selector de color del cartel** | `SelectorColorCartel` | «Automático» y un círculo de 44 por combinación (fondo y un punto del color de la figura). El elegido lleva una marca y cada uno tiene su nombre para el lector de pantalla |
 | **Elegir mapa** | `ElegirMapa` | Hoja que sube desde abajo con dos opciones de 56 de alto, Google Maps y Apple Maps, y «Cancelar». Sale al tocar «Cómo llegar» o «Ver en el mapa» |
 | **Estado vacío** | `EstadoVacio` | Círculo de marca, qué pasa y qué hacer ahora |
 | **Cargando** | `Cargando` | La silueta de lo que va a salir, en vez de una rueda |
@@ -122,7 +123,8 @@ Al pulsar, botones y chips bajan su opacidad y encogen un 2 %.
 | **Perfil** | `/perfil` | Sin sesión: entrar. Con sesión: el email, cerrar sesión y borrar cuenta (con confirmación en la misma tarjeta). Y el idioma |
 | **Entrar** | `/entrar` | Muro de carteles, «Valencia tiene plan.» y «Seguir con email». Opcional: se llega desde Perfil. Apple y Google, cuando existan sus cuentas |
 | **Alta del local** | `/local/nuevo` | Formulario en una columna; la dirección se busca en el mapa antes de enviar |
-| **Mi local** | `/local` | Nombre, datos y una tarjeta con la etiqueta de estado |
+| **Mi local** | `/local` | Nombre, datos, «Ver en el mapa», la etiqueta de estado y «Tus planes» (crear y la lista con estado y clics) |
+| **Crear o editar un plan** | `/local/plan/<id>` | Formulario por secciones (lo básico, cuándo, precio y entrada, el cartel con vista previa). Abajo, fijo: «Guardar borrador» y «Publicar», o «Guardar cambios» |
 | **Locales por revisar** | `/admin/locales` | Solo para el equipo: una tarjeta por local con Rechazar y Aprobar |
 | **Email y fecha de nacimiento** | `/entrar/email`, `/entrar/edad` | Código de 6 cifras; día, mes y año en tres campos |
 

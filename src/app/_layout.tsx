@@ -50,6 +50,7 @@ export default function RootLayout() {
         <Stack.Screen name="entrar/edad" />
         <Stack.Screen name="local/index" />
         <Stack.Screen name="local/nuevo" />
+        <Stack.Screen name="local/plan/[id]" />
         <Stack.Screen name="admin/locales" />
       </Stack>
     </>

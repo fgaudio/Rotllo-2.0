@@ -18,7 +18,7 @@ const DURACION_SIN_FIN = 6 * HORA; // un plan sin hora de fin se da por terminad
 type FechaHora = { y: number; m: number; d: number; h: number; min: number; s: number };
 
 // La fecha y la hora "de reloj" en Valencia para un instante.
-function enValencia(instante: Date): FechaHora {
+export function enValencia(instante: Date): FechaHora {
   const partes = new Intl.DateTimeFormat('en-GB', {
     timeZone: ZONA,
     year: 'numeric',
@@ -40,8 +40,8 @@ function desfaseValencia(instante: Date): number {
 }
 
 // Un día y una hora de Valencia → el instante exacto.
-export function instanteValencia(y: number, m: number, d: number, h: number): Date {
-  const comoSiFueraUTC = Date.UTC(y, m - 1, d, h);
+export function instanteValencia(y: number, m: number, d: number, h: number, min = 0): Date {
+  const comoSiFueraUTC = Date.UTC(y, m - 1, d, h, min);
   let t = comoSiFueraUTC - desfaseValencia(new Date(comoSiFueraUTC));
   t = comoSiFueraUTC - desfaseValencia(new Date(t)); // segunda vuelta por si cambia la hora ese día
   return new Date(t);

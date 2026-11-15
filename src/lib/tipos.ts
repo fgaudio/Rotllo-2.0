@@ -30,4 +30,5 @@ export type Plan = {
   urlTicketera: string | null;
   fotoUrl: string | null; // foto o flyer del local: si existe, es el cartel
   cartel?: ConfigCartel | null;
+  cancelado?: boolean; // el local lo ha cancelado: se enseña, pero avisando
 };

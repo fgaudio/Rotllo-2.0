@@ -55,6 +55,7 @@ function aPlan(fila: FilaPlanFeed): Plan {
     urlTicketera: fila.url_ticketera,
     fotoUrl: urlFoto(fila.foto_path),
     cartel: fila.cartel ?? null,
+    cancelado: fila.estado === 'cancelado',
   };
 }
 
@@ -80,13 +81,26 @@ export async function obtenerPlan(id: string): Promise<Plan | null> {
   return data ? aPlan(data as FilaPlanFeed) : null;
 }
 
+// Añade "utm_source=rotllo" al enlace de la ticketera (ADR-003): así el local ve en sus propias
+// estadísticas cuánta gente le llega desde Rotllo. Si el enlace ya dice de dónde viene, se respeta.
+export function conOrigenRotllo(enlace: string | null): string | null {
+  if (!enlace) return null;
+  try {
+    const url = new URL(enlace);
+    if (!url.searchParams.has('utm_source')) url.searchParams.set('utm_source', 'rotllo');
+    return url.toString();
+  } catch {
+    return enlace; // un enlace raro se deja como está
+  }
+}
+
 // "Pillar entrada" (v1): apunta el clic para el local y devuelve el enlace de la ticketera.
 export async function enlaceEntradas(plan: Plan): Promise<string | null> {
-  if (!supabase) return plan.urlTicketera;
+  if (!supabase) return conOrigenRotllo(plan.urlTicketera);
   const { data, error } = await supabase.rpc('registrar_clic', {
     p_plan: plan.id,
     p_dispositivo: await idDispositivo(),
   });
-  if (error) return plan.urlTicketera; // si falla el contador, que no falle la compra
-  return (data as string | null) ?? plan.urlTicketera;
+  if (error) return conOrigenRotllo(plan.urlTicketera); // si falla el contador, que no falle la compra
+  return conOrigenRotllo((data as string | null) ?? plan.urlTicketera);
 }

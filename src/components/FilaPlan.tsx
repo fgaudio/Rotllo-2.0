@@ -9,6 +9,7 @@ import { crearEstilos } from '@/theme/useTema';
 
 import { BotonGuardar } from './BotonGuardar';
 import { Cartel } from './Cartel';
+import { EtiquetaEstado } from './EtiquetaEstado';
 import { PastillaEdad, PastillaPrecio } from './Pastilla';
 
 type Props = {
@@ -37,8 +38,14 @@ export function FilaPlan({ plan, conDia }: Props) {
                 {cuando} · {plan.local}, {plan.barrio}
               </Text>
               <View style={s.pastillas}>
-                <PastillaPrecio plan={plan} tamano="pequena" />
-                <PastillaEdad edad={plan.edadMinima} tamano="pequena" />
+                {plan.cancelado ? (
+                  <EtiquetaEstado texto={t('plan.cancelado')} tono="mal" />
+                ) : (
+                  <>
+                    <PastillaPrecio plan={plan} tamano="pequena" />
+                    <PastillaEdad edad={plan.edadMinima} tamano="pequena" />
+                  </>
+                )}
               </View>
             </View>
           </View>

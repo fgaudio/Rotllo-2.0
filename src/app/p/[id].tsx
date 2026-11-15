@@ -13,6 +13,7 @@ import { BotonRedondo } from '@/components/BotonRedondo';
 import { Cargando } from '@/components/Cargando';
 import { Cartel } from '@/components/Cartel';
 import { ElegirMapa } from '@/components/ElegirMapa';
+import { EtiquetaEstado } from '@/components/EtiquetaEstado';
 import { EstadoVacio } from '@/components/EstadoVacio';
 import { MapaMini } from '@/components/MapaMini';
 import { PastillaLinea, useTextoPrecio } from '@/components/Pastilla';
@@ -126,7 +127,7 @@ function Ficha({ plan }: { plan: Plan }) {
           <View style={s.cuerpo}>
             <View style={s.arribaTitulo}>
               {categoria ? <PastillaLinea texto={categoria} /> : null}
-              {fecha.aviso ? <RotuloVivo texto={fecha.aviso} /> : null}
+              {plan.cancelado ? <EtiquetaEstado texto={t('plan.cancelado')} tono="mal" /> : fecha.aviso ? <RotuloVivo texto={fecha.aviso} /> : null}
             </View>
             <Text style={s.titulo} accessibilityRole="header">
               {plan.titulo}
@@ -211,15 +212,19 @@ function Ficha({ plan }: { plan: Plan }) {
       <View style={[s.barra, { paddingBottom: Math.max(margenes.bottom, espacio[3]), paddingHorizontal: lateral + espacio[4] }]}>
         <View style={s.barraPrecio}>
           <Text style={s.barraImporte} numberOfLines={1}>
-            {precio ?? comoSeEntraCorto}
+            {plan.cancelado ? t('plan.cancelado') : (precio ?? comoSeEntraCorto)}
           </Text>
-          {precio ? (
+          {plan.cancelado ? (
+            <Text style={s.barraNota} numberOfLines={2}>
+              {t('plan.canceladoTexto')}
+            </Text>
+          ) : precio ? (
             <Text style={s.barraNota} numberOfLines={1}>
               {comoSeEntraCorto}
             </Text>
           ) : null}
         </View>
-        {tieneTicketera ? (
+        {plan.cancelado ? null : tieneTicketera ? (
           <Boton titulo={t('plan.pillarEntrada')} ayuda={t('plan.seCompraFuera')} icono="open-outline" iconoAlFinal onPress={() => abrirEntradas(plan)} />
         ) : (
           <Boton titulo={t('plan.comoLlegar')} ayuda={t('plan.comoLlegarAyuda')} icono="navigate-outline" onPress={comoLlegar} />
