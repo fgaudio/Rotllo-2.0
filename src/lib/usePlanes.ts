@@ -1,6 +1,7 @@
 // Hooks para las pantallas: cargan los planes y dicen si está cargando o si ha fallado.
 import { useCallback, useEffect, useState } from 'react';
 
+import type { Punto } from './distancia';
 import type { Filtro } from './filtros';
 import { obtenerPlan, obtenerPlanes, PLANES_POR_PAGINA } from './planes';
 import type { Plan } from './tipos';
@@ -10,21 +11,24 @@ import type { Plan } from './tipos';
 // actual (se cambió de filtro o se pulsó "Reintentar"), es que estamos cargando.
 type EstadoFeed = { clave: string; planes: Plan[]; hayMas: boolean; error: boolean };
 
-export function usePlanes(filtro: Filtro | null = null, categoria: string | null = null) {
+// `cerca` es la posición de la persona cuando «Cerca de mí» está puesto (ordena por cercanía).
+export function usePlanes(filtro: Filtro | null = null, categoria: string | null = null, cerca: Punto | null = null) {
   const [intento, setIntento] = useState(0);
   const [estado, setEstado] = useState<EstadoFeed | null>(null);
   const [cargandoMas, setCargandoMas] = useState(false);
-  const clave = `${filtro ?? 'todos'}/${categoria ?? 'todas'}#${intento}`;
+  const lat = cerca?.lat ?? null;
+  const lng = cerca?.lng ?? null;
+  const clave = `${filtro ?? 'todos'}/${categoria ?? 'todas'}/${lat === null || lng === null ? 'por-fecha' : `${lat},${lng}`}#${intento}`;
 
   useEffect(() => {
     let vigente = true; // por si la pantalla se cierra antes de que llegue la respuesta
-    obtenerPlanes(filtro, 0, categoria)
+    obtenerPlanes(filtro, 0, categoria, lat === null || lng === null ? null : { lat, lng })
       .then((planes) => vigente && setEstado({ clave, planes, hayMas: planes.length === PLANES_POR_PAGINA, error: false }))
       .catch(() => vigente && setEstado({ clave, planes: [], hayMas: false, error: true }));
     return () => {
       vigente = false;
     };
-  }, [filtro, categoria, clave]);
+  }, [filtro, categoria, lat, lng, clave]);
 
   const actual = estado !== null && estado.clave === clave;
 
@@ -32,7 +36,7 @@ export function usePlanes(filtro: Filtro | null = null, categoria: string | null
   const cargarMas = useCallback(() => {
     if (!estado || estado.clave !== clave || !estado.hayMas || cargandoMas) return;
     setCargandoMas(true);
-    obtenerPlanes(filtro, estado.planes.length, categoria)
+    obtenerPlanes(filtro, estado.planes.length, categoria, lat === null || lng === null ? null : { lat, lng })
       .then((mas) =>
         setEstado((previo) =>
           previo && previo.clave === clave
@@ -42,7 +46,7 @@ export function usePlanes(filtro: Filtro | null = null, categoria: string | null
       )
       .catch(() => undefined) // si falla, se puede volver a intentar bajando otra vez
       .finally(() => setCargandoMas(false));
-  }, [estado, clave, cargandoMas, filtro, categoria]);
+  }, [estado, clave, cargandoMas, filtro, categoria, lat, lng]);
 
   const recargar = useCallback(() => setIntento((n) => n + 1), []);
 

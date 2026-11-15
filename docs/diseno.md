@@ -94,18 +94,19 @@ Todos los carteles generados llevan una **trama de puntos** que se desvanece en 
 | **Botón** | `Boton` | Píldora de 56. `primario` (uno por pantalla), `superficie`, `linea`, `texto`; `claro` y `tinta` para ir encima de un color; `peligro` (contorno y texto en `error`) para lo que no se puede deshacer. Mientras se envía algo enseña una rueda y no deja pulsar |
 | **Botón redondo** | `BotonRedondo` | Icono en un círculo de 44. `cristal` va encima de un cartel |
 | **Guardar** | `BotonGuardar` | El corazón. Guarda el plan en el móvil, sin cuenta. Lleno y en `vivo` si está guardado |
-| **Chip** | `Chip` | Píldora de 44. Activo: colores invertidos |
+| **Chip** | `Chip` | Píldora de 44. Activo: colores invertidos. Puede llevar un icono pequeño delante («Cerca de mí») |
 | **Pastillas** | `Pastilla` | Precio (invertida), «Gratis» (turquesa), «+21» y categoría (con contorno) |
 | **Etiqueta de estado** | `EtiquetaEstado` | Punto de color y el estado escrito: «En revisión» (color de rótulo), «Verificado» (turquesa), «No aprobado» (color de error). Nunca solo el color |
 | **Rótulo vivo** | `RotuloVivo` | Punto encendido + «EMPIEZA EN 2 H» o «YA HA EMPEZADO». Sale si faltan menos de 6 horas |
 | **Plan destacado** | `TarjetaDestacada` | Cartel ancho y, pegado debajo, rótulo, título, sitio, precio, compartir y guardar. Se ve entero sin bajar |
 | **Tarjeta pequeña** | `TarjetaMini` | Cartel vertical de 164 × 212 con sello, para carruseles |
-| **Fila de plan** | `FilaPlan` | Cartel de 84, título, hora y sitio, precio y corazón. Agenda, búsqueda y guardados |
+| **Fila de plan** | `FilaPlan` | Cartel de 84, título, hora y sitio, precio y corazón. Con «Cerca de mí», también la distancia («a 600 m»). Agenda, búsqueda y guardados |
 | **Campo de texto** | `CampoTexto` | Etiqueta arriba y caja de 56. Foco: contorno en `rotulo`. Error: contorno y mensaje en `error` |
 | **Barra de búsqueda** | `BarraBusqueda` | Píldora de 48 con lupa y botón de borrar |
 | **Selector de color del cartel** | `SelectorColorCartel` | «Automático» y un círculo de 44 por combinación (fondo y un punto del color de la figura). El elegido lleva una marca y cada uno tiene su nombre para el lector de pantalla |
 | **Elegir mapa** | `ElegirMapa` | Hoja que sube desde abajo con dos opciones de 56 de alto, Google Maps y Apple Maps, y «Cancelar». Sale al tocar «Cómo llegar» o «Ver en el mapa» |
 | **Estado vacío** | `EstadoVacio` | Círculo de marca, qué pasa y qué hacer ahora |
+| **Aviso de ubicación** | `AvisoUbicacion` | Debajo de los filtros. Con «Cerca de mí» puesto, una línea pequeña: cómo se ordena y que la ubicación no se guarda. Sin permiso o sin señal, una tarjeta con qué pasa y los botones «Abrir ajustes» y «Probar otra vez» |
 | **Cargando** | `Cargando` | La silueta de lo que va a salir, en vez de una rueda |
 | **Aviso de prueba** | `AvisoPrueba` | Contorno discontinuo: la pantalla aún no hace lo que dice. Se quita cuando funcione |
 | **Pestañas** | `(tabs)/_layout` | Icono de trazo; la activa va rellena y con una marca arriba en `rotulo` |
@@ -116,7 +117,7 @@ Al pulsar, botones y chips bajan su opacidad y encogen un 2 %.
 
 | Pantalla | Ruta | Cómo es |
 |---|---|---|
-| **Feed** | `/` | Lo primero que se ve. Logo y lupa; «¿Qué hacemos esta noche?» (cambia con la hora y con el filtro); chips Todo, Hoy, Este finde, Gratis y los tipos de plan (se combinan; tocar uno puesto lo quita); el plan destacado; «Hoy también» en carrusel si hay dos o más; «Lo que viene» en agenda por días |
+| **Feed** | `/` | Lo primero que se ve. Logo y lupa; «¿Qué hacemos esta noche?» (cambia con la hora y con el filtro); chips Todo, Cerca de mí, Hoy, Este finde, Gratis y los tipos de plan (se combinan; tocar uno puesto lo quita). «Cerca de mí» pide la ubicación, pone primero lo más cercano de cada día y enseña la distancia; el plan destacado; «Hoy también» en carrusel si hay dos o más; «Lo que viene» en agenda por días |
 | **Búsqueda** | `/buscar` | Se abre con la lupa. Por título, local o barrio, sin tildes ni mayúsculas |
 | **Ficha** | `/p/<id>` | Cartel a todo el ancho; categoría y rótulo vivo; título; cuándo, dónde, cuánto y edad; «De qué va»; bloque «Mejor con tu gente»; «Dónde es» con mapa; «Más planes». Arriba, volver, compartir y guardar. Abajo, fijo, el precio y la acción principal |
 | **Guardados** | `/guardados` | Los planes con corazón |

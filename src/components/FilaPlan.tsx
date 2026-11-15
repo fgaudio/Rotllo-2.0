@@ -1,11 +1,13 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { Link } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
-import { textosDeFecha } from '@/lib/textosPlan';
+import type { Punto } from '@/lib/distancia';
+import { textoDeDistancia, textosDeFecha } from '@/lib/textosPlan';
 import type { Plan } from '@/lib/tipos';
 import { espacio, fuentes, texto } from '@/theme/tokens';
-import { crearEstilos } from '@/theme/useTema';
+import { crearEstilos, useTema } from '@/theme/useTema';
 
 import { BotonGuardar } from './BotonGuardar';
 import { Cartel } from './Cartel';
@@ -15,19 +17,22 @@ import { PastillaEdad, PastillaPrecio } from './Pastilla';
 type Props = {
   plan: Plan;
   conDia?: boolean; // en la agenda el día ya está en el encabezado; en búsqueda y guardados hay que decirlo
+  desde?: Punto | null; // con «Cerca de mí»: dónde está la persona, para decir a cuánto queda
 };
 
 // Fila de plan para la agenda, la búsqueda y los guardados (docs/diseno.md):
-// cartel pequeño, título, hora y sitio, precio y el corazón.
-export function FilaPlan({ plan, conDia }: Props) {
+// cartel pequeño, título, hora y sitio, precio y el corazón. Con «Cerca de mí», también la distancia.
+export function FilaPlan({ plan, conDia, desde = null }: Props) {
   const { t, i18n } = useTranslation();
   const s = useEstilos();
+  const { c } = useTema();
   const fecha = textosDeFecha(plan, t, i18n.language);
   const cuando = conDia ? fecha.rotulo : fecha.hora;
+  const distancia = textoDeDistancia(plan, desde, t, i18n.language);
   return (
     <View style={s.fila}>
       <Link href={{ pathname: '/p/[id]', params: { id: plan.id } }} asChild>
-        <Pressable style={s.enlace} accessibilityRole="link" accessibilityLabel={`${plan.titulo}. ${fecha.rotulo}. ${plan.local}, ${plan.barrio}`}>
+        <Pressable style={s.enlace} accessibilityRole="link" accessibilityLabel={`${plan.titulo}. ${fecha.rotulo}. ${plan.local}, ${plan.barrio}${distancia ? `. ${distancia}` : ''}`}>
           <View style={s.contenido}>
             <Cartel plan={plan} descripcion={t('plan.cartel', { titulo: plan.titulo })} ancho={84} alto={84} />
             <View style={s.textos}>
@@ -46,6 +51,12 @@ export function FilaPlan({ plan, conDia }: Props) {
                     <PastillaEdad edad={plan.edadMinima} tamano="pequena" />
                   </>
                 )}
+                {distancia ? (
+                  <View style={s.distancia}>
+                    <Ionicons name="navigate" size={12} color={c.textoSuave} />
+                    <Text style={s.distanciaTexto}>{distancia}</Text>
+                  </View>
+                ) : null}
               </View>
             </View>
           </View>
@@ -63,5 +74,7 @@ const useEstilos = crearEstilos((c) => ({
   textos: { flex: 1, gap: espacio[1] },
   titulo: { fontFamily: fuentes.negrita, fontSize: 17, lineHeight: 21, color: c.texto },
   meta: { ...texto.xs, fontSize: 14, lineHeight: 19, color: c.textoSuave },
-  pastillas: { flexDirection: 'row', flexWrap: 'wrap', gap: espacio[1] + 2, marginTop: espacio[1] },
+  pastillas: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: espacio[1] + 2, marginTop: espacio[1] },
+  distancia: { flexDirection: 'row', alignItems: 'center', gap: espacio[1], height: 24 },
+  distanciaTexto: { fontFamily: fuentes.media, fontSize: 13, lineHeight: 17, color: c.textoSuave },
 }));

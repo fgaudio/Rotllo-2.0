@@ -11,7 +11,7 @@
 | **Política de privacidad** (art. 13 RGPD): quién trata los datos, para qué, con qué base legal, cuánto tiempo, a quién se ceden y cómo ejercer los derechos. Enlazada desde el registro y desde Perfil | Por redactar | ✅ Redacción final |
 | **Registro de actividades de tratamiento**: lista interna de qué datos se tratan y por qué | Por hacer. Base: las tablas de `docs/system-design.md` | ✅ Confirmar si es obligatorio en tu caso |
 | **Encargados del tratamiento** y sus contratos (DPA): Supabase (datos en Fráncfort), Expo (push), Google y Apple (login, mapas), y más adelante Stripe, Sentry y PostHog | Por firmar: casi todos ofrecen su DPA estándar en su web | ✅ Revisar las transferencias fuera de la UE (empresas de EE. UU.: Data Privacy Framework o cláusulas tipo) |
-| **Minimización**: guardar solo lo necesario | ✅ La ubicación del usuario **no se guarda**: solo se usa en el móvil. La fecha de nacimiento va en una tabla privada | — |
+| **Minimización**: guardar solo lo necesario | ✅ La ubicación del usuario **no se guarda**. Con «Cerca de mí» se manda a la base de datos redondeada a unos 100 m, solo para ordenar los planes en ese momento (`docs/cerca-de-mi.md`). La fecha de nacimiento va en una tabla privada | Contarlo así en la política de privacidad |
 | **Plazos de conservación**: cuánto se guarda cada dato y qué pasa al borrar la cuenta | Por definir. Las facturas (v2) se guardan por obligación fiscal y mercantil (4-6 años) | ✅ |
 | **Derechos** (acceso, rectificación, supresión, portabilidad): un email de contacto y un plazo de respuesta de 1 mes | Por definir el email | — |
 | **Brechas de seguridad**: avisar a la AEPD en 72 h si hay una fuga de datos | Por escribir el procedimiento en el runbook (prompt 3.3) | — |
@@ -22,7 +22,7 @@
 |---|---|---|
 | **Edad mínima de 18**, declarada al registrarse | ✅ La base de datos rechaza a los menores y la fecha solo se pone una vez | ✅ Confirmar que basta con la declaración más el DNI en la puerta, sobre todo en planes con alcohol |
 | **Borrar la cuenta desde la app**: lo exigen Apple (App Review Guideline 5.1.1) y Google Play (también con un enlace web), además del derecho de supresión del RGPD | Hecho en la app (Perfil → Borrar cuenta), ver `docs/login.md`. Falta el enlace web que pide Google Play y borrar las fotos de perfil cuando existan | — |
-| **Permiso de ubicación**: pedirlo solo al usar "Cerca de mí" y explicar para qué | Por hacer en el módulo 4. Texto con el tono Rotllo, por ejemplo "Para enseñarte lo que tienes cerca. No guardamos dónde estás." | — |
+| **Permiso de ubicación**: pedirlo solo al usar "Cerca de mí" y explicar para qué | ✅ Hecho (15 nov 2026). Solo se pide al tocar «Cerca de mí». El iPhone enseña: «Rotllo usa tu ubicación para enseñarte los planes que tienes cerca. No se guarda.» y la app lo repite debajo del filtro. Solo se declara la ubicación «mientras se usa la app», nunca de fondo | Verlo en un móvil de verdad |
 | **Notificaciones push**: permiso del sistema y preferencias por tipo | v1.1 (ADR-006) | — |
 
 ## Web, app y comunicaciones (LSSI-CE)

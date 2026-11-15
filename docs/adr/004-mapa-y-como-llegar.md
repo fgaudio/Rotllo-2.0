@@ -90,3 +90,7 @@ En el MVP, el mapa es una herramienta, no la seña de identidad. Lo que diferenc
 - **No se fija el modo de viaje** (a pie, en bici, en metro): cada persona lo elige en su app.
 - **Comprobado:** los dos enlaces responden bien pidiendo como iPhone, como Android y como ordenador, y Google conserva el destino. Hay tests con los enlaces exactos (`src/lib/mapas.test.ts`).
 - **Sin comprobar:** que en un iPhone y en un Android de verdad se abra la app instalada y no el navegador. Es el comportamiento que documentan Google y Apple, pero hay que verlo en un móvil.
+
+## Actualización del 15 de noviembre de 2026: «Cerca de mí»
+
+El feed y la pestaña Mapa pueden ordenar los planes por cercanía. La ubicación se pide con `expo-location`, solo al tocar «Cerca de mí», y la distancia la calcula la base de datos con PostGIS. El detalle y lo que pasa con la ubicación están en `docs/cerca-de-mi.md`.

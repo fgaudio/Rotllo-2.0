@@ -30,6 +30,7 @@ export const en: Textos = {
     filtros: 'Filter plans',
     filtro: {
       todo: 'All',
+      cerca: 'Near me',
       hoy: 'Today',
       finde: 'This weekend',
       gratis: 'Free',
@@ -139,6 +140,24 @@ export const en: Textos = {
     error: "Couldn't open it. Try the other one.",
     verEnMapa: 'See on the map',
     comprobar: 'Check on the map',
+  },
+  cerca: {
+    buscando: 'Finding you…',
+    aM: '{{valor}} m away',
+    aKm: '{{valor}} km away',
+    nota: 'Closest first. Your location is only used to sort plans: it is never stored.',
+    denegada: {
+      titulo: "Rotllo can't see where you are",
+      texto: 'Allow location in your phone settings and try again.',
+      textoWeb: 'Allow location for this site in your browser and try again.',
+      ajustes: 'Open settings',
+    },
+    fallo: {
+      titulo: "We couldn't find you",
+      texto: 'Check that location is turned on and try again.',
+    },
+    reintentar: 'Try again',
+    centrar: 'Show where I am',
   },
   mapa: {
     soloEnApp: 'The map lives in the app. Here are the plans as a list.',

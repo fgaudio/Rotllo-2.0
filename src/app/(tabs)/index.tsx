@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AvisoUbicacion } from '@/components/AvisoUbicacion';
 import { BotonRedondo } from '@/components/BotonRedondo';
 import { Cargando } from '@/components/Cargando';
 import { Chip } from '@/components/Chip';
@@ -18,6 +19,7 @@ import type { Filtro } from '@/lib/filtros';
 import { formatearDia, formatearHoy } from '@/lib/formatos';
 import { supabaseConfigurado } from '@/lib/supabase';
 import type { Plan } from '@/lib/tipos';
+import { alternarCerca, apagarCerca, puntoDe, refrescarUbicacion, useUbicacion } from '@/lib/ubicacion';
 import { usePlanes } from '@/lib/usePlanes';
 import { espacio, texto } from '@/theme/tokens';
 import { crearEstilos } from '@/theme/useTema';
@@ -32,17 +34,27 @@ type Linea = { tipo: 'dia'; clave: string; titulo: string } | { tipo: 'plan'; cl
 //   · Sin filtros: el primer plan va destacado, el resto de hoy en un carrusel y lo demás en agenda.
 //   · Con filtros: todo en agenda, agrupado por días. Hay dos filtros que se pueden combinar:
 //     cuándo o cuánto (hoy, este finde, gratis) y el tipo de plan (fiesta, música en directo...).
+//   · «Cerca de mí» se suma a los anteriores: no quita planes, pone primero los más cercanos de
+//     cada día y dice a cuánto queda cada uno. La ubicación solo se pide al tocarlo.
 // Lee de Supabase (buscar_planes), de 30 en 30, o de los datos de ejemplo si no hay claves en .env.
 export default function FeedScreen() {
   const { t, i18n } = useTranslation();
   const s = useEstilos();
   const [filtro, setFiltro] = useState<Filtro | null>(null);
   const [categoria, setCategoria] = useState<string | null>(null);
-  const { datos, cargando, error, recargar, cargarMas, cargandoMas } = usePlanes(filtro, categoria);
-  const sinFiltros = filtro === null && categoria === null;
+  const ubicacion = useUbicacion();
+  const cerca = puntoDe(ubicacion); // dónde está la persona, o null si «Cerca de mí» no está puesto
+  const buscandome = ubicacion.estado === 'buscando';
+  const { datos, cargando, error, recargar, cargarMas, cargandoMas } = usePlanes(filtro, categoria, cerca);
+  const sinFiltros = filtro === null && categoria === null && cerca === null;
   const quitarFiltros = () => {
     setFiltro(null);
     setCategoria(null);
+    apagarCerca();
+  };
+  const refrescar = () => {
+    void refrescarUbicacion(); // por si la persona se ha movido
+    recargar();
   };
   const ahora = new Date();
   const idioma = i18n.language;
@@ -80,7 +92,7 @@ export default function FeedScreen() {
             </View>
           ) : (
             <View style={s.fila}>
-              <FilaPlan plan={item.plan} />
+              <FilaPlan plan={item.plan} desde={cerca} />
             </View>
           )
         }
@@ -88,7 +100,7 @@ export default function FeedScreen() {
         onEndReached={cargarMas}
         onEndReachedThreshold={0.5}
         refreshing={false}
-        onRefresh={recargar}
+        onRefresh={refrescar}
         ListFooterComponent={
           cargandoMas ? (
             <View style={s.margen}>
@@ -113,7 +125,14 @@ export default function FeedScreen() {
               </Text>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} accessibilityLabel={t('feed.filtros')} contentContainerStyle={s.filtros}>
-              <Chip etiqueta={t('feed.filtro.todo')} activo={sinFiltros} onPress={quitarFiltros} />
+              <Chip etiqueta={t('feed.filtro.todo')} activo={sinFiltros && !buscandome} onPress={quitarFiltros} />
+              <Chip
+                icono="navigate"
+                etiqueta={buscandome ? t('cerca.buscando') : t('feed.filtro.cerca')}
+                activo={cerca !== null || buscandome}
+                ocupado={buscandome}
+                onPress={alternarCerca}
+              />
               {/* Tocar un filtro puesto lo quita. */}
               {FILTROS.map((f) => (
                 <Chip key={f} etiqueta={t(`feed.filtro.${f}`)} activo={filtro === f} onPress={() => setFiltro(filtro === f ? null : f)} />
@@ -122,6 +141,7 @@ export default function FeedScreen() {
                 <Chip key={slug} etiqueta={t(`categorias.${slug}`)} activo={categoria === slug} onPress={() => setCategoria(categoria === slug ? null : slug)} />
               ))}
             </ScrollView>
+            <AvisoUbicacion ubicacion={ubicacion} />
             {supabaseConfigurado ? null : <Text style={s.aviso}>{t('feed.datosEjemplo')}</Text>}
             {destacado ? (
               <View style={s.destacado}>

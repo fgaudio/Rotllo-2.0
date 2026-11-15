@@ -30,6 +30,7 @@ export const it: Textos = {
     filtros: 'Filtra gli eventi',
     filtro: {
       todo: 'Tutto',
+      cerca: 'Vicino a me',
       hoy: 'Oggi',
       finde: 'Questo weekend',
       gratis: 'Gratis',
@@ -139,6 +140,24 @@ export const it: Textos = {
     error: 'Non è stato possibile aprirlo. Prova con l’altra.',
     verEnMapa: 'Vedi sulla mappa',
     comprobar: 'Controlla sulla mappa',
+  },
+  cerca: {
+    buscando: 'Ti stiamo cercando…',
+    aM: 'a {{valor}} m',
+    aKm: 'a {{valor}} km',
+    nota: 'Prima i più vicini. La tua posizione serve solo per ordinare: non viene salvata.',
+    denegada: {
+      titulo: 'Rotllo non può vedere dove sei',
+      texto: 'Dai il permesso di posizione nelle impostazioni del telefono e riprova.',
+      textoWeb: 'Dai il permesso di posizione a questo sito nel browser e riprova.',
+      ajustes: 'Apri impostazioni',
+    },
+    fallo: {
+      titulo: 'Non siamo riusciti a trovarti',
+      texto: 'Controlla di avere la posizione attiva e riprova.',
+    },
+    reintentar: 'Riprova',
+    centrar: 'Mostra dove sono',
   },
   mapa: {
     soloEnApp: 'La mappa è nell’app. Qui trovi gli eventi in lista.',

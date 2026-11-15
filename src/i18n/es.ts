@@ -31,6 +31,7 @@ export const es = {
     filtros: 'Filtrar planes',
     filtro: {
       todo: 'Todo',
+      cerca: 'Cerca de mí',
       hoy: 'Hoy',
       finde: 'Este finde',
       gratis: 'Gratis',
@@ -140,6 +141,24 @@ export const es = {
     error: 'No se ha podido abrir. Prueba con la otra.',
     verEnMapa: 'Ver en el mapa',
     comprobar: 'Comprobar en el mapa',
+  },
+  cerca: {
+    buscando: 'Buscándote…',
+    aM: 'a {{valor}} m',
+    aKm: 'a {{valor}} km',
+    nota: 'Lo más cercano, primero. Tu ubicación solo se usa para ordenar: no se guarda.',
+    denegada: {
+      titulo: 'Rotllo no puede ver dónde estás',
+      texto: 'Dale permiso de ubicación en los ajustes del móvil y prueba otra vez.',
+      textoWeb: 'Dale permiso de ubicación a esta web en tu navegador y prueba otra vez.',
+      ajustes: 'Abrir ajustes',
+    },
+    fallo: {
+      titulo: 'No hemos podido encontrarte',
+      texto: 'Mira que tengas la ubicación encendida y prueba otra vez.',
+    },
+    reintentar: 'Probar otra vez',
+    centrar: 'Ver dónde estoy',
   },
   mapa: {
     soloEnApp: 'El mapa está en la app. Aquí tienes los planes en lista.',

@@ -70,6 +70,18 @@ const config: ExpoConfig = {
       },
     ],
     [
+      'expo-location',
+      {
+        // Texto que enseña el iPhone al pedir permiso de ubicación. Solo se pide al tocar
+        // «Cerca de mí» y con la app abierta: nunca de fondo, ni el movimiento del móvil.
+        locationWhenInUsePermission: 'Rotllo usa tu ubicación para enseñarte los planes que tienes cerca. No se guarda.',
+        locationAlwaysAndWhenInUsePermission: false,
+        locationAlwaysPermission: false,
+        motionUsagePermission: false,
+        locationFullAccuracyPermission: false,
+      },
+    ],
+    [
       'react-native-maps',
       {
         // Clave de Google Maps para Android, restringida a la app (ADR-004).

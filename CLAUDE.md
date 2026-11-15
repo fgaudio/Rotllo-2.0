@@ -37,6 +37,7 @@ Decidido en la Fase 1. El porqué de cada decisión está en `docs/adr/`.
 - **Backend:** **Supabase**, en una región de la UE: Postgres + PostGIS, Auth, Storage, Realtime, Edge Functions y pg_cron. Seguridad con RLS (ADR-002).
 - **Entradas:** v1, enlace a la ticketera del local con contador de clics; v2, **Stripe Connect** (cuentas Express). Gastos de gestión con la **tarifa A: 4 % + 1,60 € por entrada**, sacada de la tabla `tarifas_gestion` (ADR-003).
 - **Mapa:** `react-native-maps` (Apple Maps en iOS, Google Maps en Android). "Cómo llegar" abre la app de mapas con un enlace (ADR-004).
+- **Ubicación:** `expo-location`, solo al tocar «Cerca de mí». Se redondea a unos 100 m y no se guarda (`docs/cerca-de-mi.md`).
 - **Imágenes:** Supabase Storage, comprimidas en el móvil con `expo-image-manipulator` y mostradas con `expo-image` (ADR-005).
 - **Push:** servicio de push de Expo (`expo-notifications`), después de la v1 (ADR-006).
 - **Textos:** `i18next` + `react-i18next`, con `es` primero y `en` e `it` preparados.
@@ -46,7 +47,7 @@ Decidido en la Fase 1. El porqué de cada decisión está en `docs/adr/`.
 ```
 src/app/        Pantallas y rutas (Expo Router). Cada archivo es una URL: src/app/p/[id].tsx = rotllo.app/p/123.
 src/components/ Componentes reutilizables (Boton, Chip, Cartel, FilaPlan...). Un archivo .web.tsx es la versión para navegador.
-src/lib/        Conexiones (supabase.ts), sesión y login (sesion.ts, auth.ts), tipos, formatos, filtros y mapas.
+src/lib/        Conexiones (supabase.ts), sesión y login (sesion.ts, auth.ts), tipos, formatos, filtros, mapas y ubicación.
 src/i18n/       Textos: es.ts (principal), en.ts, it.ts.
 src/theme/      Tokens de diseño (colores, espacios, tipografía). Ningún color o medida fuera de aquí.
 supabase/       Migraciones SQL, Edge Functions y datos de prueba.

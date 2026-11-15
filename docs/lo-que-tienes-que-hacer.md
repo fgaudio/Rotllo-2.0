@@ -21,7 +21,7 @@ No hace falta que avises: la app ya está preparada. La explicación completa es
 
 ### 2. Una cuenta de Expo, para ver la app en tu móvil (cuando se pueda)
 
-**Para qué:** todo lo hecho hasta ahora está probado en el navegador. Falta verlo en un móvil de verdad: la galería de fotos, el mapa, que «Cómo llegar» abra la app de mapas, el menú de compartir y que el enlace del correo abra la app.
+**Para qué:** todo lo hecho hasta ahora está probado en el navegador. Falta verlo en un móvil de verdad: la galería de fotos, el mapa, que «Cómo llegar» abra la app de mapas, el menú de compartir, que el enlace del correo abra la app y el permiso de ubicación de «Cerca de mí».
 
 **Estado (15 de noviembre):** Expo no te ha dejado crear la cuenta. No bloquea nada de momento: el trabajo sigue en el navegador. Cuando quieras reintentarlo:
 
