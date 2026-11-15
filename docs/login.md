@@ -74,7 +74,8 @@ Después de cambiar la plantilla:
 
 - **Probado con tests automáticos:** los errores explicados según el paso, qué pantalla toca según la sesión, la mezcla de guardados y qué pasa con ellos al entrar y salir (90 tests de la app). En la base de datos: nadie guarda ni lee guardados ajenos, sin sesión no se borra nada, la única propietaria de un local no puede borrarse y al borrar la cuenta se va todo lo suyo (108 tests).
 - **Probado contra el Supabase real, en el navegador:** enviar el correo, el aviso de email mal escrito, el rechazo de un código falso, la sesión abierta, «Te falta un paso», el aviso de menor de edad, que la sesión sigue tras recargar, la confirmación de borrar cuenta (sin llegar a borrarla) y cerrar sesión.
-- **No probado todavía:** escribir un código de verdad (la plantilla aún manda un enlace; la sesión de la prueba se abrió con ese enlace), guardar una fecha de nacimiento real (es la tuya y solo se puede poner una vez), la subida de guardados a la cuenta (necesita el perfil completo) y todo ello en un iPhone o un Android.
+- **Probado después, con una cuenta de prueba** (un alias del correo de Fran, ya borrada): guardar la fecha de nacimiento y que el perfil quede completo; que el corazón guarde el plan en la cuenta (tabla `favoritos`); que la app no deje borrar la cuenta a quien es el único dueño de un local, y lo explique; y borrar la cuenta desde Perfil, tras lo cual no queda nada suyo en la base de datos.
+- **No probado todavía:** escribir un código de verdad (la plantilla aún manda un enlace; las sesiones de prueba se abrieron con ese enlace) y todo ello en un iPhone o un Android.
 
 ## Revisión de seguridad
 
