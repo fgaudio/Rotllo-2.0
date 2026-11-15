@@ -118,6 +118,18 @@ export const it: Textos = {
       boton: 'Vedi eventi',
     },
   },
+  compartir: {
+    titulo: 'Per la tua storia',
+    texto: 'Un’immagine dell’evento, pronta per Instagram.',
+    imagen: 'Condividi immagine',
+    descargar: 'Scarica immagine',
+    enlace: 'Condividi il link',
+    consejo: 'Su Instagram, carica l’immagine nella tua storia e aggiungi lo sticker link con il link dell’evento. Così chi la vede arriva all’evento con un tocco.',
+    mirar: 'Guardalo su Rotllo',
+    paraStories: 'Immagine per le storie',
+    descargada: 'Immagine scaricata. Caricala nella tua storia.',
+    error: 'Non è stato possibile creare l’immagine. Riprova.',
+  },
   mapas: {
     abrirEn: 'Apri in…',
     google: 'Google Maps',

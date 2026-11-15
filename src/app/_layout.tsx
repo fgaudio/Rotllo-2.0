@@ -45,6 +45,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="p/[id]" options={{ headerShown: false }} />
         <Stack.Screen name="buscar" options={{ headerShown: false, animation: 'fade' }} />
+        <Stack.Screen name="compartir/[id]" />
         <Stack.Screen name="entrar/index" options={{ headerShown: false }} />
         <Stack.Screen name="entrar/email" />
         <Stack.Screen name="entrar/edad" />

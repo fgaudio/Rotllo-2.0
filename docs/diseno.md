@@ -122,6 +122,7 @@ Al pulsar, botones y chips bajan su opacidad y encogen un 2 %.
 | **Guardados** | `/guardados` | Los planes con corazón |
 | **Perfil** | `/perfil` | Sin sesión: entrar. Con sesión: el email, cerrar sesión y borrar cuenta (con confirmación en la misma tarjeta). Y el idioma |
 | **Entrar** | `/entrar` | Muro de carteles, «Valencia tiene plan.» y «Seguir con email». Opcional: se llega desde Perfil. Apple y Google, cuando existan sus cuentas |
+| **Para tu historia** | `/compartir/<id>` | La imagen para stories tal como va a quedar (9:16, siempre oscura) y dos botones: compartir la imagen y compartir el enlace |
 | **Alta del local** | `/local/nuevo` | Formulario en una columna; la dirección se busca en el mapa antes de enviar |
 | **Mi local** | `/local` | Nombre, datos, «Ver en el mapa», la etiqueta de estado y «Tus planes» (crear y la lista con estado y clics) |
 | **Crear o editar un plan** | `/local/plan/<id>` | Formulario por secciones (lo básico, cuándo, precio y entrada, el cartel con vista previa). Abajo, fijo: «Guardar borrador» y «Publicar», o «Guardar cambios» |

@@ -163,6 +163,9 @@ function Ficha({ plan }: { plan: Plan }) {
             <Text style={s.genteTexto}>{t('plan.gente.texto')}</Text>
             <View style={s.genteBoton}>
               <Boton titulo={copiado ? t('plan.enlaceCopiado') : t('plan.gente.boton')} icono={copiado ? 'checkmark' : 'share-outline'} variante="tinta" compacto onPress={compartir} />
+              {plan.cancelado ? null : (
+                <Boton titulo={t('compartir.paraStories')} icono="logo-instagram" variante="tinta" compacto onPress={() => router.push({ pathname: '/compartir/[id]', params: { id: plan.id } })} />
+              )}
             </View>
           </View>
 
@@ -306,7 +309,7 @@ const useEstilos = crearEstilos((c) => ({
   corro: { position: 'absolute', right: -34, top: -34, width: 150, height: 150, borderRadius: 75, backgroundColor: pop.amarillo },
   genteTitulo: { ...texto.titulo, fontSize: 36, lineHeight: 40, color: pop.tinta, maxWidth: 220 },
   genteTexto: { ...texto.m, fontFamily: fuentes.media, fontSize: 16, lineHeight: 22, color: pop.tinta, marginTop: espacio[2], maxWidth: 250 },
-  genteBoton: { alignSelf: 'flex-start', marginTop: espacio[4] },
+  genteBoton: { alignSelf: 'flex-start', alignItems: 'flex-start', marginTop: espacio[4], gap: espacio[2] },
 
   sitio: { flexDirection: 'row', alignItems: 'center', gap: espacio[3], marginTop: espacio[3] },
   sitioTextos: { flex: 1, gap: 2 },

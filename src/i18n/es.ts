@@ -119,6 +119,18 @@ export const es = {
       boton: 'Ver planes',
     },
   },
+  compartir: {
+    titulo: 'Para tu historia',
+    texto: 'Una imagen del plan, lista para Instagram.',
+    imagen: 'Compartir imagen',
+    descargar: 'Descargar imagen',
+    enlace: 'Compartir el enlace',
+    consejo: 'En Instagram, sube la imagen a tu historia y añade el sticker de enlace con el enlace del plan. Así quien la vea llega al plan con un toque.',
+    mirar: 'Míralo en Rotllo',
+    paraStories: 'Imagen para stories',
+    descargada: 'Imagen descargada. Súbela a tu historia.',
+    error: 'No se ha podido crear la imagen. Prueba otra vez.',
+  },
   mapas: {
     abrirEn: 'Abrir en…',
     google: 'Google Maps',

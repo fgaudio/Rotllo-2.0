@@ -118,6 +118,18 @@ export const en: Textos = {
       boton: 'See plans',
     },
   },
+  compartir: {
+    titulo: 'For your story',
+    texto: 'An image of the plan, ready for Instagram.',
+    imagen: 'Share image',
+    descargar: 'Download image',
+    enlace: 'Share the link',
+    consejo: "On Instagram, add the image to your story and use the link sticker with the plan's link. Anyone who sees it gets to the plan in one tap.",
+    mirar: 'See it on Rotllo',
+    paraStories: 'Image for stories',
+    descargada: 'Image downloaded. Add it to your story.',
+    error: "Couldn't create the image. Try again.",
+  },
   mapas: {
     abrirEn: 'Open in…',
     google: 'Google Maps',
