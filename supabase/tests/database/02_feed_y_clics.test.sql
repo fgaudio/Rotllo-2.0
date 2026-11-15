@@ -101,7 +101,7 @@ select is(
   2,
   'planes y locales tienen una regla de lectura propia para quien no tiene cuenta');
 
--- ── Filtro por tipo de plan (migración 20261115120000_v1_filtro_por_categoria) ──
+-- ── Filtro por tipo de plan (migración 20261115184219_v1_filtro_por_categoria) ──
 reset role;
 insert into public.planes (local_id, categoria_id, titulo, empieza_en, es_gratis, estado)
 select 'a0000000-0000-4000-8000-000000000001', c.id, t.titulo, t.empieza::timestamptz, t.gratis, 'publicado'
