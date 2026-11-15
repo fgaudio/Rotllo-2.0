@@ -60,6 +60,16 @@ const config: ExpoConfig = {
       },
     ],
     [
+      'expo-image-picker',
+      {
+        // Texto que enseña el iPhone al pedir permiso para ver las fotos. Solo se usa la
+        // galería (para el cartel de un plan): no se pide cámara ni micrófono.
+        photosPermission: 'Rotllo usa tus fotos para que elijas el cartel de tu plan.',
+        cameraPermission: false,
+        microphonePermission: false,
+      },
+    ],
+    [
       'react-native-maps',
       {
         // Clave de Google Maps para Android, restringida a la app (ADR-004).

@@ -3,6 +3,7 @@
 // Las pantallas no saben de dónde vienen: solo llaman a estas funciones.
 import { idDispositivo } from './dispositivo';
 import { filtrarPlanes, type Filtro } from './filtros';
+import { urlDeFoto } from './fotos';
 import { planesEjemplo, buscarPlan } from './planes-ejemplo';
 import { supabase } from './supabase';
 import type { ConfigCartel, ModoEntradas, Plan } from './tipos';
@@ -30,10 +31,6 @@ type FilaPlanFeed = {
   estado: 'publicado' | 'cancelado';
 };
 
-function urlFoto(path: string | null) {
-  if (!path || !supabase) return null;
-  return supabase.storage.from('planes').getPublicUrl(path).data.publicUrl;
-}
 
 function aPlan(fila: FilaPlanFeed): Plan {
   return {
@@ -53,7 +50,7 @@ function aPlan(fila: FilaPlanFeed): Plan {
     edadMinima: fila.edad_minima,
     modoEntradas: fila.modo_entradas,
     urlTicketera: fila.url_ticketera,
-    fotoUrl: urlFoto(fila.foto_path),
+    fotoUrl: urlDeFoto(fila.foto_path),
     cartel: fila.cartel ?? null,
     cancelado: fila.estado === 'cancelado',
   };

@@ -144,7 +144,7 @@ Cercano, joven, con tuteo y frases cortas. Los botones empiezan por verbo y tien
 
 ## Pendiente
 
-- **Editor del cartel para el local:** elegir estilo, color y texto, o subir su flyer, viendo cómo queda. Llega con el panel de locales (módulos 2 y 3). La base de datos y la app ya lo admiten.
+- ~~Editor del cartel para el local~~: hecho. Está en el formulario del plan (`docs/panel-local.md`).
 - **Logo e icono de la app** definitivos.
 - **Filtro por categoría** (Fiesta, Directos…): cuando la base de datos lo permita (módulo 3).
 - **Probar en un móvil de verdad.** Este rediseño está comprobado en el navegador. En iPhone y Android hay que revisar sobre todo los carteles generados (la posición de las letras puede variar unos píxeles) y el mapa pequeño de la ficha.

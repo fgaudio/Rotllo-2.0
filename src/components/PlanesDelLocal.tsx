@@ -47,7 +47,7 @@ export function PlanesDelLocal({ localId, version }: { localId: string; version:
             <Link key={plan.id} href={{ pathname: '/local/plan/[id]', params: { id: plan.id } }} asChild>
               <Pressable accessibilityRole="link" accessibilityLabel={`${plan.titulo}. ${t(`misPlanes.situacion.${situacion}`)}. ${fecha.rotulo}`}>
                 <View style={s.fila}>
-                  <Cartel plan={{ ...plan, fotoUrl: null }} descripcion={t('plan.cartel', { titulo: plan.titulo })} ancho={72} alto={72} />
+                  <Cartel plan={plan} descripcion={t('plan.cartel', { titulo: plan.titulo })} ancho={72} alto={72} />
                   <View style={s.textos}>
                     <Text style={s.nombre} numberOfLines={2}>
                       {plan.titulo}

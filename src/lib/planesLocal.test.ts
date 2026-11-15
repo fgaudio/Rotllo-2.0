@@ -133,6 +133,7 @@ describe('editar un plan guardado', () => {
     modoEntradas: 'enlace_externo',
     urlTicketera: 'https://entradas.es/techno',
     cartel: { estilo: 'cinta', color: 'azul', texto: 'Techno hasta las 6' },
+    fotoUrl: null,
     estado: 'publicado',
     motivoCancelacion: null,
     clics: 12,

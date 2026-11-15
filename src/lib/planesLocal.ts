@@ -3,6 +3,7 @@
 // Abajo, las llamadas a la base de datos, que es la que decide quién puede qué.
 import { ESTILOS_CARTEL, TEXTO_CARTEL_MAX } from './cartel';
 import { diaNocturno, enValencia, instanteValencia } from './filtros';
+import { urlDeFoto } from './fotos';
 import { supabase } from './supabase';
 import type { ConfigCartel, EstiloCartel, ModoEntradas } from './tipos';
 
@@ -22,6 +23,7 @@ export type PlanLocal = {
   modoEntradas: ModoEntradas;
   urlTicketera: string | null;
   cartel: ConfigCartel | null;
+  fotoUrl: string | null; // la foto o el flyer que ha subido el local, si hay
   estado: EstadoPlan;
   motivoCancelacion: string | null;
   clics: number;
@@ -224,9 +226,10 @@ type FilaPlan = {
   motivo_cancelacion: string | null;
   categorias: { slug: string } | null;
   clics_ticketera: { count: number }[] | null;
+  fotos_plan: { storage_path: string; orden: number }[] | null;
 };
 const COLUMNAS =
-  'id, titulo, descripcion, empieza_en, termina_en, es_gratis, precio_desde_centimos, edad_minima, modo_entradas, url_ticketera, cartel, estado, motivo_cancelacion, categorias (slug), clics_ticketera (count)';
+  'id, titulo, descripcion, empieza_en, termina_en, es_gratis, precio_desde_centimos, edad_minima, modo_entradas, url_ticketera, cartel, estado, motivo_cancelacion, categorias (slug), clics_ticketera (count), fotos_plan (storage_path, orden)';
 
 function aPlanLocal(f: FilaPlan): PlanLocal {
   return {
@@ -242,6 +245,7 @@ function aPlanLocal(f: FilaPlan): PlanLocal {
     modoEntradas: f.modo_entradas,
     urlTicketera: f.url_ticketera,
     cartel: f.cartel,
+    fotoUrl: urlDeFoto([...(f.fotos_plan ?? [])].sort((a, b) => a.orden - b.orden)[0]?.storage_path),
     estado: f.estado,
     motivoCancelacion: f.motivo_cancelacion,
     clics: f.clics_ticketera?.[0]?.count ?? 0,

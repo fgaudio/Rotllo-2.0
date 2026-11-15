@@ -6,7 +6,7 @@ Dónde un bar, una discoteca o un sitio de actividades se da de alta y publica s
 |---|---|---|
 | **1. El local** | Alta, estado de la revisión y la pantalla del equipo para aprobar | Hecha (13 de noviembre de 2026) |
 | **2. Los planes** | Crear, editar, publicar y cancelar, con el editor de cartel | Hecha (14 de noviembre de 2026) |
-| **3. El flyer** | Subir una foto o un flyer propio como cartel | Pendiente |
+| **3. El flyer** | Subir una foto o un flyer propio como cartel | Hecha (15 de noviembre de 2026) |
 
 ## Ronda 1: el local
 
@@ -97,3 +97,42 @@ Tampoco ha hecho falta ninguna migración.
 ### Fuera de esta ronda
 
 Subir una foto o un flyer (ronda 3), repetir un plan cada semana, duplicar un plan y cambiar la dirección de un plan concreto (hoy usa siempre la del local).
+
+## Ronda 3: la foto o el flyer
+
+### Cómo funciona
+
+1. En el formulario del plan, sección «El cartel»: **«Subir foto o flyer»** abre la galería del móvil.
+2. Con una imagen elegida, el formulario enseña **los dos recortes**: cómo sale en la ficha (vertical) y cómo sale en el feed (apaisado). Así el local ve antes de publicar si se le corta algo.
+3. Las opciones de estilo, color y texto desaparecen: **con foto, el cartel es su imagen, tal cual**, sin nada encima.
+4. Al guardar, la imagen se sube. Se puede **cambiar** por otra o **quitar** para volver al cartel generado.
+
+### Decisiones
+
+- **Se encoge antes de subir:** 1600 px por su lado más largo y en JPEG. Un flyer de 3000 × 3750 px se queda en 1280 × 1600 y unos 50 KB. Gasta pocos datos al local y al que lo ve.
+- **Se le quitan los datos ocultos** (dónde y con qué móvil se hizo la foto), porque la imagen se guarda de nuevo desde cero.
+- **Una sola foto de cartel por plan.** Subir otra sustituye a la anterior y borra el archivo viejo.
+- **Primero se guarda el plan y después se sube la foto.** Si la subida falla, el plan no se pierde: el formulario avisa y se puede reintentar sin crear el plan dos veces.
+- **Dónde se guarda:** Supabase Storage, carpeta `planes/<id del plan>/`. Cualquiera puede ver la imagen con su enlace; solo puede subirla, cambiarla o borrarla quien puede editar ese plan (regla de la base de datos, pensada desde el diseño inicial).
+- **Solo galería:** no se pide permiso de cámara ni de micrófono.
+
+### Dónde está cada cosa
+
+| Archivo | Qué hace |
+|---|---|
+| `src/lib/fotos.ts` | Elegir, encoger, subir, sustituir y quitar la foto |
+| `src/app/local/plan/[id].tsx` | La sección «El cartel» del formulario |
+| `app.config.ts` | El texto que enseña el iPhone al pedir permiso para ver las fotos |
+| `supabase/tests/database/07_fotos_del_plan.test.sql` | Tests de quién puede subir y borrar |
+
+Paquete nuevo: `expo-image-picker`. Es un paquete nativo, así que **hay que rehacer la app de pruebas (development build)** para verlo en el móvil.
+
+### Probado
+
+- **Tests:** 141 de la app y 161 de la base de datos, todos pasan.
+- **Contra el Supabase real, en el navegador** (12 comprobaciones): subir un flyer al crear un plan, que quede apuntado y se pueda ver sin cuenta, que salga en el feed y en la ficha, cambiarlo por otro (y que el viejo se borre), quitarlo, y que alguien sin cuenta no pueda subir nada a la carpeta del plan.
+- **No probado:** la galería de un iPhone o un Android de verdad (aquí se probó con el selector de archivos del navegador).
+
+### Fuera de esta ronda
+
+Varias fotos por plan (la tabla admite hasta 6), recortar la imagen dentro de la app, hacer la foto con la cámara y el efecto de dos tintas para las fotos, que quedó como idea en la guía de diseño.
