@@ -48,6 +48,7 @@ export default function RootLayout() {
         <Stack.Screen name="compartir/[id]" />
         <Stack.Screen name="entrar/index" options={{ headerShown: false }} />
         <Stack.Screen name="entrar/email" />
+        <Stack.Screen name="entrar/enlace" options={{ headerShown: false }} />
         <Stack.Screen name="entrar/edad" />
         <Stack.Screen name="local/index" />
         <Stack.Screen name="local/nuevo" />

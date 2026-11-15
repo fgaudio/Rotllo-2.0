@@ -127,7 +127,7 @@ Al pulsar, botones y chips bajan su opacidad y encogen un 2 %.
 | **Mi local** | `/local` | Nombre, datos, «Ver en el mapa», la etiqueta de estado y «Tus planes» (crear y la lista con estado y clics) |
 | **Crear o editar un plan** | `/local/plan/<id>` | Formulario por secciones (lo básico, cuándo, precio y entrada, el cartel con vista previa). Abajo, fijo: «Guardar borrador» y «Publicar», o «Guardar cambios» |
 | **Locales por revisar** | `/admin/locales` | Solo para el equipo: una tarjeta por local con Rechazar y Aprobar |
-| **Email y fecha de nacimiento** | `/entrar/email`, `/entrar/edad` | Código de 6 cifras; día, mes y año en tres campos |
+| **Email, enlace y fecha de nacimiento** | `/entrar/email`, `/entrar/enlace`, `/entrar/edad` | Se pide un enlace por correo y se espera en «Mira tu correo»; `/entrar/enlace` recibe ese enlace («Entrando…» o «Ese enlace ya no vale»); día, mes y año en tres campos |
 
 **La acción principal de la ficha** depende del plan: «Pillar entrada» si tiene ticketera; «Cómo llegar» si no.
 

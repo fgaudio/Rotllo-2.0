@@ -6,39 +6,33 @@ Cosas que Claude no puede hacer por ti, porque piden entrar en tus cuentas, paga
 
 ## Ahora
 
-### 1. Que el correo de Supabase mande un código (5 minutos)
+### 1. Decirle a Supabase que el enlace del correo puede volver a Rotllo (3 minutos)
 
-**Para qué:** hoy nadie puede entrar en la app. El correo trae un enlace, y la app pide un código.
+**Para qué:** ahora se entra tocando el enlace que llega al correo (ya no hay código, así que no hay que tocar ninguna plantilla). Supabase solo devuelve a la gente a las direcciones que tú le apuntes en una lista. En el navegador ya funciona; este paso hace falta para la app instalada en el móvil.
 
 1. Entra en [supabase.com/dashboard](https://supabase.com/dashboard) y abre el proyecto de Rotllo.
-2. En el menú de la izquierda: **Authentication** → **Emails** (puede llamarse «Email Templates»).
-3. Abre la plantilla **Magic Link**. Borra lo que hay en el cuerpo y pega esto:
+2. En el menú de la izquierda: **Authentication** → **URL Configuration**.
+3. En **Redirect URLs**, toca **Add URL**, escribe `rotllo://**` y guarda.
+4. Repite con `http://localhost:8081/**`.
 
-   ```html
-   <h2>Tu código para entrar en Rotllo</h2>
-   <p style="font-size:28px;letter-spacing:4px"><strong>{{ .Token }}</strong></p>
-   <p>Escríbelo en la app. Caduca en unos minutos y solo vale una vez.</p>
-   <p>Si no lo has pedido tú, no hagas nada.</p>
-   ```
+No hace falta que avises: la app ya está preparada. La explicación completa está en `docs/login.md`.
 
-   En el asunto pon: `Tu código para entrar en Rotllo`. Guarda.
-4. Abre la plantilla **Confirm signup** (la que llega a quien entra por primera vez) y haz lo mismo, con el mismo texto. Guarda.
-5. En **Authentication** → **Sign In / Providers** → **Email**, busca **Email OTP Expiration** y pon `600` (10 minutos). Guarda.
+**Para probarlo ya en el navegador:** sigue «Cómo probarlo tú» de `docs/login.md`. El correo llega en inglés y a nombre de «Supabase Auth»; se podrá cambiar cuando haya correo propio (tabla de «Antes de lanzar»).
 
-**Cuando esté:** dile a Claude «plantilla hecha». Repetirá la prueba de entrar con el código de verdad.
+### 2. Una cuenta de Expo, para ver la app en tu móvil (cuando se pueda)
 
-Lo importante es `{{ .Token }}`: Supabase lo cambia por el código de cada persona. Es lo que indica su documentación para mandar un código en vez de un enlace.
+**Para qué:** todo lo hecho hasta ahora está probado en el navegador. Falta verlo en un móvil de verdad: la galería de fotos, el mapa, que «Cómo llegar» abra la app de mapas, el menú de compartir y que el enlace del correo abra la app.
 
-### 2. Una cuenta de Expo, para ver la app en tu móvil (15 minutos)
+**Estado (15 de noviembre):** Expo no te ha dejado crear la cuenta. No bloquea nada de momento: el trabajo sigue en el navegador. Cuando quieras reintentarlo:
 
-**Para qué:** todo lo hecho hasta ahora está probado en el navegador. Falta verlo en un móvil de verdad: la galería de fotos, el mapa, que «Cómo llegar» abra la app de mapas y el menú de compartir.
-
-1. Crea una cuenta gratis en [expo.dev](https://expo.dev) («Sign up»).
+1. Prueba en [expo.dev/signup](https://expo.dev/signup) con otro navegador o sin bloqueador de anuncios, o con «Continue with Google» o «Continue with GitHub». Si da un error, copia el texto del error y pásaselo a Claude.
 2. Dentro, ve a los ajustes de tu cuenta → **Access tokens** → **Create token**. Ponle de nombre «Rotllo» y copia el texto que te da.
 3. **No pegues ese texto en el chat.** Dile a Claude «tengo el token de Expo»: te abrirá un formulario seguro para guardarlo.
 4. Con eso, Claude intentará lanzar la compilación de prueba para **Android**. Cuando termine, Expo da un enlace y un código QR para instalarla en el móvil.
 
 **iPhone:** para instalar la app en un iPhone hace falta la cuenta de desarrollador de Apple (99 $ al año). Se puede dejar para más adelante y empezar por Android.
+
+**Sin cuenta de Expo** también se puede compilar la app, pero en un ordenador tuyo con Android Studio instalado (gratis, pesa varios GB). Es más lento de preparar; si la cuenta sigue sin salir, Claude te guía.
 
 Aviso: este camino no se ha recorrido todavía en este proyecto. Puede hacer falta algún ajuste por el camino.
 

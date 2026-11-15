@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,27 +7,28 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Boton } from '@/components/Boton';
 import { CampoTexto } from '@/components/CampoTexto';
-import { CODIGO_MAX, enviarCodigo, esCodigoValido, esEmailValido, ESPERA_REENVIO_S, limpiarEmail, verificarCodigo, type ErrorAuth } from '@/lib/auth';
+import { enviarEnlace, esEmailValido, ESPERA_REENVIO_S, limpiarEmail, type ErrorAuth } from '@/lib/auth';
 import { siguientePaso, useSesion } from '@/lib/sesion';
-import { espacio, texto } from '@/theme/tokens';
-import { crearEstilos } from '@/theme/useTema';
+import { espacio, radio, texto } from '@/theme/tokens';
+import { crearEstilos, useTema } from '@/theme/useTema';
 
-// Entrar con email: se manda un código de 6 cifras (sin contraseñas) y se escribe aquí.
-// Si el email es nuevo, la cuenta se crea sola. Al acertar el código, la app sigue con la fecha
+// Entrar con email: se manda un enlace al correo (sin contraseñas ni códigos). Al tocarlo, se abre
+// la pantalla /entrar/enlace, que inicia la sesión. Si el email es nuevo, la cuenta se crea sola.
+// Esta pantalla se queda esperando: si la sesión llega mientras está abierta, sigue con la fecha
 // de nacimiento (la primera vez) o vuelve al perfil.
 export default function EmailScreen() {
   const { t } = useTranslation();
   const s = useEstilos();
+  const { c } = useTema();
   const paso = siguientePaso(useSesion());
   const [email, setEmail] = useState('');
-  const [codigo, setCodigo] = useState('');
   const [enviado, setEnviado] = useState(false);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [espera, setEspera] = useState(0); // segundos hasta poder pedir otro código
-  const [ultimoEnvio, setUltimoEnvio] = useState<string | null>(null); // a qué email se mandó el último código
+  const [espera, setEspera] = useState(0); // segundos hasta poder pedir otro enlace
+  const [ultimoEnvio, setUltimoEnvio] = useState<string | null>(null); // a qué email se mandó el último enlace
 
-  // Cuenta atrás para "Enviar otro código".
+  // Cuenta atrás para "Enviar otro enlace".
   useEffect(() => {
     if (espera <= 0) return;
     const reloj = setTimeout(() => setEspera((segundos) => segundos - 1), 1000);
@@ -41,34 +43,21 @@ export default function EmailScreen() {
     if (!esEmailValido(email)) return setError(t('entrar.errores.email'));
     setError(null);
     setCargando(true);
-    const resultado = await enviarCodigo(email);
+    const resultado = await enviarEnlace(email);
     setCargando(false);
-    // "Espera" justo después de mandar un código a este mismo email: el código ya está en el
-    // correo, así que se pasa a escribirlo en vez de dejar a la persona bloqueada un minuto.
+    // "Espera" justo después de mandar un enlace a este mismo email: el enlace ya está en el
+    // correo, así que se enseña «Mira tu correo» en vez de un error.
     const yaEnviado = !resultado.ok && resultado.error === 'espera' && ultimoEnvio === limpiarEmail(email);
     if (!resultado.ok && !yaEnviado) return setError(explicar(resultado.error));
     setEnviado(true);
-    setCodigo('');
     if (resultado.ok) {
       setUltimoEnvio(limpiarEmail(email));
       setEspera(ESPERA_REENVIO_S);
     }
   };
 
-  const entrar = async () => {
-    if (cargando) return;
-    if (!esCodigoValido(codigo)) return setError(t('entrar.codigo.error'));
-    setError(null);
-    setCargando(true);
-    const resultado = await verificarCodigo(email, codigo);
-    setCargando(false);
-    if (!resultado.ok) setError(explicar(resultado.error));
-    // Si ha ido bien, la sesión cambia sola y los Redirect de abajo llevan a la pantalla que toca.
-  };
-
   const cambiarEmail = () => {
     setEnviado(false);
-    setCodigo('');
     setError(null);
   };
 
@@ -81,29 +70,23 @@ export default function EmailScreen() {
         <ScrollView contentContainerStyle={s.cuerpo} keyboardShouldPersistTaps="handled">
           {enviado ? (
             <>
+              <View style={s.sobre}>
+                <Ionicons name="mail-unread-outline" size={32} color={c.texto} />
+              </View>
               <View style={s.cabecera}>
                 <Text style={s.titulo} accessibilityRole="header">
-                  {t('entrar.codigo.titulo')}
+                  {t('entrar.enlace.titulo')}
                 </Text>
-                <Text style={s.texto}>{t('entrar.codigo.texto', { email: limpiarEmail(email) })}</Text>
+                <Text style={s.texto}>{t('entrar.enlace.texto', { email: limpiarEmail(email) })}</Text>
+                <Text style={s.texto}>{t('entrar.enlace.pasos')}</Text>
               </View>
-              <CampoTexto
-                key="codigo"
-                etiqueta={t('entrar.codigo.etiqueta')}
-                valor={codigo}
-                onCambio={(valor) => {
-                  setCodigo(valor.replace(/\D/g, '').slice(0, CODIGO_MAX));
-                  setError(null);
-                }}
-                error={error}
-                keyboardType="number-pad"
-                textContentType="oneTimeCode"
-                autoComplete="one-time-code"
-                maxLength={CODIGO_MAX}
-                autoFocus
-                onSubmitEditing={entrar}
-              />
-              <Text style={s.nota}>{t('entrar.codigo.noLlega')}</Text>
+              {error ? (
+                <Text style={s.error} accessibilityRole="alert">
+                  {error}
+                </Text>
+              ) : (
+                <Text style={s.nota}>{t('entrar.enlace.noLlega')}</Text>
+              )}
             </>
           ) : (
             <>
@@ -137,13 +120,12 @@ export default function EmailScreen() {
         <View style={s.abajo}>
           {enviado ? (
             <>
-              <Boton titulo={t('entrar.codigo.entrar')} cargando={cargando} onPress={entrar} />
               {espera > 0 ? (
-                <Text style={s.espera}>{t('entrar.codigo.reenviarEn', { segundos: espera })}</Text>
+                <Text style={s.espera}>{t('entrar.enlace.reenviarEn', { segundos: espera })}</Text>
               ) : (
-                <Boton titulo={t('entrar.codigo.reenviar')} variante="texto" desactivado={cargando} onPress={enviar} />
+                <Boton titulo={t('entrar.enlace.reenviar')} variante="superficie" cargando={cargando} onPress={enviar} />
               )}
-              <Boton titulo={t('entrar.codigo.cambiar')} variante="texto" desactivado={cargando} onPress={cambiarEmail} />
+              <Boton titulo={t('entrar.enlace.cambiar')} variante="texto" desactivado={cargando} onPress={cambiarEmail} />
             </>
           ) : (
             <Boton titulo={t('entrar.correo.enviar')} cargando={cargando} onPress={enviar} />
@@ -160,7 +142,9 @@ const useEstilos = crearEstilos((c) => ({
   cabecera: { gap: espacio[2] },
   titulo: { ...texto.titulo, color: c.texto },
   texto: { ...texto.m, color: c.textoSuave },
+  sobre: { width: 72, height: 72, borderRadius: radio.pildora, backgroundColor: c.superficie, alignItems: 'center', justifyContent: 'center' },
   nota: { ...texto.s, color: c.textoTenue, marginTop: -espacio[3] },
+  error: { ...texto.s, color: c.error, marginTop: -espacio[3] },
   abajo: { padding: espacio[4], gap: espacio[1], width: '100%', maxWidth: 560, alignSelf: 'center' },
   espera: { ...texto.s, color: c.textoTenue, textAlign: 'center', minHeight: 44, textAlignVertical: 'center', paddingTop: espacio[3] },
 }));

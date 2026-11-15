@@ -1,14 +1,16 @@
 // Entrar, salir y borrar la cuenta (Supabase Auth, ADR-002).
-// Se entra con el email y un código de 6 cifras que llega al correo: sin contraseñas.
+// Se entra con el email y un enlace que llega al correo: sin contraseñas ni códigos (docs/login.md).
 // Estas funciones nunca lanzan errores: devuelven { ok } o { ok: false, error } con un motivo
 // que las pantallas saben explicar.
+import * as Linking from 'expo-linking';
+
 import { supabase } from './supabase';
 
 export type ErrorAuth =
   | 'sin-servicio' // la app está en modo de ejemplo (sin claves de Supabase)
   | 'email' // el email no vale
   | 'espera' // demasiados intentos seguidos: hay que esperar
-  | 'codigo' // el código no es correcto o ha caducado
+  | 'enlace' // el enlace del correo ha caducado, ya se usó o está incompleto
   | 'menor' // la fecha de nacimiento es de menor de 18 (lo dice la base de datos)
   | 'local' // es la única persona propietaria de un local: no puede borrar la cuenta
   | 'red'; // sin conexión o fallo del servidor
@@ -18,16 +20,7 @@ export type Resultado = { ok: true } | { ok: false; error: ErrorAuth };
 const OK: Resultado = { ok: true };
 const fallo = (error: ErrorAuth): Resultado => ({ ok: false, error });
 
-// Supabase manda códigos de 6 cifras por defecto, pero se puede configurar hasta 10:
-// la app acepta cualquiera de esos largos para no depender de ese ajuste.
-export const CODIGO_MIN = 6;
-export const CODIGO_MAX = 10;
-const ES_CODIGO = new RegExp(`^\\d{${CODIGO_MIN},${CODIGO_MAX}}$`);
-
-export function esCodigoValido(codigo: string): boolean {
-  return ES_CODIGO.test(codigo);
-}
-export const ESPERA_REENVIO_S = 60; // Supabase deja pedir un código por email cada 60 segundos
+export const ESPERA_REENVIO_S = 60; // Supabase deja pedir un enlace por email cada 60 segundos
 
 // Comprobación básica para avisar de erratas antes de enviar nada.
 const PARECE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -42,7 +35,7 @@ export function esEmailValido(email: string): boolean {
 
 type ErrorSupabase = { code?: string; status?: number; message?: string } | null;
 
-type Paso = 'enviar' | 'verificar' | 'fecha' | 'borrar';
+type Paso = 'enviar' | 'entrar' | 'fecha' | 'borrar';
 
 // Traduce un error de Supabase a uno de los nuestros. El mismo código significa cosas distintas
 // según lo que se estuviera haciendo, por eso hace falta saber el paso.
@@ -53,8 +46,8 @@ export function tipoDeError(error: ErrorSupabase, paso: Paso): ErrorAuth {
   switch (paso) {
     case 'enviar':
       return code === 'email_address_invalid' || code === 'validation_failed' || code === 'email_address_not_authorized' ? 'email' : 'red';
-    case 'verificar':
-      return 'codigo'; // cualquier rechazo aquí es que el código no vale o ha caducado
+    case 'entrar':
+      return 'enlace'; // cualquier rechazo aquí es que el enlace no vale o ha caducado
     case 'fecha':
       return code === '23514' ? 'menor' : 'red'; // 23514 = la regla de los 18 años
     case 'borrar':
@@ -64,25 +57,64 @@ export function tipoDeError(error: ErrorSupabase, paso: Paso): ErrorAuth {
   }
 }
 
-// Paso 1: manda el código al email. Si la cuenta no existe, se crea.
-export async function enviarCodigo(email: string): Promise<Resultado> {
+// Ruta de la app que recibe el enlace del correo (src/app/entrar/enlace.tsx).
+export const RUTA_ENLACE = '/entrar/enlace';
+
+// Dirección a la que Supabase devuelve a la persona después de tocar el enlace del correo.
+// En el navegador es https://<la web>/entrar/enlace; en la app instalada, rotllo://entrar/enlace.
+// Tiene que estar en la lista de «Redirect URLs» de Supabase (docs/login.md).
+export function urlDeVuelta(): string {
+  return Linking.createURL(RUTA_ENLACE);
+}
+
+// Paso 1: manda el enlace al email. Si la cuenta no existe, se crea.
+export async function enviarEnlace(email: string): Promise<Resultado> {
   if (!supabase) return fallo('sin-servicio');
   if (!esEmailValido(email)) return fallo('email');
   try {
-    const { error } = await supabase.auth.signInWithOtp({ email: limpiarEmail(email), options: { shouldCreateUser: true } });
+    const { error } = await supabase.auth.signInWithOtp({ email: limpiarEmail(email), options: { shouldCreateUser: true, emailRedirectTo: urlDeVuelta() } });
     return error ? fallo(tipoDeError(error, 'enviar')) : OK;
   } catch {
     return fallo('red');
   }
 }
 
-// Paso 2: comprueba el código. Si es correcto, la sesión queda abierta y guardada en el móvil.
-export async function verificarCodigo(email: string, codigo: string): Promise<Resultado> {
+export type Enlace = { ok: true; accessToken: string; refreshToken: string } | { ok: false };
+
+// Lee los datos que Supabase añade a la dirección de vuelta. Si todo ha ido bien, vienen las dos
+// llaves de la sesión detrás de la almohadilla (#access_token=…&refresh_token=…). Si el enlace ha
+// caducado o ya se usó, viene un error (error_code=otp_expired) y ninguna llave.
+export function leerEnlace(url: string | null | undefined): Enlace {
+  if (!url) return { ok: false };
+  const datos = new Map<string, string>();
+  const [antes, ...resto] = url.split('#');
+  const consulta = antes.includes('?') ? antes.slice(antes.indexOf('?') + 1) : '';
+  for (const trozo of [consulta, resto.join('#')]) {
+    for (const par of trozo.split('&')) {
+      const igual = par.indexOf('=');
+      if (igual <= 0) continue;
+      try {
+        datos.set(par.slice(0, igual), decodeURIComponent(par.slice(igual + 1).replace(/\+/g, ' ')));
+      } catch {
+        // Un valor mal escrito se ignora: el enlace se dará por no válido.
+      }
+    }
+  }
+  const accessToken = datos.get('access_token');
+  const refreshToken = datos.get('refresh_token');
+  if (datos.has('error') || datos.has('error_code') || !accessToken || !refreshToken) return { ok: false };
+  return { ok: true, accessToken, refreshToken };
+}
+
+// Paso 2: la app se abre con el enlace del correo. Si trae las llaves, la sesión queda abierta
+// y guardada en el móvil.
+export async function entrarConEnlace(url: string | null | undefined): Promise<Resultado> {
   if (!supabase) return fallo('sin-servicio');
-  if (!esCodigoValido(codigo)) return fallo('codigo');
+  const enlace = leerEnlace(url);
+  if (!enlace.ok) return fallo('enlace');
   try {
-    const { error } = await supabase.auth.verifyOtp({ email: limpiarEmail(email), token: codigo, type: 'email' });
-    return error ? fallo(tipoDeError(error, 'verificar')) : OK;
+    const { error } = await supabase.auth.setSession({ access_token: enlace.accessToken, refresh_token: enlace.refreshToken });
+    return error ? fallo(tipoDeError(error, 'entrar')) : OK;
   } catch {
     return fallo('red');
   }
@@ -95,7 +127,7 @@ export async function guardarFechaNacimiento(fechaIso: string): Promise<Resultad
   try {
     const { data: sesion } = await supabase.auth.getSession();
     const id = sesion.session?.user.id;
-    if (!id) return fallo('codigo');
+    if (!id) return fallo('red');
     // Con .select() la base de datos devuelve la fila cambiada: así se sabe que se ha guardado de verdad.
     const { data, error, status } = await supabase.from('perfiles_privados').update({ fecha_nacimiento: fechaIso }).eq('id', id).select('estado');
     if (error) return fallo(tipoDeError({ ...error, status }, 'fecha'));
