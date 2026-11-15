@@ -1,4 +1,4 @@
-// Filtros del feed: hoy, este finde y gratis. Hacen lo mismo que la función
+// Filtros del feed: hoy, este finde y gratis, y además por tipo de plan (categoría). Hacen lo mismo que la función
 // buscar_planes de la base de datos (que es la que se usa con Supabase); esta versión
 // sirve para los datos de ejemplo. Si cambias una, cambia la otra.
 //
@@ -75,10 +75,11 @@ function finDe(plan: Plan): number {
   return plan.terminaEn ? Date.parse(plan.terminaEn) : Date.parse(plan.empiezaEn) + DURACION_SIN_FIN;
 }
 
-export function filtrarPlanes(planes: Plan[], filtro: Filtro | null, ahora = new Date()): Plan[] {
+export function filtrarPlanes(planes: Plan[], filtro: Filtro | null, ahora = new Date(), categoria: string | null = null): Plan[] {
   const v = ventanas(ahora);
   return planes
     .filter((plan) => finDe(plan) > ahora.getTime())
+    .filter((plan) => categoria === null || plan.categoria === categoria)
     .filter((plan) => {
       const empieza = Date.parse(plan.empiezaEn);
       if (filtro === 'hoy') return empieza < v.hoyFin.getTime();

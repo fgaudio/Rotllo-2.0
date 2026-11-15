@@ -59,13 +59,17 @@ function aPlan(fila: FilaPlanFeed): Plan {
 export const PLANES_POR_PAGINA = 30;
 
 // Una página del feed: planes publicados que aún no han terminado, con el filtro hecho en la
-// base de datos (buscar_planes: hora de Valencia y día de 06:00 a 06:00).
-export async function obtenerPlanes(filtro: Filtro | null = null, desde = 0): Promise<Plan[]> {
-  if (!supabase) return filtrarPlanes(planesEjemplo, filtro).slice(desde, desde + PLANES_POR_PAGINA);
+// base de datos (buscar_planes: hora de Valencia y día de 06:00 a 06:00). `categoria` es el tipo
+// de plan ("fiesta", "musica-en-directo"...) y se puede combinar con el filtro.
+export async function obtenerPlanes(filtro: Filtro | null = null, desde = 0, categoria: string | null = null): Promise<Plan[]> {
+  if (!supabase) return filtrarPlanes(planesEjemplo, filtro, new Date(), categoria).slice(desde, desde + PLANES_POR_PAGINA);
   const { data, error } = await supabase.rpc('buscar_planes', {
     p_filtro: filtro,
     p_desde: desde,
     p_limite: PLANES_POR_PAGINA,
+    // Solo se manda si se ha elegido un tipo de plan: así el feed normal no depende de que la
+    // base de datos tenga ya la versión nueva de buscar_planes.
+    ...(categoria ? { p_categoria: categoria } : {}),
   });
   if (error) throw error;
   return (data as FilaPlanFeed[]).map(aPlan);

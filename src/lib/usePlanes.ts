@@ -10,21 +10,21 @@ import type { Plan } from './tipos';
 // actual (se cambió de filtro o se pulsó "Reintentar"), es que estamos cargando.
 type EstadoFeed = { clave: string; planes: Plan[]; hayMas: boolean; error: boolean };
 
-export function usePlanes(filtro: Filtro | null = null) {
+export function usePlanes(filtro: Filtro | null = null, categoria: string | null = null) {
   const [intento, setIntento] = useState(0);
   const [estado, setEstado] = useState<EstadoFeed | null>(null);
   const [cargandoMas, setCargandoMas] = useState(false);
-  const clave = `${filtro ?? 'todos'}#${intento}`;
+  const clave = `${filtro ?? 'todos'}/${categoria ?? 'todas'}#${intento}`;
 
   useEffect(() => {
     let vigente = true; // por si la pantalla se cierra antes de que llegue la respuesta
-    obtenerPlanes(filtro, 0)
+    obtenerPlanes(filtro, 0, categoria)
       .then((planes) => vigente && setEstado({ clave, planes, hayMas: planes.length === PLANES_POR_PAGINA, error: false }))
       .catch(() => vigente && setEstado({ clave, planes: [], hayMas: false, error: true }));
     return () => {
       vigente = false;
     };
-  }, [filtro, clave]);
+  }, [filtro, categoria, clave]);
 
   const actual = estado !== null && estado.clave === clave;
 
@@ -32,7 +32,7 @@ export function usePlanes(filtro: Filtro | null = null) {
   const cargarMas = useCallback(() => {
     if (!estado || estado.clave !== clave || !estado.hayMas || cargandoMas) return;
     setCargandoMas(true);
-    obtenerPlanes(filtro, estado.planes.length)
+    obtenerPlanes(filtro, estado.planes.length, categoria)
       .then((mas) =>
         setEstado((previo) =>
           previo && previo.clave === clave
@@ -42,7 +42,7 @@ export function usePlanes(filtro: Filtro | null = null) {
       )
       .catch(() => undefined) // si falla, se puede volver a intentar bajando otra vez
       .finally(() => setCargandoMas(false));
-  }, [estado, clave, cargandoMas, filtro]);
+  }, [estado, clave, cargandoMas, filtro, categoria]);
 
   const recargar = useCallback(() => setIntento((n) => n + 1), []);
 

@@ -116,7 +116,7 @@ Al pulsar, botones y chips bajan su opacidad y encogen un 2 %.
 
 | Pantalla | Ruta | Cómo es |
 |---|---|---|
-| **Feed** | `/` | Lo primero que se ve. Logo y lupa; «¿Qué hacemos esta noche?» (cambia con la hora y con el filtro); chips Todo, Hoy, Este finde y Gratis; el plan destacado; «Hoy también» en carrusel si hay dos o más; «Lo que viene» en agenda por días |
+| **Feed** | `/` | Lo primero que se ve. Logo y lupa; «¿Qué hacemos esta noche?» (cambia con la hora y con el filtro); chips Todo, Hoy, Este finde, Gratis y los tipos de plan (se combinan; tocar uno puesto lo quita); el plan destacado; «Hoy también» en carrusel si hay dos o más; «Lo que viene» en agenda por días |
 | **Búsqueda** | `/buscar` | Se abre con la lupa. Por título, local o barrio, sin tildes ni mayúsculas |
 | **Ficha** | `/p/<id>` | Cartel a todo el ancho; categoría y rótulo vivo; título; cuándo, dónde, cuánto y edad; «De qué va»; bloque «Mejor con tu gente»; «Dónde es» con mapa; «Más planes». Arriba, volver, compartir y guardar. Abajo, fijo, el precio y la acción principal |
 | **Guardados** | `/guardados` | Los planes con corazón |
@@ -146,6 +146,6 @@ Cercano, joven, con tuteo y frases cortas. Los botones empiezan por verbo y tien
 
 - ~~Editor del cartel para el local~~: hecho. Está en el formulario del plan (`docs/panel-local.md`).
 - **Logo e icono de la app** definitivos.
-- **Filtro por categoría** (Fiesta, Directos…): cuando la base de datos lo permita (módulo 3).
+- ~~Filtro por categoría~~: hecho. Los tipos de plan van en la misma fila de chips, después de Hoy, Este finde y Gratis, y se combinan con ellos.
 - **Probar en un móvil de verdad.** Este rediseño está comprobado en el navegador. En iPhone y Android hay que revisar sobre todo los carteles generados (la posición de las letras puede variar unos píxeles) y el mapa pequeño de la ficha.
 - **Componentes de la v2** (entrada con QR, chat y votación): se diseñan cuando lleguen sus módulos.

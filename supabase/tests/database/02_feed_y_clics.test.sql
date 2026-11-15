@@ -101,5 +101,37 @@ select is(
   2,
   'planes y locales tienen una regla de lectura propia para quien no tiene cuenta');
 
+-- ── Filtro por tipo de plan (migración 20261115120000_v1_filtro_por_categoria) ──
+reset role;
+insert into public.planes (local_id, categoria_id, titulo, empieza_en, es_gratis, estado)
+select 'a0000000-0000-4000-8000-000000000001', c.id, t.titulo, t.empieza::timestamptz, t.gratis, 'publicado'
+from (values
+  ('K·concierto sábado',  'musica-en-directo', '2030-03-16 21:00 Europe/Madrid', false),
+  ('K·concierto gratis',  'musica-en-directo', '2030-03-20 21:00 Europe/Madrid', true),
+  ('K·vermut domingo',    'bar-y-tardeo',      '2030-03-17 13:00 Europe/Madrid', true)
+) as t (titulo, slug, empieza, gratis)
+join public.categorias c on c.slug = t.slug;
+select set_config('request.jwt.claims', '{"role": "anon"}', true);
+set local role anon;
+
+select results_eq(
+  $$ select titulo from buscar_planes(null, 0, 100, '2030-03-15 12:00 Europe/Madrid', 'musica-en-directo') where titulo like 'K·%' $$,
+  $$ values ('K·concierto sábado'::text), ('K·concierto gratis') $$,
+  'Por tipo de plan: solo los de ese tipo, por orden de fecha');
+select results_eq(
+  $$ select titulo from buscar_planes('finde', 0, 100, '2030-03-15 12:00 Europe/Madrid', 'musica-en-directo') where titulo like 'K·%' $$,
+  $$ values ('K·concierto sábado'::text) $$,
+  'Tipo de plan y "este finde" a la vez');
+select results_eq(
+  $$ select titulo from buscar_planes('gratis', 0, 100, '2030-03-15 12:00 Europe/Madrid', 'musica-en-directo') where titulo like 'K·%' $$,
+  $$ values ('K·concierto gratis'::text) $$,
+  'Tipo de plan y "gratis" a la vez');
+select is(
+  (select count(*) from buscar_planes(null, 0, 100, '2030-03-15 12:00 Europe/Madrid', 'no-existe'))::int,
+  0, 'Un tipo de plan que no existe no devuelve nada');
+select is(
+  (select count(*) from buscar_planes(null, 0, 100, '2030-03-15 12:00 Europe/Madrid') where titulo like 'K·%')::int,
+  3, 'Sin tipo de plan (como antes) salen todos');
+
 select * from finish();
 rollback;

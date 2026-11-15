@@ -12,6 +12,7 @@ import { FilaPlan } from '@/components/FilaPlan';
 import { Marca } from '@/components/Marca';
 import { TarjetaDestacada } from '@/components/TarjetaDestacada';
 import { TarjetaMini } from '@/components/TarjetaMini';
+import { es } from '@/i18n/es';
 import { agruparPorDia, momentoDelDia, type GrupoDia } from '@/lib/agenda';
 import type { Filtro } from '@/lib/filtros';
 import { formatearDia, formatearHoy } from '@/lib/formatos';
@@ -21,25 +22,33 @@ import { usePlanes } from '@/lib/usePlanes';
 import { espacio, texto } from '@/theme/tokens';
 import { crearEstilos } from '@/theme/useTema';
 
-const FILTROS: (Filtro | null)[] = [null, 'hoy', 'finde', 'gratis'];
+const FILTROS: Filtro[] = ['hoy', 'finde', 'gratis'];
+const CATEGORIAS = Object.keys(es.categorias) as (keyof typeof es.categorias)[];
 
 // Cada línea de la agenda: el encabezado de un día o un plan.
 type Linea = { tipo: 'dia'; clave: string; titulo: string } | { tipo: 'plan'; clave: string; plan: Plan };
 
 // Feed (docs/diseno.md). Es lo primero que se ve al abrir la app, sin registro.
-//   · Sin filtro: el primer plan va destacado, el resto de hoy en un carrusel y lo demás en agenda.
-//   · Con filtro: todo en agenda, agrupado por días.
+//   · Sin filtros: el primer plan va destacado, el resto de hoy en un carrusel y lo demás en agenda.
+//   · Con filtros: todo en agenda, agrupado por días. Hay dos filtros que se pueden combinar:
+//     cuándo o cuánto (hoy, este finde, gratis) y el tipo de plan (fiesta, música en directo...).
 // Lee de Supabase (buscar_planes), de 30 en 30, o de los datos de ejemplo si no hay claves en .env.
 export default function FeedScreen() {
   const { t, i18n } = useTranslation();
   const s = useEstilos();
   const [filtro, setFiltro] = useState<Filtro | null>(null);
-  const { datos, cargando, error, recargar, cargarMas, cargandoMas } = usePlanes(filtro);
+  const [categoria, setCategoria] = useState<string | null>(null);
+  const { datos, cargando, error, recargar, cargarMas, cargandoMas } = usePlanes(filtro, categoria);
+  const sinFiltros = filtro === null && categoria === null;
+  const quitarFiltros = () => {
+    setFiltro(null);
+    setCategoria(null);
+  };
   const ahora = new Date();
   const idioma = i18n.language;
 
   const grupos = agruparPorDia(datos, ahora);
-  const destacado = filtro === null ? datos[0] : undefined;
+  const destacado = sinFiltros ? datos[0] : undefined;
   // El carrusel "Hoy también" solo sale si hay al menos dos planes más hoy; uno solo va a la agenda.
   const restoDeHoy = destacado && grupos[0]?.cuando === 'hoy' ? grupos[0].planes.filter((plan) => plan.id !== destacado.id) : [];
   const hoyTambien = restoDeHoy.length >= 2 ? restoDeHoy : [];
@@ -104,8 +113,13 @@ export default function FeedScreen() {
               </Text>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} accessibilityLabel={t('feed.filtros')} contentContainerStyle={s.filtros}>
+              <Chip etiqueta={t('feed.filtro.todo')} activo={sinFiltros} onPress={quitarFiltros} />
+              {/* Tocar un filtro puesto lo quita. */}
               {FILTROS.map((f) => (
-                <Chip key={f ?? 'todo'} etiqueta={t(`feed.filtro.${f ?? 'todo'}`)} activo={filtro === f} onPress={() => setFiltro(f)} />
+                <Chip key={f} etiqueta={t(`feed.filtro.${f}`)} activo={filtro === f} onPress={() => setFiltro(filtro === f ? null : f)} />
+              ))}
+              {CATEGORIAS.map((slug) => (
+                <Chip key={slug} etiqueta={t(`categorias.${slug}`)} activo={categoria === slug} onPress={() => setCategoria(categoria === slug ? null : slug)} />
               ))}
             </ScrollView>
             {supabaseConfigurado ? null : <Text style={s.aviso}>{t('feed.datosEjemplo')}</Text>}
@@ -144,7 +158,7 @@ export default function FeedScreen() {
               texto={t('comun.error.texto')}
               boton={{ titulo: t('comun.error.boton'), onPress: recargar }}
             />
-          ) : destacado ? undefined : filtro === null ? (
+          ) : destacado ? undefined : sinFiltros ? (
             <EstadoVacio
               titulo={t('feed.sinPlanes.titulo')}
               texto={t('feed.sinPlanes.texto')}
@@ -154,7 +168,7 @@ export default function FeedScreen() {
             <EstadoVacio
               titulo={t('feed.vacio.titulo')}
               texto={t('feed.vacio.texto')}
-              boton={{ titulo: t('feed.vacio.boton'), onPress: () => setFiltro(null) }}
+              boton={{ titulo: t('feed.vacio.boton'), onPress: quitarFiltros }}
             />
           )
         }

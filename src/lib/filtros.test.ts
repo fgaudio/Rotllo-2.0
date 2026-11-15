@@ -68,6 +68,16 @@ describe('filtros del feed (hora de Valencia, día de 06:00 a 06:00)', () => {
     expect(titulos(filtrarPlanes(planes, 'gratis', viernes2330))).toEqual(['lunes gratis']);
   });
 
+  test('por tipo de plan, solo o combinado con otro filtro', () => {
+    // Todos los planes de prueba son "fiesta" menos uno, que se cambia aquí a "deporte".
+    const mezclados = planes.map((p) => (p.titulo === 'lunes gratis' ? { ...p, categoria: 'deporte' } : p));
+    expect(titulos(filtrarPlanes(mezclados, null, viernes2330, 'deporte'))).toEqual(['lunes gratis']);
+    expect(titulos(filtrarPlanes(mezclados, 'gratis', viernes2330, 'deporte'))).toEqual(['lunes gratis']);
+    expect(titulos(filtrarPlanes(mezclados, 'gratis', viernes2330, 'fiesta'))).toEqual([]);
+    expect(titulos(filtrarPlanes(mezclados, 'hoy', viernes2330, 'fiesta'))).toEqual(titulos(filtrarPlanes(planes, 'hoy', viernes2330)));
+    expect(titulos(filtrarPlanes(mezclados, null, viernes2330, 'no-existe'))).toEqual([]);
+  });
+
   test('sin filtro: lo que no ha terminado, por fecha', () => {
     expect(titulos(filtrarPlanes(planes, null, viernes2330))).toEqual([
       'viernes madrugada',
