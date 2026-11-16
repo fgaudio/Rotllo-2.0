@@ -15,7 +15,12 @@ export const supabase =
           storage: AsyncStorage, // guarda la sesión en el móvil
           autoRefreshToken: true,
           persistSession: true,
-          detectSessionInUrl: false,
+          detectSessionInUrl: false, // el enlace del correo lo lee la pantalla /entrar/enlace
+          // PKCE: al pedir el enlace, el móvil guarda una clave secreta; sin ella, el enlace del correo
+          // no abre ninguna sesión. Así nadie puede meterte en su cuenta con un enlace preparado.
+          flowType: 'pkce',
+          // Cada petición de enlace lleva su propio identificador: si pides dos, valen los dos.
+          experimental: { appendPkceFlowIdToRedirects: true },
         },
       })
     : null;

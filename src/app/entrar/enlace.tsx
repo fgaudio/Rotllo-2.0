@@ -13,9 +13,10 @@ import { crearEstilos, useTema } from '@/theme/useTema';
 
 type Estado = { url: string | null; resultado: 'ok' | ErrorAuth };
 
-// Aquí llega la persona al tocar el enlace del correo (rotllo.app/entrar/enlace). La dirección trae
-// las llaves de la sesión: se guardan y la app sigue con la fecha de nacimiento (la primera vez)
-// o con el perfil. Si el enlace ha caducado o ya se usó, se explica y se ofrece pedir otro.
+// Aquí llega la persona al tocar el enlace del correo (rotllo.app/entrar/enlace?code=…). El código
+// se cambia por la sesión con la clave que este móvil guardó al pedir el enlace (PKCE), y la app
+// sigue con la fecha de nacimiento (la primera vez) o con el perfil. Si el enlace ha caducado, ya
+// se usó o se pidió en otro dispositivo, se explica y se ofrece pedir otro.
 export default function EnlaceScreen() {
   const { t } = useTranslation();
   const s = useEstilos();
@@ -53,6 +54,12 @@ export default function EnlaceScreen() {
           titulo={t('entrar.enlace.sinConexionTitulo')}
           texto={t(`entrar.errores.${fallo}`)}
           boton={{ titulo: t('entrar.enlace.reintentar'), onPress: () => setIntento((n) => n + 1) }}
+        />
+      ) : fallo === 'otro-dispositivo' ? (
+        <EstadoVacio
+          titulo={t('entrar.enlace.otroTitulo')}
+          texto={t('entrar.enlace.otroTexto')}
+          boton={{ titulo: t('entrar.enlace.pedirAqui'), onPress: () => router.replace('/entrar/email') }}
         />
       ) : fallo ? (
         <EstadoVacio

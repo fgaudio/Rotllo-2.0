@@ -411,7 +411,7 @@ export const es = {
     enlace: {
       titulo: 'Mira tu correo',
       texto: 'Te hemos mandado un enlace a {{email}}.',
-      pasos: 'Tócalo en este mismo dispositivo y ya estás dentro.',
+      pasos: 'Ábrelo en este mismo móvil o navegador y ya estás dentro. En otro no funcionará.',
       cambiar: 'Cambiar email',
       reenviar: 'Enviar otro enlace',
       reenviarEn: 'Puedes pedir otro en {{segundos}} s',
@@ -421,6 +421,9 @@ export const es = {
       caducadoTexto: 'Los enlaces caducan pronto y solo sirven una vez. Pide otro y entras.',
       sinConexionTitulo: 'No hemos podido entrar',
       pedirOtro: 'Pedir otro enlace',
+      otroTitulo: 'Este enlace es de otro dispositivo',
+      otroTexto: 'Por seguridad, el enlace solo vale en el móvil o navegador donde lo pediste. Pide uno nuevo aquí y ábrelo en este mismo.',
+      pedirAqui: 'Pedir un enlace aquí',
       reintentar: 'Probar otra vez',
     },
     edad: {

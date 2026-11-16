@@ -1,5 +1,6 @@
 // Entrar, salir y borrar la cuenta (Supabase Auth, ADR-002).
 // Se entra con el email y un enlace que llega al correo: sin contraseñas ni códigos (docs/login.md).
+// El enlace solo vale en el móvil o navegador donde se pidió (método PKCE, docs/revision-seguridad.md S3).
 // Estas funciones nunca lanzan errores: devuelven { ok } o { ok: false, error } con un motivo
 // que las pantallas saben explicar.
 import * as Linking from 'expo-linking';
@@ -11,6 +12,7 @@ export type ErrorAuth =
   | 'email' // el email no vale
   | 'espera' // demasiados intentos seguidos: hay que esperar
   | 'enlace' // el enlace del correo ha caducado, ya se usó o está incompleto
+  | 'otro-dispositivo' // el enlace se pidió en otro móvil o navegador (PKCE)
   | 'menor' // la fecha de nacimiento es de menor de 18 (lo dice la base de datos)
   | 'local' // es la única persona propietaria de un local: no puede borrar la cuenta
   | 'red'; // sin conexión o fallo del servidor
@@ -47,7 +49,9 @@ export function tipoDeError(error: ErrorSupabase, paso: Paso): ErrorAuth {
     case 'enviar':
       return code === 'email_address_invalid' || code === 'validation_failed' || code === 'email_address_not_authorized' ? 'email' : 'red';
     case 'entrar':
-      return 'enlace'; // cualquier rechazo aquí es que el enlace no vale o ha caducado
+      // Sin la clave que se guardó al pedir el enlace (o con otra), es que se pidió en otro sitio.
+      if (code === 'pkce_code_verifier_not_found' || code === 'bad_code_verifier') return 'otro-dispositivo';
+      return 'enlace'; // cualquier otro rechazo es que el enlace no vale o ha caducado
     case 'fecha':
       return code === '23514' ? 'menor' : 'red'; // 23514 = la regla de los 18 años
     case 'borrar':
@@ -79,13 +83,21 @@ export async function enviarEnlace(email: string): Promise<Resultado> {
   }
 }
 
-export type Enlace = { ok: true; accessToken: string; refreshToken: string } | { ok: false };
+export type Enlace = { tipo: 'codigo'; codigo: string; flujo: string | null } | { tipo: 'no-vale' };
 
-// Lee los datos que Supabase añade a la dirección de vuelta. Si todo ha ido bien, vienen las dos
-// llaves de la sesión detrás de la almohadilla (#access_token=…&refresh_token=…). Si el enlace ha
-// caducado o ya se usó, viene un error (error_code=otp_expired) y ninguna llave.
+// El código que devuelve Supabase es un identificador corto (un UUID); el flujo, 32 cifras hexadecimales.
+const ES_CODIGO = /^[A-Za-z0-9-]{8,128}$/;
+const ES_FLUJO = /^[0-9a-f]{32}$/;
+
+// Lee los datos que Supabase añade a la dirección de vuelta.
+//   · Si todo ha ido bien, viene un código de un solo uso (?code=…) y el flujo al que pertenece
+//     (&sb_flow_id=…). El código no abre la sesión por sí solo: hace falta además la clave que este
+//     móvil guardó al pedir el enlace (método PKCE).
+//   · Si el enlace ha caducado o ya se usó, viene un error (error_code=otp_expired).
+//   · Unas llaves de sesión en la dirección (#access_token=…) NO se aceptan: con ellas, cualquiera
+//     podría preparar un enlace que te mete en su cuenta (docs/revision-seguridad.md, S3).
 export function leerEnlace(url: string | null | undefined): Enlace {
-  if (!url) return { ok: false };
+  if (!url) return { tipo: 'no-vale' };
   const datos = new Map<string, string>();
   const [antes, ...resto] = url.split('#');
   const consulta = antes.includes('?') ? antes.slice(antes.indexOf('?') + 1) : '';
@@ -100,20 +112,20 @@ export function leerEnlace(url: string | null | undefined): Enlace {
       }
     }
   }
-  const accessToken = datos.get('access_token');
-  const refreshToken = datos.get('refresh_token');
-  if (datos.has('error') || datos.has('error_code') || !accessToken || !refreshToken) return { ok: false };
-  return { ok: true, accessToken, refreshToken };
+  const codigo = datos.get('code') ?? '';
+  if (datos.has('error') || datos.has('error_code') || !ES_CODIGO.test(codigo)) return { tipo: 'no-vale' };
+  const flujo = datos.get('sb_flow_id') ?? '';
+  return { tipo: 'codigo', codigo, flujo: ES_FLUJO.test(flujo) ? flujo : null };
 }
 
-// Paso 2: la app se abre con el enlace del correo. Si trae las llaves, la sesión queda abierta
-// y guardada en el móvil.
+// Paso 2: la app se abre con el enlace del correo. Cambia el código por la sesión, que queda
+// abierta y guardada en el móvil. Solo funciona en el móvil o navegador donde se pidió el enlace.
 export async function entrarConEnlace(url: string | null | undefined): Promise<Resultado> {
   if (!supabase) return fallo('sin-servicio');
   const enlace = leerEnlace(url);
-  if (!enlace.ok) return fallo('enlace');
+  if (enlace.tipo !== 'codigo') return fallo('enlace');
   try {
-    const { error } = await supabase.auth.setSession({ access_token: enlace.accessToken, refresh_token: enlace.refreshToken });
+    const { error } = await supabase.auth.exchangeCodeForSession(enlace.codigo, enlace.flujo ? { flowId: enlace.flujo } : undefined);
     return error ? fallo(tipoDeError(error, 'entrar')) : OK;
   } catch {
     return fallo('red');

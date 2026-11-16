@@ -36,7 +36,7 @@ export default function EmailScreen() {
   }, [espera]);
 
   const explicar = (motivo: ErrorAuth) =>
-    motivo === 'sin-servicio' ? t('entrar.sinServicio') : motivo === 'menor' || motivo === 'local' ? t('entrar.errores.red') : t(`entrar.errores.${motivo}`);
+    motivo === 'sin-servicio' ? t('entrar.sinServicio') : motivo === 'menor' || motivo === 'local' || motivo === 'otro-dispositivo' ? t('entrar.errores.red') : t(`entrar.errores.${motivo}`);
 
   const enviar = async () => {
     if (cargando) return;

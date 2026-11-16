@@ -1,14 +1,14 @@
 # Login y cuentas (módulo 1)
 
-**Estado:** construido el 12 de noviembre de 2026. Desde el 15 de noviembre se entra con el **enlace del correo**, sin código. En el navegador ya funciona; para la app instalada en el móvil falta un ajuste en el panel de Supabase (ver «Lo que tienes que hacer tú»).
+**Estado:** construido el 12 de noviembre de 2026. Desde el 15 de noviembre se entra con el **enlace del correo**, sin código. Desde el 16, con el método **PKCE**: el enlace solo vale en el móvil o navegador donde se pidió. En el navegador ya funciona; para la app instalada en el móvil falta un ajuste en el panel de Supabase (ver «Lo que tienes que hacer tú»).
 
 ## Cómo funciona
 
 | Paso | Qué ve la persona | Qué pasa por detrás |
 |---|---|---|
 | 1. Email | Escribe su email y toca «Enviar enlace» | Supabase Auth manda un correo con un enlace. Si el email es nuevo, crea la cuenta |
-| 2. Correo | La app dice «Mira tu correo». Abre el correo y toca el enlace | Supabase comprueba el enlace y devuelve a la persona a Rotllo, a `/entrar/enlace`, con las llaves de la sesión |
-| 3. Entrando | Un momento de «Entrando…» | La app guarda la sesión en el móvil |
+| 2. Correo | La app dice «Mira tu correo». Abre el correo y toca el enlace **en el mismo móvil o navegador** | Supabase comprueba el enlace y devuelve a la persona a Rotllo, a `/entrar/enlace?code=…`, con un código de un solo uso |
+| 3. Entrando | Un momento de «Entrando…» | La app cambia el código por la sesión con la clave secreta que guardó al pedir el enlace, y guarda la sesión en el móvil |
 | 4. Fecha de nacimiento | Solo la primera vez: día, mes y año | Se guarda en `perfiles_privados`. La base de datos comprueba los 18 años y pasa el perfil a `activo` |
 | 5. Listo | Vuelve a Perfil, ya con su cuenta | Los planes guardados en el móvil se suben a su cuenta |
 
@@ -19,7 +19,7 @@ Capturas: `prototipos/login/enlace.png`.
 La primera versión pedía un código de 6 cifras. Para que el correo traiga un código hay que cambiar la plantilla del correo, y Supabase no deja cambiarla sin un servicio de correo propio (SMTP). El correo que Supabase manda por defecto trae un enlace, así que la app usa ese enlace.
 
 - **A favor:** funciona hoy, sin tocar plantillas, y no hay que copiar nada: un toque y dentro.
-- **En contra:** el enlace hay que abrirlo en el mismo dispositivo donde está Rotllo. Y algunos correos de empresa «visitan» los enlaces para revisarlos, lo que gasta el enlace antes de que la persona lo toque. Si pasa, la app lo explica y ofrece pedir otro.
+- **En contra:** el enlace hay que abrirlo en el mismo móvil o navegador donde se pidió (ver «Por qué solo en el mismo dispositivo»). Y algunos correos de empresa «visitan» los enlaces para revisarlos, lo que gasta el enlace antes de que la persona lo toque. Si pasa, la app lo explica y ofrece pedir otro.
 - **El correo llega en inglés** («Confirm your email address» la primera vez; las siguientes, uno parecido para iniciar sesión) y a nombre de «Supabase Auth». Cambiarlo también pide el correo propio.
 
 ### Cómo vuelve el enlace a la app
@@ -34,6 +34,22 @@ Al pedir el enlace, la app le dice a Supabase a dónde tiene que devolver a la p
 Supabase solo acepta direcciones que estén en su lista de **Redirect URLs**. Si la dirección no está en la lista, manda a la persona a la «URL del sitio», que no es Rotllo. Por eso hay que añadirlas (ver más abajo).
 
 Cuando exista el dominio, la app instalada usará también `https://rotllo.app/entrar/enlace`: así el enlace abre la app si está instalada y la web si no.
+
+La dirección lleva además `?sb_flow_id=…`, un identificador de cada petición: si alguien pide dos enlaces, valen los dos. Por eso las entradas de la lista de Supabase tienen que acabar en `/**`: una dirección exacta, sin comodín, no aceptaría ese añadido.
+
+### Por qué solo en el mismo dispositivo (PKCE)
+
+Antes, el enlace devolvía a Rotllo las llaves de la sesión metidas en la propia dirección. Eso tenía un agujero: **alguien podía preparar un enlace con las llaves de su cuenta y mandártelo.** Al tocarlo, entrabas en su cuenta sin darte cuenta, y lo que guardaras o el local que dieras de alta acababan siendo suyos (`docs/revision-seguridad.md`, S3).
+
+Con PKCE:
+
+1. Al tocar «Enviar enlace», el móvil se inventa una clave secreta, se la guarda y manda a Supabase solo una «huella» de esa clave.
+2. El enlace del correo devuelve un código, que no sirve de nada solo.
+3. La app junta el código con la clave guardada y Supabase comprueba que la clave encaja con la huella. Solo entonces abre la sesión.
+
+Un enlace preparado por otra persona ya no funciona: la clave que hace falta está en su móvil, no en el tuyo. Las llaves metidas en la dirección se ignoran.
+
+**Lo que se nota:** si alguien pide el enlace en el ordenador y lo abre en el móvil, sale «Este enlace es de otro dispositivo», con un botón para pedir uno nuevo ahí mismo. **Ese enlace queda gastado:** hay que pedir otro desde el dispositivo donde se va a abrir.
 
 - **Sin contraseñas ni códigos.** No hay nada que recordar ni que nos puedan robar.
 - **Entrar es opcional.** La app se abre en los planes; a esta pantalla se llega desde Perfil.
@@ -54,7 +70,7 @@ Cuando exista el dominio, la app instalada usará también `https://rotllo.app/e
 
 | Archivo | Qué hace |
 |---|---|
-| `src/lib/auth.ts` | Pedir el enlace, leer las llaves con las que vuelve y abrir la sesión; guardar la fecha, cerrar sesión y borrar la cuenta. Traduce los errores de Supabase a mensajes que se entienden |
+| `src/lib/auth.ts` | Pedir el enlace, leer el código con el que vuelve y cambiarlo por la sesión (PKCE); guardar la fecha, cerrar sesión y borrar la cuenta. Traduce los errores de Supabase a mensajes que se entienden |
 | `src/lib/sesion.ts` | Quién está usando la app. Las pantallas lo leen con `useSesion()` |
 | `src/lib/guardados.ts` | El corazón: guardados en el móvil y, con cuenta, también en `favoritos` |
 | `src/app/entrar/` | Pantallas de entrar, email (`email.tsx`), llegada del enlace (`enlace.tsx`) y fecha de nacimiento (`edad.tsx`) |
@@ -97,6 +113,15 @@ Supabase deja pedir muy pocos correos por hora con el correo de prueba. Si sale 
 - **Probado después, con una cuenta de prueba** (un alias del correo de Fran, ya borrada): guardar la fecha de nacimiento y que el perfil quede completo; que el corazón guarde el plan en la cuenta (tabla `favoritos`); que la app no deje borrar la cuenta a quien es el único dueño de un local, y lo explique; y borrar la cuenta desde Perfil, tras lo cual no queda nada suyo en la base de datos.
 - **El enlace del correo, de principio a fin** (15 de noviembre, con la cuenta de prueba): se pide el enlace desde la app, llega el correo, se abre el enlace y Rotllo inicia la sesión y pasa a la fecha de nacimiento. La pestaña que se había quedado en «Mira tu correo» también entra sola. Las llaves no se quedan en la dirección del navegador. El mismo enlace, usado por segunda vez, enseña «Ese enlace ya no vale» y «Pedir otro enlace» lleva a pedirlo. La cuenta de prueba se borró al terminar.
 - **No probado todavía:** el enlace en la app instalada en un iPhone o un Android (`rotllo://…`). Depende de añadir la dirección en Supabase y de tener la app de pruebas en el móvil. Tampoco el enlace que recibe una cuenta que ya existía: usa el mismo camino, pero no se ha gastado otro correo en comprobarlo.
+
+- **PKCE, de principio a fin** (16 de noviembre, con la cuenta de prueba, contra el Supabase real):
+  - la petición del enlace lleva la huella de la clave y el identificador de la petición;
+  - abierto en otro navegador, sale «Este enlace es de otro dispositivo» y no se abre ninguna sesión;
+  - abierto en el mismo navegador, entra y pasa a la fecha de nacimiento, y la pestaña que esperaba en «Mira tu correo» también entra;
+  - el código no se queda en la dirección;
+  - un enlace preparado con llaves de sesión metidas a mano se rechaza.
+
+  La cuenta de prueba se borró al terminar.
 
 ## Revisión de seguridad
 

@@ -16,7 +16,7 @@
 | ⬜ | **Correo propio (SMTP)** conectado a Supabase, con el remitente de Rotllo | Hoy solo te llegan correos a ti: **nadie más puede entrar** | Fran (cuenta), Claude (configuración y plantillas en español) |
 | ⬜ | **Plan Pro de Supabase** | Copias de seguridad diarias y que el proyecto no se pause | Fran |
 | 🟡 | **Arreglos de seguridad aplicados** (S1, S2, S4-S10) | Están hechos y probados en la rama `seguridad-fase-3`, sin aplicar | Claude, con tu OK |
-| ⬜ | **Login con PKCE** (S3) | Evita que alguien te meta en su cuenta con un enlace preparado | Claude, con tu OK |
+| ✅ | **Login con PKCE** (S3) | Evita que alguien te meta en su cuenta con un enlace preparado | Hecho el 16 nov |
 | ⬜ | **Probado en un iPhone y un Android** con la lista de `docs/test-plan.md` | Nada se ha visto aún en un móvil: permisos, mapa, compartir, enlaces | Fran (cuenta de Expo) y Claude |
 | ⬜ | **Política de privacidad, términos (usuarios y locales) y aviso legal**, revisados por un abogado | Lo exigen el RGPD, la LSSI y las dos tiendas | Claude (borradores), abogado |
 | ⬜ | **Un email de soporte** (por ejemplo, hola@rotllo.app) puesto en la app, la web y las tiendas | Lo piden el RGPD, la DSA y las tiendas, y la app dice «escríbenos» sin decir dónde | Fran |

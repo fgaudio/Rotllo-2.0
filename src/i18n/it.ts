@@ -410,7 +410,7 @@ export const it: Textos = {
     enlace: {
       titulo: 'Controlla la posta',
       texto: 'Ti abbiamo mandato un link a {{email}}.',
-      pasos: 'Toccalo su questo stesso dispositivo e sei dentro.',
+      pasos: 'Aprilo su questo stesso telefono o browser e sei dentro. Altrove non funziona.',
       cambiar: 'Cambia email',
       reenviar: 'Invia un altro link',
       reenviarEn: 'Puoi chiederne un altro tra {{segundos}} s',
@@ -420,6 +420,9 @@ export const it: Textos = {
       caducadoTexto: 'I link scadono presto e funzionano una volta sola. Chiedine un altro ed entri.',
       sinConexionTitulo: 'Non siamo riusciti a farti entrare',
       pedirOtro: 'Chiedi un altro link',
+      otroTitulo: 'Questo link è di un altro dispositivo',
+      otroTexto: 'Per sicurezza, il link funziona solo sul telefono o browser da cui l’hai chiesto. Chiedine uno nuovo qui e aprilo su questo dispositivo.',
+      pedirAqui: 'Chiedi un link qui',
       reintentar: 'Riprova',
     },
     edad: {

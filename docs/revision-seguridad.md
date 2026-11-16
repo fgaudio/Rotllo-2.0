@@ -1,7 +1,7 @@
 # Revisión de seguridad (Fase 3, prompt 3.2)
 
 > Fecha: 16 de noviembre de 2026. Revisión de todo el proyecto: base de datos, almacenamiento de fotos, app, configuración y repositorio.
-> **Estado:** los arreglos de la base de datos están **preparados y probados en la rama `seguridad-fase-3`, sin aplicar**. El arreglo del login (S3) está **propuesto**, sin hacer. Ver «Qué falta decidir».
+> **Estado:** los arreglos de la base de datos están **preparados y probados en la rama `seguridad-fase-3`, sin aplicar**. El arreglo del login (S3) está **hecho** y probado. Ver «Qué falta decidir».
 
 ## Conclusión
 
@@ -33,7 +33,7 @@ El más serio es de privacidad: **un local podía ver el nombre de quien pulsaba
 | **S10** | 🟠 Media | **Un local veía quién pulsaba «Pillar entrada».** Pidiendo los clics directamente a la base de datos (no desde la app), salía el identificador de cada persona y, cruzándolo con los perfiles, su nombre | Datos personales sin permiso: el RGPD no lo permite. El local solo necesita el número | El local solo puede leer el plan y la hora de cada clic: lo justo para contarlos | Preparado |
 | **S1** | 🟠 Media | **Meter a otra persona en tu local sin que lo sepa**, incluso como propietaria, y después salirte | La persona aparece como dueña de un local que no conoce y **no puede borrar su cuenta** (la app no deja borrarla a quien es la única propietaria de un local). Choca con el derecho a borrar tus datos | En la v1 no hay invitaciones: solo el equipo de Rotllo añade personas a un local. Cuando haya invitaciones, habrá que aceptarlas | Preparado |
 | **S2** | 🟠 Media | **Cambiar el nombre de un local después de que Rotllo lo verifique**, por ejemplo a «Café Mercedes Jazz (oficial)» | La verificación pierde su valor: alguien se hace pasar por un local conocido con la marca de verificado | El nombre, la dirección web y la dirección de un local verificado solo los cambia el equipo. Lo demás (Instagram, descripción…) sí lo cambia el local | Preparado |
-| **S3** | 🟠 Media | **Hacer entrar a alguien en tu cuenta sin que se dé cuenta.** Un enlace preparado con las llaves de la cuenta de la atacante (`rotllo.app/entrar/enlace#access_token=…`) abre Rotllo con esa sesión | La víctima cree que está en su cuenta: lo que guarde o el local que dé de alta acaban en la cuenta de la atacante, que lo ve todo. Se llama «login CSRF» | Cambiar el login al método **PKCE**: el enlace solo funciona en el móvil o navegador donde se pidió | **Propuesto** |
+| **S3** | 🟠 Media | **Hacer entrar a alguien en tu cuenta sin que se dé cuenta.** Un enlace preparado con las llaves de la cuenta de la atacante (`rotllo.app/entrar/enlace#access_token=…`) abre Rotllo con esa sesión | La víctima cree que está en su cuenta: lo que guarde o el local que dé de alta acaban en la cuenta de la atacante, que lo ve todo. Se llama «login CSRF» | Login con el método **PKCE**: el enlace solo funciona en el móvil o navegador donde se pidió, y las llaves metidas en la dirección se ignoran | **Hecho** (16 nov), probado contra el Supabase real |
 | **S4** | 🟡 Baja | **Reportes trucados:** al reportar se podía dejar la revisión ya rellenada («resuelto por el equipo»), y sin límite (500 en un segundo) | Ensuciar la cola de moderación cuando la haya. La app todavía no tiene botón de reportar | La revisión siempre empieza vacía y como mucho se mandan 20 reportes al día | Preparado |
 | **S5** | 🟡 Baja | **Inflar los clics de «Pillar entrada»** sin cuenta, llamando a la función sin el identificador del móvil (300 llamadas, 300 clics) | El número que ve el local deja de valer | Sin cuenta ni identificador del móvil, el clic no cuenta (la app siempre lo manda). **Sigue abierto:** quien se invente identificadores puede inflarlo. Arreglarlo del todo pide contar por IP en el servidor (una Edge Function). El número es orientativo y así hay que decírselo al local | Preparado (en parte) |
 | **S6** | 🟡 Baja | **Dar de alta 200 locales de golpe** | Llenar la lista de revisión del equipo | Como mucho 3 locales esperando revisión por persona. La app lo explica | Preparado |
@@ -80,7 +80,7 @@ El más serio es de privacidad: **un local podía ver el nombre de quien pulsaba
 1. **Aplicar los arreglos de la base de datos** (S1, S2 y S4 a S10). Están en la rama `seguridad-fase-3`, con 32 tests nuevos y los 211 de la base de datos pasando. Al aplicarlos:
    - se sube la migración a Supabase y se junta la rama con `main`;
    - se comprueba contra el Supabase real que el panel del local sigue contando los clics.
-2. **S3, el login con PKCE.** Cambia una cosa que se nota: **el enlace del correo solo funciona en el móvil o el navegador donde se pidió.** Ya lo decimos en la pantalla («Ábrelo en este mismo dispositivo»), pero hoy, si lo abres en otro, entra igual. Con PKCE saldría «Este enlace es de otro dispositivo». Recomiendo hacerlo antes de lanzar.
+2. ~~**S3, el login con PKCE.**~~ Hecho el 16 de noviembre (`docs/login.md`).
 3. **S5 del todo.** Contar los clics por IP en una Edge Function. No corre prisa: mientras el número sea orientativo, basta con decirlo así en el panel.
 
 ## Cómo repetir la revisión
