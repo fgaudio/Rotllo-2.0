@@ -1,0 +1,45 @@
+# Pruebas automáticas: GitHub las ejecuta cada vez que se sube un cambio (docs/test-plan.md).
+# Si algo falla, sale una cruz roja en el commit y llega un email.
+name: Pruebas
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  app:
+    name: App (tipos, estilo y lógica)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test -- --ci
+
+  base-de-datos:
+    name: Base de datos (reglas RLS y funciones)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      # El mismo Postgres que Supabase (16), con PostGIS para los mapas y pgTAP para los tests.
+      - name: Instalar Postgres 16, PostGIS y pgTAP
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-16 postgresql-16-postgis-3 postgresql-16-pgtap libtap-parser-sourcehandler-pgtap-perl
+          sudo systemctl start postgresql
+      # El usuario postgres no puede leer la carpeta de GitHub: se copia el proyecto a /tmp.
+      - name: Probar las migraciones y las reglas
+        run: |
+          cp -r "$GITHUB_WORKSPACE" /tmp/rotllo
+          sudo chown -R postgres /tmp/rotllo
+          sudo -u postgres bash -c "cd /tmp && bash /tmp/rotllo/scripts/db/probar.sh"
