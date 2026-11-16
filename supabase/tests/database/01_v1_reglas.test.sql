@@ -225,7 +225,8 @@ reset role;
 select set_config('request.jwt.claims', '{"role": "anon"}', true);
 set local role anon;
 
-select is((select registrar_clic('b0000000-0000-4000-8000-000000000001')), 'https://example.com/entradas/salsa',
+-- La app manda siempre el identificador del móvil (sin él, el clic no cuenta: 09_seguridad_fase_3).
+select is((select registrar_clic('b0000000-0000-4000-8000-000000000001', 'movil-sin-cuenta')), 'https://example.com/entradas/salsa',
   'Sin cuenta también se puede pillar entrada');
 select is((select registrar_clic(id) from planes where titulo = 'Concierto acústico'), null,
   'Un plan sin ticketera no devuelve enlace (ni cuenta clic)');

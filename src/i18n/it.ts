@@ -250,6 +250,7 @@ export const it: Textos = {
         emailContacto: 'Questa email non sembra giusta. Controllala.',
         red: 'Non siamo riusciti a connetterci. Controlla internet e riprova.',
         sinCuenta: 'Per registrare un locale ti serve l’account completo.',
+        limite: 'Hai già 3 locali in attesa di revisione. Quando li controlliamo, potrai aggiungerne altri.',
       },
     },
     necesitaCuenta: {

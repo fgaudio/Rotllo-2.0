@@ -251,6 +251,7 @@ export const es = {
         emailContacto: 'Este email no parece bien escrito. Revísalo.',
         red: 'No hemos podido conectar. Revisa tu internet y prueba otra vez.',
         sinCuenta: 'Para dar de alta un local necesitas tu cuenta completa.',
+        limite: 'Ya tienes 3 locales esperando revisión. Cuando los revisemos, podrás dar de alta más.',
       },
     },
     necesitaCuenta: {

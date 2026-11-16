@@ -34,7 +34,7 @@ export type DatosAlta = {
 };
 
 export type CampoAlta = 'nombre' | 'tipo' | 'direccion' | 'instagram' | 'emailContacto';
-export type ErrorLocal = 'sin-servicio' | 'sin-cuenta' | 'red';
+export type ErrorLocal = 'sin-servicio' | 'sin-cuenta' | 'limite' | 'red'; // limite: ya tiene 3 locales esperando revisión (RT003)
 export type Resultado<T = undefined> = { ok: true; valor: T } | { ok: false; error: ErrorLocal };
 
 // ── Sin red: se pueden probar ───────────────────────────────────────────────
@@ -140,7 +140,7 @@ export async function crearLocal(datos: DatosAlta): Promise<Resultado<string>> {
       });
       if (!error) return { ok: true, valor: data as string };
       if (error.code === '23505') continue; // esa dirección web ya existe: siguiente
-      return { ok: false, error: error.code === '42501' ? 'sin-cuenta' : 'red' };
+      return { ok: false, error: error.code === '42501' ? 'sin-cuenta' : error.code === 'RT003' ? 'limite' : 'red' };
     } catch {
       return { ok: false, error: 'red' };
     }

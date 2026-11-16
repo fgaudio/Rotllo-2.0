@@ -250,6 +250,7 @@ export const en: Textos = {
         emailContacto: "That email doesn't look right. Check it.",
         red: "We couldn't connect. Check your internet and try again.",
         sinCuenta: 'You need a complete account to register a venue.',
+        limite: 'You already have 3 venues waiting for review. Once we check them, you can add more.',
       },
     },
     necesitaCuenta: {

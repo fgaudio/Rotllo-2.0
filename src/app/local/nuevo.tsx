@@ -71,7 +71,8 @@ export default function NuevoLocalScreen() {
     setEnviando(true);
     const resultado = await crearLocal(datos);
     setEnviando(false);
-    if (!resultado.ok) return setErrorEnvio(t(resultado.error === 'sin-cuenta' ? 'local.alta.errores.sinCuenta' : 'local.alta.errores.red'));
+    if (!resultado.ok)
+      return setErrorEnvio(t(resultado.error === 'sin-cuenta' ? 'local.alta.errores.sinCuenta' : resultado.error === 'limite' ? 'local.alta.errores.limite' : 'local.alta.errores.red'));
     router.replace('/local');
   };
 
