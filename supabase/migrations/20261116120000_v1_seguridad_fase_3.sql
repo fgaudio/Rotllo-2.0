@@ -11,6 +11,7 @@
 --   S7. Firmar un plan a nombre de otra persona.
 --   S8. Rutas de foto que apuntan fuera de la carpeta del plan.
 --   S9. Enlaces de entradas que no son https.
+--   S10. El local veía quién (nombre incluido) había pulsado «Pillar entrada» en sus planes.
 --
 -- (S3, el login con enlaces de otra persona, se arregla en la app, no aquí.)
 
@@ -212,3 +213,15 @@ alter table public.fotos_plan add constraint foto_en_su_carpeta check (
 alter table public.planes add constraint ticketera_https check (
   url_ticketera is null or url_ticketera ~ '^https://[^\s]+$'
 );
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- S10. El local cuenta los clics de sus planes, pero no sabe de quién son
+--     La regla «clics: ver los de mi local» dejaba leer cada fila, con el user_id: cruzándolo
+--     con los perfiles, el local sabía el nombre de quien había pulsado «Pillar entrada».
+--     Ahora, desde la app, solo se pueden leer el plan y la hora de cada clic: lo justo para
+--     contarlos (el panel usa «clics_ticketera (count)»). Rotllo lo sigue viendo todo desde el panel
+--     de Supabase.
+-- ─────────────────────────────────────────────────────────────────────────────
+
+revoke select on public.clics_ticketera from anon, authenticated;
+grant select (id, plan_id, creado_en) on public.clics_ticketera to authenticated;

@@ -107,5 +107,25 @@ reset role;
 select is((select count(*)::int from clics_ticketera where plan_id = 'b0000000-0000-4000-8000-000000000001' and dispositivo = 'movil-de-verdad'), 1,
   'S5 · Y cuenta una vez');
 
+-- S10 ─────────────────────────────────────────────────────────────────────────
+insert into auth.users (id, email, raw_user_meta_data) values
+  ('5eeeeee4-0000-4000-8000-000000000004', 'clienta@example.com', '{"nombre": "Lucía", "fecha_nacimiento": "1999-02-02"}');
+insert into miembros_local (local_id, user_id, rol) values ('a0000000-0000-4000-8000-000000000001', '5eeeeee2-0000-4000-8000-000000000002', 'propietario');
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "5eeeeee4-0000-4000-8000-000000000004", "role": "authenticated"}', true);
+select is(registrar_clic('b0000000-0000-4000-8000-000000000001', 'movil-lucia'), 'https://example.com/entradas/salsa', 'S10 · Lucía pulsa «Pillar entrada»');
+select set_config('request.jwt.claims', '{"sub": "5eeeeee2-0000-4000-8000-000000000002", "role": "authenticated"}', true);
+select is((select count(*)::int from clics_ticketera where plan_id = 'b0000000-0000-4000-8000-000000000001'), 2,
+  'S10 · La dueña del local cuenta los clics de su plan');
+select throws_ok($$ select user_id from clics_ticketera $$, '42501', null, 'S10 · Pero no puede ver de quién son');
+select throws_ok($$ select dispositivo from clics_ticketera $$, '42501', null, 'S10 · Ni el identificador del móvil');
+select throws_ok($$ select * from clics_ticketera $$, '42501', null, 'S10 · Ni pedir todas las columnas');
+select set_config('request.jwt.claims', '{"sub": "5eeeeee4-0000-4000-8000-000000000004", "role": "authenticated"}', true);
+select is((select count(*)::int from clics_ticketera), 0, 'S10 · Quien no es del local no ve ningún clic');
+reset role;
+set local role anon;
+select throws_ok($$ select count(*) from clics_ticketera $$, '42501', null, 'S10 · Sin cuenta, nada');
+reset role;
+
 select * from finish();
 rollback;

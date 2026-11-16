@@ -62,7 +62,7 @@ set local role anon;
 select is(
   (select registrar_clic((select id from planes_feed where titulo = 'P·Noche de panel (editada)'), 'movil-de-prueba-1')),
   'https://example.com/entradas', 'Tocar "Pillar entrada" devuelve el enlace del local');
-select is((select count(*) from clics_ticketera)::int, 0, 'Quien no es del local no ve los clics');
+select throws_ok($$ select count(*) from clics_ticketera $$, '42501', null, 'Quien no es del local no ve los clics (sin cuenta, ni siquiera puede contarlos)');
 
 -- ── La dueña ve sus clics, borra un borrador y cancela el plan ─────────────
 reset role;
