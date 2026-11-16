@@ -2,6 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ComponentProps } from 'react';
 import { Pressable } from 'react-native';
 
+import { estadoPulsado } from '@/lib/accesibilidad';
 import { pop, radio, zonaTactilMinima } from '@/theme/tokens';
 import { crearEstilos, useTema } from '@/theme/useTema';
 
@@ -22,7 +23,7 @@ export function BotonRedondo({ icono, etiqueta, onPress, variante = 'superficie'
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={etiqueta}
-      accessibilityState={seleccionado === undefined ? undefined : { selected: seleccionado }}
+      {...(seleccionado === undefined ? {} : estadoPulsado(seleccionado))}
       onPress={onPress}
       hitSlop={4}
       style={({ pressed }) => [s.base, s[variante], pressed && s.pulsado]}>

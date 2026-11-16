@@ -2,6 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ComponentProps } from 'react';
 import { Pressable, Text } from 'react-native';
 
+import { estadoPulsado } from '@/lib/accesibilidad';
 import { espacio, fuentes, radio, zonaTactilMinima } from '@/theme/tokens';
 import { crearEstilos, useTema } from '@/theme/useTema';
 
@@ -21,7 +22,8 @@ export function Chip({ etiqueta, activo, onPress, icono, ocupado }: Props) {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={etiqueta}
-      accessibilityState={{ selected: activo, busy: ocupado }}
+      {...estadoPulsado(activo)}
+      aria-busy={ocupado}
       onPress={onPress}
       style={({ pressed }) => [s.base, activo && s.activo, pressed && s.pulsado]}>
       {icono ? <Ionicons name={icono} size={16} color={activo ? c.fondo : c.texto} /> : null}

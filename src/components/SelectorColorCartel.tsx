@@ -31,7 +31,7 @@ export function SelectorColorCartel({ valor, onCambio }: Props) {
             key={nombre}
             accessibilityRole="radio"
             accessibilityLabel={t(`misPlanes.colores.${nombre}`)}
-            accessibilityState={{ selected: elegido }}
+            aria-checked={elegido} // «marcado»: lo correcto en una lista de opciones, en el móvil y en el navegador
             onPress={() => onCambio(nombre)}
             style={({ pressed }) => [s.circulo, { backgroundColor: color.fondo }, elegido && s.elegido, pressed && s.pulsado]}>
             {elegido ? <Ionicons name="checkmark" size={22} color={color.tinta} /> : <View style={[s.punto, { backgroundColor: color.figura }]} />}
