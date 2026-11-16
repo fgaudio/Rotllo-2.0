@@ -2,7 +2,7 @@
 
 Cosas que Claude no puede hacer por ti, porque piden entrar en tus cuentas, pagar o decidir. Están por orden: primero lo que desbloquea el trabajo ahora, después lo que hace falta antes de lanzar.
 
-Última revisión: 15 de noviembre de 2026.
+Última revisión: 16 de noviembre de 2026.
 
 ## Ahora
 
@@ -61,6 +61,8 @@ Aviso: este camino no se ha recorrido todavía en este proyecto. Puede hacer fal
 
 Para cada una, dile a Claude «vamos con X» y te dará los pasos en ese momento.
 
+La lista completa para el lanzamiento, con lo técnico, lo legal y lo de las tiendas, está en `docs/checklist-lanzamiento.md`.
+
 ## Lo que no es técnico (y es lo más importante)
 
 Tu propia guía lo dice: el mayor riesgo de Rotllo no es el código, es que los locales publiquen. La meta antes de lanzar son **20-30 locales comprometidos**, con planes cargados para las primeras semanas.
@@ -69,6 +71,6 @@ Ya puedes enseñarles algo real: el panel donde dan de alta su local, crean un p
 
 ## Lo que Claude puede seguir haciendo sin ti
 
-- El módulo de **mapa**: planes cerca de ti, con el permiso de ubicación.
-- La **fase 3** de tu guía: plan de tests, revisión de seguridad de todo el proyecto, README y guía para locales.
+- **Aplicar los arreglos de seguridad** y el login con PKCE (`docs/revision-seguridad.md`), en cuanto des el OK.
+- **Borradores de la política de privacidad, los términos y el aviso legal**, para que los revise el abogado.
 - Mejoras del panel: repetir un plan cada semana, duplicarlo, varias fotos.

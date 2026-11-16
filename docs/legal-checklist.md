@@ -14,7 +14,7 @@
 | **Minimización**: guardar solo lo necesario | ✅ La ubicación del usuario **no se guarda**. Con «Cerca de mí» se manda a la base de datos redondeada a unos 100 m, solo para ordenar los planes en ese momento (`docs/cerca-de-mi.md`). La fecha de nacimiento va en una tabla privada | Contarlo así en la política de privacidad |
 | **Plazos de conservación**: cuánto se guarda cada dato y qué pasa al borrar la cuenta | Por definir. Las facturas (v2) se guardan por obligación fiscal y mercantil (4-6 años) | ✅ |
 | **Derechos** (acceso, rectificación, supresión, portabilidad): un email de contacto y un plazo de respuesta de 1 mes | Por definir el email | — |
-| **Brechas de seguridad**: avisar a la AEPD en 72 h si hay una fuga de datos | Por escribir el procedimiento en el runbook (prompt 3.3) | — |
+| **Brechas de seguridad**: avisar a la AEPD en 72 h si hay una fuga de datos | ✅ Procedimiento escrito en `docs/runbook.md`, apartado 8 (16 nov 2026) | Revisar con el abogado qué se cuenta a la AEPD |
 
 ## Cuenta, edad y ubicación
 
@@ -56,7 +56,7 @@
 |---|---|---|
 | **Ley Europea de Accesibilidad** (Directiva 2019/882, en España la Ley 11/2023): se aplica a los servicios de comercio electrónico desde junio de 2025. Las microempresas (menos de 10 personas y menos de 2 M€) están exentas en servicios | ✅ Ya cumplimos lo básico: contraste AA y zonas táctiles de 44 px | ✅ Confirmar la exención |
 | **Fichas de las tiendas**: etiquetas de privacidad (App Store) y "Seguridad de los datos" (Google Play), que tienen que coincidir con la política de privacidad | Por hacer en el prompt 3.4 | — |
-| **Clasificación por edad en las tiendas**: 18+ por la promoción de ocio nocturno y alcohol | Por hacer en el prompt 3.4 | — |
+| **Clasificación por edad en las tiendas**: 18+ por la promoción de ocio nocturno y alcohol | Apuntado en `docs/checklist-lanzamiento.md`, apartado 2 | — |
 
 ## Recomendable (no obligatorio)
 
