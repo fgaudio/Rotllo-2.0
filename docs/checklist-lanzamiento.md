@@ -18,7 +18,7 @@
 | ✅ | **Arreglos de seguridad aplicados** (S1, S2, S4-S10) | Aplicados el 17 nov y comprobados contra el Supabase real | Hecho |
 | ✅ | **Login con PKCE** (S3) | Evita que alguien te meta en su cuenta con un enlace preparado | Hecho el 16 nov |
 | ⬜ | **Probado en un iPhone y un Android** con la lista de `docs/test-plan.md` | Nada se ha visto aún en un móvil: permisos, mapa, compartir, enlaces | Fran (cuenta de Expo) y Claude |
-| ⬜ | **Política de privacidad, términos (usuarios y locales) y aviso legal**, revisados por un abogado | Lo exigen el RGPD, la LSSI y las dos tiendas | Claude (borradores), abogado |
+| 🟡 | **Política de privacidad, términos (usuarios y locales) y aviso legal**, revisados por un abogado | Lo exigen el RGPD, la LSSI y las dos tiendas | Borradores en `docs/legal/` (17 nov). Faltan los datos del titular y la revisión del abogado |
 | ⬜ | **Un email de soporte** (por ejemplo, hola@rotllo.app) puesto en la app, la web y las tiendas | Lo piden el RGPD, la DSA y las tiendas, y la app dice «escríbenos» sin decir dónde | Fran |
 | ⬜ | **Sentry** conectado | Si la app falla en el móvil de alguien, hoy no nos enteramos | Fran (cuenta), Claude |
 

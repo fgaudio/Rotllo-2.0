@@ -2,14 +2,16 @@
 
 > Fecha: 2026-11-08. Es una lista de trabajo, **no asesoramiento legal**. La columna "Abogado" marca lo que debe revisar un profesional antes de publicar la app. Las fichas de las tiendas y la política de privacidad tienen que estar listas para la beta cerrada.
 
+**Borradores:** todos los textos están en [`docs/legal/`](legal/README.md), con lo que falta rellenar y las preguntas para el abogado.
+
 **Lo primero:** decidir **quién es el titular** de Rotllo (autónomo o sociedad). Aparece en el aviso legal, la política de privacidad, los términos, Stripe y las facturas, y casi todo lo demás depende de eso.
 
 ## Datos personales (RGPD y LOPDGDD)
 
 | Qué hace falta | Estado en Rotllo | Abogado |
 |---|---|---|
-| **Política de privacidad** (art. 13 RGPD): quién trata los datos, para qué, con qué base legal, cuánto tiempo, a quién se ceden y cómo ejercer los derechos. Enlazada desde el registro y desde Perfil | Por redactar | ✅ Redacción final |
-| **Registro de actividades de tratamiento**: lista interna de qué datos se tratan y por qué | Por hacer. Base: las tablas de `docs/system-design.md` | ✅ Confirmar si es obligatorio en tu caso |
+| **Política de privacidad** (art. 13 RGPD): quién trata los datos, para qué, con qué base legal, cuánto tiempo, a quién se ceden y cómo ejercer los derechos. Enlazada desde el registro y desde Perfil | 🟡 Borrador en `docs/legal/politica-privacidad.md` (17 nov 2026) | ✅ Redacción final |
+| **Registro de actividades de tratamiento**: lista interna de qué datos se tratan y por qué | 🟡 Borrador en `docs/legal/registro-tratamientos.md` | ✅ Confirmar si es obligatorio en tu caso |
 | **Encargados del tratamiento** y sus contratos (DPA): Supabase (datos en Fráncfort), Expo (push), Google y Apple (login, mapas), y más adelante Stripe, Sentry y PostHog | Por firmar: casi todos ofrecen su DPA estándar en su web | ✅ Revisar las transferencias fuera de la UE (empresas de EE. UU.: Data Privacy Framework o cláusulas tipo) |
 | **Minimización**: guardar solo lo necesario | ✅ La ubicación del usuario **no se guarda**. Con «Cerca de mí» se manda a la base de datos redondeada a unos 100 m, solo para ordenar los planes en ese momento (`docs/cerca-de-mi.md`). La fecha de nacimiento va en una tabla privada | Contarlo así en la política de privacidad |
 | **Plazos de conservación**: cuánto se guarda cada dato y qué pasa al borrar la cuenta | Por definir. Las facturas (v2) se guardan por obligación fiscal y mercantil (4-6 años) | ✅ |
@@ -29,7 +31,7 @@
 
 | Qué hace falta | Estado en Rotllo | Abogado |
 |---|---|---|
-| **Aviso legal** con los datos del titular (nombre, NIF, domicilio, email) en la web y en la app | Por hacer: depende del titular | — |
+| **Aviso legal** con los datos del titular (nombre, NIF, domicilio, email) en la web y en la app | 🟡 Borrador en `docs/legal/aviso-legal.md`; faltan los datos del titular | — |
 | **Cookies y analítica**: en la web, banner de consentimiento si hay analítica. En la app, consentimiento antes de medir (prompt 4.1) | Ahora no hay cookies ni analítica | ✅ Revisar el texto del banner y si PostHog necesita consentimiento previo |
 | **Comunicaciones comerciales** (newsletter, push de promoción): solo con consentimiento previo y fácil de retirar | No hay ninguna todavía | — |
 
@@ -39,15 +41,15 @@
 |---|---|---|
 | **Botón para denunciar contenido** (planes, locales, mensajes) y respuesta motivada cuando se retira algo | ✅ La tabla `reportes` ya existe. Falta la pantalla y la revisión desde el panel de admin | ✅ Qué obligaciones del DSA aplican a una empresa pequeña |
 | **Punto de contacto** para usuarios y autoridades (un email) | Por definir | — |
-| **Términos claros** sobre qué contenido está prohibido y cómo se modera la jam (v1.1) | Por redactar | ✅ |
-| **Fotos de los locales**: el local garantiza que tiene derecho a usarlas, también la imagen de las personas que salen (LO 1/1982) | Va en los términos para locales | ✅ |
+| **Términos claros** sobre qué contenido está prohibido y cómo se modera la jam (v1.1) | 🟡 Lo prohibido y la moderación están en los borradores de términos (`docs/legal/`). La jam, con la v2 | ✅ |
+| **Fotos de los locales**: el local garantiza que tiene derecho a usarlas, también la imagen de las personas que salen (LO 1/1982) | 🟡 En `docs/legal/terminos-locales.md`, apartado 4 | ✅ |
 
 ## Términos y condiciones
 
 | Qué hace falta | Estado en Rotllo | Abogado |
 |---|---|---|
-| **Términos para usuarios**: qué es Rotllo; que en la v1 las entradas se compran en la web del local, con Rotllo solo como enlace; conducta; suspensión de cuentas; edad | Por redactar | ✅ |
-| **Términos para locales** (empresa a empresa): veracidad de los planes, responsabilidad del evento, verificación, suspensión y derechos sobre fotos y textos. En la v2, también la comisión, los reembolsos y Stripe Connect | Por redactar | ✅ |
+| **Términos para usuarios**: qué es Rotllo; que en la v1 las entradas se compran en la web del local, con Rotllo solo como enlace; conducta; suspensión de cuentas; edad | 🟡 Borrador en `docs/legal/terminos-usuarios.md` | ✅ |
+| **Términos para locales** (empresa a empresa): veracidad de los planes, responsabilidad del evento, verificación, suspensión y derechos sobre fotos y textos. En la v2, también la comisión, los reembolsos y Stripe Connect | 🟡 Borrador en `docs/legal/terminos-locales.md` | ✅ |
 | **v2 · venta de entradas**: precio final con gastos visible desde el principio, excepción al derecho de desistimiento para ocio con fecha concreta, IVA y factura simplificada de los gastos (ADR-003) | Pendiente de la v2 | ✅ |
 
 ## Accesibilidad y tiendas
@@ -55,7 +57,7 @@
 | Qué hace falta | Estado en Rotllo | Abogado |
 |---|---|---|
 | **Ley Europea de Accesibilidad** (Directiva 2019/882, en España la Ley 11/2023): se aplica a los servicios de comercio electrónico desde junio de 2025. Las microempresas (menos de 10 personas y menos de 2 M€) están exentas en servicios | ✅ Ya cumplimos lo básico: contraste AA y zonas táctiles de 44 px | ✅ Confirmar la exención |
-| **Fichas de las tiendas**: etiquetas de privacidad (App Store) y "Seguridad de los datos" (Google Play), que tienen que coincidir con la política de privacidad | Por hacer en el prompt 3.4 | — |
+| **Fichas de las tiendas**: etiquetas de privacidad (App Store) y "Seguridad de los datos" (Google Play), que tienen que coincidir con la política de privacidad | 🟡 Qué declarar, en `docs/legal/fichas-tiendas.md` | — |
 | **Clasificación por edad en las tiendas**: 18+ por la promoción de ocio nocturno y alcohol | Apuntado en `docs/checklist-lanzamiento.md`, apartado 2 | — |
 
 ## Recomendable (no obligatorio)

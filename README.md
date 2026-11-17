@@ -119,3 +119,4 @@ prototipos/      Capturas y previsualizaciones de cada módulo
 | [`docs/login.md`](docs/login.md), [`docs/panel-local.md`](docs/panel-local.md), [`docs/cerca-de-mi.md`](docs/cerca-de-mi.md), [`docs/compartir-instagram.md`](docs/compartir-instagram.md) | Cada módulo: cómo funciona y qué se ha probado |
 | [`docs/test-plan.md`](docs/test-plan.md), [`docs/revision-seguridad.md`](docs/revision-seguridad.md), [`docs/revision-cto.md`](docs/revision-cto.md) | Tests y revisiones |
 | [`docs/legal-checklist.md`](docs/legal-checklist.md) | Lo legal (RGPD, LSSI, tiendas) |
+| [`docs/legal/`](docs/legal/README.md) | Borradores de la política de privacidad, los términos y el aviso legal |

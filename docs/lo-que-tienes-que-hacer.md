@@ -2,7 +2,7 @@
 
 Cosas que Claude no puede hacer por ti, porque piden entrar en tus cuentas, pagar o decidir. Están por orden: primero lo que desbloquea el trabajo ahora, después lo que hace falta antes de lanzar.
 
-Última revisión: 16 de noviembre de 2026.
+Última revisión: 17 de noviembre de 2026.
 
 ## Ahora
 
@@ -57,7 +57,7 @@ Aviso: este camino no se ha recorrido todavía en este proyecto. Puede hacer fal
 | **Apple Developer** | Publicar en iPhone y «Entrar con Apple» | 99 $ al año | — |
 | **Plan Pro de Supabase** | Copias de seguridad y que el proyecto no se pause | 25 $ al mes | Cuando haya usuarios reales |
 | **Protección de contraseñas filtradas** | Aviso de seguridad de Supabase (Authentication → ajustes) | Gratis | — |
-| **Un abogado** | Revisar privacidad y condiciones (`docs/legal-checklist.md`) | Según el abogado | — |
+| **Un abogado** | Revisar los borradores de `docs/legal/` (privacidad, términos y aviso legal). Antes, rellena los datos del titular: lista en `docs/legal/README.md` | Según el abogado | — |
 
 Para cada una, dile a Claude «vamos con X» y te dará los pasos en ese momento.
 
@@ -71,5 +71,5 @@ Ya puedes enseñarles algo real: el panel donde dan de alta su local, crean un p
 
 ## Lo que Claude puede seguir haciendo sin ti
 
-- **Borradores de la política de privacidad, los términos y el aviso legal**, para que los revise el abogado.
+- **Publicar los textos legales en la app y en la web** (aceptar los términos al registrarse, botón «Reportar», enlace web para borrar la cuenta), cuando el abogado los apruebe.
 - Mejoras del panel: repetir un plan cada semana, duplicarlo, varias fotos.
