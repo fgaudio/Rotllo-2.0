@@ -36,7 +36,7 @@ Las dos marcas se borran antes de publicar.
 
 ## 2. Lo que tienes que decidir tú (con el abogado)
 
-1. **El identificador anónimo del móvil** que cuenta los clics. Puede necesitar consentimiento (art. 22.2 LSSI) porque no lo pide la persona, sirve a la estadística del local. Opciones:
+1. **El identificador aleatorio del móvil** que cuenta los clics. Puede necesitar consentimiento (art. 22.2 LSSI) porque no lo pide la persona, sirve a la estadística del local. Opciones:
    - **(a)** pedir consentimiento;
    - **(b)** dejar de guardarlo: sin cuenta, los clics se contarían peor;
    - **(c)** mantenerlo si el abogado lo ve justificado.
