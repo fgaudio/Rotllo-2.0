@@ -71,6 +71,5 @@ Ya puedes enseñarles algo real: el panel donde dan de alta su local, crean un p
 
 ## Lo que Claude puede seguir haciendo sin ti
 
-- **Aplicar los arreglos de seguridad** y el login con PKCE (`docs/revision-seguridad.md`), en cuanto des el OK.
 - **Borradores de la política de privacidad, los términos y el aviso legal**, para que los revise el abogado.
 - Mejoras del panel: repetir un plan cada semana, duplicarlo, varias fotos.

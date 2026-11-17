@@ -19,7 +19,7 @@ Lo que la guía pone primero (pagos, aforo, QR, votos, chat) **es de la v2 y tod
 | Tipo | Qué prueba | Herramienta | Cuántos hay | Cuánto tarda |
 |---|---|---|---|---|
 | **Lógica de la app** | Cuentas y reglas que no necesitan pantalla: filtros, fechas, distancias, validaciones, textos de error | Jest (`npm test`) | 169, en 18 archivos | ~2 s |
-| **Base de datos** | Las reglas RLS, los triggers y las funciones, entrando como distintas personas (sin cuenta, usuaria, dueña de un local, equipo de Rotllo) | pgTAP en un Postgres local que imita a Supabase (`scripts/db/probar.sh`) | 179 en `main`, 211 con la rama de seguridad, en 9 archivos | ~1 s |
+| **Base de datos** | Las reglas RLS, los triggers y las funciones, entrando como distintas personas (sin cuenta, usuaria, dueña de un local, equipo de Rotllo) | pgTAP en un Postgres local que imita a Supabase (`scripts/db/probar.sh`) | 211, en 9 archivos | ~1 s |
 | **De punta a punta (humo)** | Que la app abre y lo principal funciona en un navegador, con los datos de ejemplo | Playwright (`scripts/e2e/humo.cjs`) | 1 recorrido con 15 comprobaciones | ~30 s |
 | **De punta a punta (real)** | Login con el correo de verdad, panel del local, fotos, contra el Supabase real | Playwright, a mano | Se hicieron en cada módulo; no se repiten solos porque mandan correos y crean datos reales | — |
 | **En el móvil** | Permisos, mapa, compartir, enlaces | A mano, con la lista de abajo | 0: falta la app de pruebas | — |
@@ -32,7 +32,7 @@ Se sigue la pirámide de siempre: muchos tests pequeños y rápidos abajo, pocos
 |---|---|---|---|---|
 | 1 | **Permisos (RLS)** | Un local edita planes de otro; alguien ve datos privados; alguien se hace admin | Base de datos: cada regla con un test que intenta saltársela (`01`, `05`, `06`, `07`, `09`) | ✅ |
 | 2 | **Edad mínima** | Un menor de 18 tiene cuenta; un plan +21 sale como +18 | Base de datos (`01`): fecha de menor rechazada, fecha que no se cambia, edad del plan ≥ 18. App: `edad.test.ts` | ✅ |
-| 3 | **Datos personales** | Un local sabe quién pulsó su enlace; borrar la cuenta deja datos | Base de datos (`04`, `09`): qué se borra y qué queda anónimo; el local solo cuenta clics | ✅ con la rama de seguridad |
+| 3 | **Datos personales** | Un local sabe quién pulsó su enlace; borrar la cuenta deja datos | Base de datos (`04`, `09`): qué se borra y qué queda anónimo; el local solo cuenta clics | ✅ |
 | 4 | **Login y cuenta** | Nadie puede entrar; una sesión ajena; no se puede borrar la cuenta | App: `auth.test.ts` (lectura del enlace, errores), `sesion.test.ts`. Real: a mano con el correo | 🟡 sin repetición automática del correo real |
 | 5 | **Feed y filtros** | «Hoy» esconde la fiesta de esta noche; el finde se corta | Los mismos casos en la app (`filtros.test.ts`) y en la base de datos (`02`, `08`): día de 06:00 a 06:00, hora de Valencia, cambio de hora | ✅ |
 | 6 | **Panel del local** | Un plan se publica sin revisar; un plan cancelado vuelve; se pierden fotos | Base de datos (`05`, `06`, `07`). App: `planesLocal.test.ts`, `fotos.test.ts`, `cartel.test.ts` | ✅ |
